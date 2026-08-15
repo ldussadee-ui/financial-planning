@@ -1,0 +1,114 @@
+"use client";
+
+import { useLiveQuery } from "dexie-react-hooks";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { db } from "@/lib/db";
+import { fmt, fmtRange } from "@/lib/calc";
+import { useMetrics } from "@/hooks/useMetrics";
+import { SectionHeader, StatRow, EmptyState } from "@/components/ui";
+
+export function Dashboard() {
+  const { metrics, cycleRange, loading } = useMetrics();
+  const goals = useLiveQuery(() => db.goals.toArray(), [], []);
+  const investment = useLiveQuery(() => db.investmentAssets.toArray(), [], []);
+  const liquid = useLiveQuery(() => db.liquidAssets.toArray(), [], []);
+
+  if (loading) return null;
+
+  return (
+    <div>
+      <SectionHeader title="ภาพรวมการเงิน ☺️" sub={`สรุปสถานะสินทรัพย์ หนี้สิน และกระแสเงินสด · รอบปัจจุบัน ${fmtRange(cycleRange)}`} chip="ทดลองใช้งาน" />
+
+      <div className="fp-grid-2" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 18 }}>
+        <div className="fp-card" style={{ padding: 26 }}>
+          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>💗 มูลค่าสุทธิ</div>
+          <StatRow label="สินทรัพย์สภาพคล่อง" value={fmt(metrics.totalLiquid)} />
+          <StatRow label="สินทรัพย์เพื่อการลงทุน" value={fmt(metrics.totalInvestment)} />
+          <StatRow label="สินทรัพย์ส่วนตัว (ไม่ก่อรายได้)" value={fmt(metrics.totalPersonal)} />
+          <StatRow label="หนี้สินรวม" value={"− " + fmt(metrics.totalLiab)} />
+          <div style={{ borderTop: "2px dashed var(--line)", marginTop: 8, paddingTop: 10 }}>
+            <StatRow label="Net Worth รวมทั้งหมด" value={fmt(metrics.totalNetWorth)} big />
+            <StatRow label="Investable Net Worth" value={fmt(metrics.investableNetWorth)} big />
+          </div>
+          <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10 }}>
+            * Investable Net Worth = สินทรัพย์สภาพคล่อง + สินทรัพย์ลงทุน − หนี้สินรวม
+          </div>
+        </div>
+
+        <div className="fp-card" style={{ padding: 26 }}>
+          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>🥧 สัดส่วนสินทรัพย์เพื่อการลงทุน</div>
+          {metrics.byCat.length ? (
+            <div style={{ height: 190, display: "flex", alignItems: "center" }}>
+              <ResponsiveContainer width="55%" height={180}>
+                <PieChart>
+                  <Pie data={metrics.byCat} dataKey="value" nameKey="name" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
+                    {metrics.byCat.map((c) => <Cell key={c.key} fill={c.color} stroke="none" />)}
+                  </Pie>
+                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ flex: 1, fontSize: 12.5 }}>
+                {metrics.byCat.map((c) => (
+                  <div key={c.key} style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: 5, background: c.color, display: "inline-block" }} />
+                    <span style={{ color: "var(--ink-soft)" }}>{c.name}</span>
+                    <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>
+                      {((c.value / metrics.totalInvestment) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
+        </div>
+      </div>
+
+      <div className="fp-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginTop: 18 }}>
+        <div className="fp-card" style={{ padding: 26 }}>
+          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>🌿 รายรับ Passive</div>
+          <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: "#5FBDAE" }}>
+            {metrics.passiveRatio === null ? "—" : (metrics.passiveRatio * 100).toFixed(1) + "%"}
+          </div>
+          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 3, marginBottom: 6 }}>ของรายจ่ายรวมในรอบนี้ มาจาก Passive Income</div>
+          <StatRow label="รายได้ Active" value={fmt(metrics.incomeActive)} />
+          <StatRow label="รายได้ Passive" value={fmt(metrics.incomePassive)} />
+          <StatRow label="รายจ่ายประจำ (คงที่)" value={fmt(metrics.expenseFixed)} />
+          <StatRow label="รายจ่ายผันแปร" value={fmt(metrics.expenseVariable)} />
+          <StatRow label="เงินคงเหลือในรอบนี้" value={fmt(metrics.savings)} big />
+        </div>
+
+        <div className="fp-card" style={{ padding: 26 }}>
+          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>☔ สภาพคล่องระยะสั้น</div>
+          <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: metrics.currentRatio === null ? "var(--ink-soft)" : metrics.currentRatio >= 1 ? "#5FBDAE" : "#FF8C7A" }}>
+            {metrics.currentRatio === null ? "—" : metrics.currentRatio.toFixed(2) + "x"}
+          </div>
+          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 3, marginBottom: 6 }}>สินทรัพย์สภาพคล่องสูง ÷ หนี้สินระยะสั้น</div>
+          <StatRow label="สินทรัพย์สภาพคล่องสูง" value={fmt(metrics.liquidHigh)} />
+          <StatRow label="หนี้สินระยะสั้น" value={fmt(metrics.liabShort)} />
+          <StatRow label="หนี้สินระยะยาว" value={fmt(metrics.liabLong)} />
+        </div>
+      </div>
+
+      <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
+        <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 16 }}>🎯 ความคืบหน้าเป้าหมาย</div>
+        {goals && goals.length ? goals.map((g) => {
+          const linked =
+            (investment || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0) +
+            (liquid || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0);
+          const pct = Math.min(100, (linked / g.target) * 100);
+          return (
+            <div key={g.id} style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
+                <span>{g.name} <span style={{ color: "var(--ink-soft)", fontSize: 11.5 }}>({g.type})</span></span>
+                <span className="fp-num">{fmt(linked)} / {fmt(g.target)}</span>
+              </div>
+              <div style={{ height: 10, background: "#FBF2FF", borderRadius: 999, overflow: "hidden" }}>
+                <div style={{ width: pct + "%", height: "100%", background: "#D4577E", borderRadius: 999 }} />
+              </div>
+            </div>
+          );
+        }) : <EmptyState text="ยังไม่มีเป้าหมาย" />}
+      </div>
+    </div>
+  );
+}
