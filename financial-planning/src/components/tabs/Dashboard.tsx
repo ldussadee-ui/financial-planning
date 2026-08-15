@@ -1,17 +1,65 @@
 "use client";
 
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { db } from "@/lib/db";
 import { fmt, fmtRange } from "@/lib/calc";
 import { useMetrics } from "@/hooks/useMetrics";
 import { SectionHeader, StatRow, EmptyState } from "@/components/ui";
 
+// A StatRow that expands in place to list the individual items behind the
+// total — read-only (editing still happens in the dedicated asset tabs), so
+// the dashboard stays a quick overview rather than growing its own CRUD UI.
+function ExpandableStatRow({
+  label, value, expanded, onToggle, items,
+}: {
+  label: string;
+  value: string;
+  expanded: boolean;
+  onToggle: () => void;
+  items: { name: string; value: string }[];
+}) {
+  return (
+    <div>
+      <div
+        onClick={onToggle}
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "7px 0", cursor: "pointer" }}
+      >
+        <span style={{ fontSize: 13, color: "var(--ink-soft)", display: "flex", alignItems: "center", gap: 4 }}>
+          {expanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+          {label}
+        </span>
+        <span className="fp-num" style={{ fontSize: 14, fontWeight: 600 }}>{value}</span>
+      </div>
+      {expanded && (
+        <div style={{ paddingLeft: 19, paddingBottom: 6 }}>
+          {items.length ? items.map((it, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--ink-soft)", padding: "4px 0" }}>
+              <span>{it.name}</span>
+              <span className="fp-num">{it.value}</span>
+            </div>
+          )) : <div style={{ fontSize: 12, color: "var(--ink-soft)", padding: "4px 0" }}>ยังไม่มีรายการ</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Dashboard() {
   const { metrics, cycleRange, loading } = useMetrics();
   const goals = useLiveQuery(() => db.goals.toArray(), [], []);
   const investment = useLiveQuery(() => db.investmentAssets.toArray(), [], []);
   const liquid = useLiveQuery(() => db.liquidAssets.toArray(), [], []);
+  const personal = useLiveQuery(() => db.personalAssets.toArray(), [], []);
+  const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const toggle = (key: string) => setExpanded((prev) => {
+    const next = new Set(prev);
+    if (next.has(key)) next.delete(key); else next.add(key);
+    return next;
+  });
 
   if (loading) return null;
 
@@ -22,10 +70,34 @@ export function Dashboard() {
       <div className="fp-grid-2" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 18 }}>
         <div className="fp-card" style={{ padding: 26 }}>
           <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>💗 มูลค่าสุทธิ</div>
-          <StatRow label="สินทรัพย์สภาพคล่อง" value={fmt(metrics.totalLiquid)} />
-          <StatRow label="สินทรัพย์เพื่อการลงทุน" value={fmt(metrics.totalInvestment)} />
-          <StatRow label="สินทรัพย์ส่วนตัว (ไม่ก่อรายได้)" value={fmt(metrics.totalPersonal)} />
-          <StatRow label="หนี้สินรวม" value={"− " + fmt(metrics.totalLiab)} />
+          <ExpandableStatRow
+            label="สินทรัพย์สภาพคล่อง"
+            value={fmt(metrics.totalLiquid)}
+            expanded={expanded.has("liquid")}
+            onToggle={() => toggle("liquid")}
+            items={(liquid || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
+          />
+          <ExpandableStatRow
+            label="สินทรัพย์เพื่อการลงทุน"
+            value={fmt(metrics.totalInvestment)}
+            expanded={expanded.has("investment")}
+            onToggle={() => toggle("investment")}
+            items={(investment || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
+          />
+          <ExpandableStatRow
+            label="สินทรัพย์ส่วนตัว (ไม่ก่อรายได้)"
+            value={fmt(metrics.totalPersonal)}
+            expanded={expanded.has("personal")}
+            onToggle={() => toggle("personal")}
+            items={(personal || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
+          />
+          <ExpandableStatRow
+            label="หนี้สินรวม"
+            value={"− " + fmt(metrics.totalLiab)}
+            expanded={expanded.has("liability")}
+            onToggle={() => toggle("liability")}
+            items={(liabilities || []).map((l) => ({ name: l.type, value: fmt(l.balance) }))}
+          />
           <div style={{ borderTop: "2px dashed var(--line)", marginTop: 8, paddingTop: 10 }}>
             <StatRow label="Net Worth รวมทั้งหมด" value={fmt(metrics.totalNetWorth)} big />
             <StatRow label="Investable Net Worth" value={fmt(metrics.investableNetWorth)} big />
@@ -74,6 +146,7 @@ export function Dashboard() {
           <StatRow label="รายได้ Passive" value={fmt(metrics.incomePassive)} />
           <StatRow label="รายจ่ายประจำ (คงที่)" value={fmt(metrics.expenseFixed)} />
           <StatRow label="รายจ่ายผันแปร" value={fmt(metrics.expenseVariable)} />
+          <StatRow label="รายจ่ายออมและลงทุน" value={fmt(metrics.expenseInvest)} />
           <StatRow label="เงินคงเหลือในรอบนี้" value={fmt(metrics.savings)} big />
         </div>
 

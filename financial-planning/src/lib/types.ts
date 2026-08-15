@@ -48,7 +48,6 @@ export interface Liability {
   balance: number;
   rate: number;
   monthly: number;
-  months: number;
 }
 
 export type GoalType = "เกษียณ" | "บ้าน" | "การศึกษา" | "ท่องเที่ยว" | "กองทุนฉุกเฉิน" | "อื่นๆ";
@@ -65,7 +64,7 @@ export interface Goal {
 
 export type CashFlowType = "Income" | "Expense";
 export type IncomeClass = "Active" | "Passive";
-export type ExpenseClass = "Fixed" | "Variable";
+export type ExpenseClass = "Fixed" | "Variable" | "Invest";
 
 export interface CashFlowEntry {
   id: string;

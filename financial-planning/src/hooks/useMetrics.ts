@@ -30,6 +30,7 @@ export interface Metrics {
   expense: number;
   expenseFixed: number;
   expenseVariable: number;
+  expenseInvest: number;
   passiveRatio: number | null;
   savings: number;
   byCat: ByCatSlice[];
@@ -70,8 +71,9 @@ export function useMetrics(): { metrics: Metrics; cycleRange: CycleRange; loadin
   const incomePassive = sum(cycleCF.filter((c) => c.type === "Income" && c.incomeClass === "Passive"), (c) => c.amount);
   const expenses = cycleCF.filter((c) => c.type === "Expense");
   const expenseFixed = sum(expenses.filter((c) => c.expense_class === "Fixed"), (c) => c.amount);
-  const expenseVariable = sum(expenses.filter((c) => c.expense_class !== "Fixed"), (c) => c.amount);
-  const expense = expenseFixed + expenseVariable;
+  const expenseInvest = sum(expenses.filter((c) => c.expense_class === "Invest"), (c) => c.amount);
+  const expenseVariable = sum(expenses.filter((c) => c.expense_class !== "Fixed" && c.expense_class !== "Invest"), (c) => c.amount);
+  const expense = expenseFixed + expenseVariable + expenseInvest;
   const passiveRatio = expense > 0 ? incomePassive / expense : null;
   const savings = incomeActive + incomePassive - expense;
 
@@ -88,7 +90,7 @@ export function useMetrics(): { metrics: Metrics; cycleRange: CycleRange; loadin
     metrics: {
       totalLiquid, totalInvestment, totalPersonal, liabShort, liabLong, totalLiab,
       investableNetWorth, totalNetWorth, liquidHigh, currentRatio,
-      incomeActive, incomePassive, expense, expenseFixed, expenseVariable,
+      incomeActive, incomePassive, expense, expenseFixed, expenseVariable, expenseInvest,
       passiveRatio, savings, byCat,
     },
     cycleRange,

@@ -1,8 +1,9 @@
-import { FIXED_KEYWORDS, PASSIVE_KEYWORDS } from "./constants";
+import { FIXED_KEYWORDS, INVEST_KEYWORDS, PASSIVE_KEYWORDS } from "./constants";
 import type { ExpenseClass, IncomeClass } from "./types";
 
 export const classifyExpense = (category: string): ExpenseClass => {
   const t = (category || "").toLowerCase();
+  if (INVEST_KEYWORDS.some((k) => t.includes(k.toLowerCase()))) return "Invest";
   return FIXED_KEYWORDS.some((k) => t.includes(k.toLowerCase())) ? "Fixed" : "Variable";
 };
 

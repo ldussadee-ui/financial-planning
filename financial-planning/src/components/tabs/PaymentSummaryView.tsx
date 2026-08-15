@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
 import { fmt, fmtRange } from "@/lib/calc";
 import { usePaymentGroups } from "@/hooks/usePaymentGroups";
@@ -17,8 +18,16 @@ export function PaymentSummaryView() {
 
   return (
     <div>
-      <Link href="/cashflow" style={{ fontSize: 12.5, color: "var(--ink-soft)", display: "inline-block", marginBottom: 12 }}>
-        ← กลับไปรายรับ-จ่าย
+      <Link
+        href="/cashflow"
+        aria-label="กลับไปรายรับ-จ่าย"
+        style={{
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: 34, height: 34, borderRadius: "50%",
+          background: "#F5EFFF", color: "#7A5C9E", marginBottom: 12,
+        }}
+      >
+        <ArrowLeft size={17} />
       </Link>
       <SectionHeader
         title="สรุปการจ่ายต่อช่องทาง 💳"

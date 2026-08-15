@@ -20,12 +20,13 @@ export function useExpensePeriod(period: Period) {
   const entries = (cashflow || []).filter((c) => c.type === "Expense" && periodContains(period, c.date));
 
   const fixedTotal = entries.filter((e) => e.expense_class === "Fixed").reduce((s, e) => s + Number(e.amount || 0), 0);
-  const variableTotal = entries.filter((e) => e.expense_class !== "Fixed").reduce((s, e) => s + Number(e.amount || 0), 0);
-  const total = fixedTotal + variableTotal;
+  const investTotal = entries.filter((e) => e.expense_class === "Invest").reduce((s, e) => s + Number(e.amount || 0), 0);
+  const variableTotal = entries.filter((e) => e.expense_class !== "Fixed" && e.expense_class !== "Invest").reduce((s, e) => s + Number(e.amount || 0), 0);
+  const total = fixedTotal + variableTotal + investTotal;
 
   const byCategoryMap = new Map<string, CategoryTotal>();
   for (const e of entries) {
-    const expenseClass: ExpenseClass = e.expense_class === "Fixed" ? "Fixed" : "Variable";
+    const expenseClass: ExpenseClass = e.expense_class === "Fixed" ? "Fixed" : e.expense_class === "Invest" ? "Invest" : "Variable";
     const existing = byCategoryMap.get(e.category);
     if (existing) {
       existing.amount += Number(e.amount || 0);
@@ -36,5 +37,5 @@ export function useExpensePeriod(period: Period) {
   }
   const byCategory = Array.from(byCategoryMap.values()).sort((a, b) => b.amount - a.amount);
 
-  return { total, fixedTotal, variableTotal, byCategory, loading };
+  return { total, fixedTotal, variableTotal, investTotal, byCategory, loading };
 }

@@ -39,11 +39,12 @@ export function CashflowTab() {
   });
   const income = cycleCF.filter((c) => c.type === "Income");
   const fixedExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Fixed");
-  const varExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class !== "Fixed");
+  const investExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Invest");
+  const varExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class !== "Fixed" && c.expense_class !== "Invest");
 
   return (
     <div>
-      <SectionHeader title="รายรับ-จ่าย 💸" sub="รายรับแยก Active/Passive และรายจ่ายแยกประจำ/ผันแปรให้อัตโนมัติ" />
+      <SectionHeader title="รายรับ-จ่าย 💸" sub="รายรับแยก Active/Passive และรายจ่ายแยกประจำ/ผันแปร/ออมและลงทุนให้อัตโนมัติ" />
 
       <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
         <span>🗓️ รอบบัญชีปัจจุบัน: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange)}</b></span>
@@ -68,16 +69,17 @@ export function CashflowTab() {
         ]}
       />
       <NestedGroup
-        title={`Expense — ${fmt(metrics.expenseFixed + metrics.expenseVariable)}`}
+        title={`Expense — ${fmt(metrics.expenseFixed + metrics.expenseVariable + metrics.expenseInvest)}`}
         tint="#FFEFE6"
         subGroups={[
           { label: `🔒 Fixed (ประจำ) — ${fmt(metrics.expenseFixed)}`, items: renderByDay(fixedExp, remove, openEdit) },
           { label: `🎈 Variable (ผันแปร) — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit) },
+          { label: `🌱 ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit) },
         ]}
       />
 
       <div style={{ fontSize: 11.5, color: "var(--ink-soft)", marginTop: 4 }}>
-        * แสดงเฉพาะรายการในรอบบัญชีปัจจุบันด้านบน · รายจ่ายแยกประจำ/ผันแปรจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
+        * แสดงเฉพาะรายการในรอบบัญชีปัจจุบันด้านบน · รายจ่ายแยกประจำ/ผันแปร/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
       </div>
     </div>
   );

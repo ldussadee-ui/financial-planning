@@ -4,7 +4,7 @@ import { createContext, useContext, useRef, useState, type CSSProperties, type R
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { classifyExpense, classifyIncome, isoToday, uid } from "@/lib/calc";
-import { Field, AddButton, Modal, inputStyle } from "@/components/ui";
+import { Field, AddButton, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
 
@@ -25,20 +25,21 @@ const doneButtonStyle: CSSProperties = {
   background: "#3FA88F", color: "#fff", border: "none",
   borderRadius: 999, padding: "8px 16px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
 };
-const cancelButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
-  borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
-};
 function badgeLabel(type: CashFlowType, cls: string) {
-  if (type === "Expense") return cls === "Fixed" ? "🔒 ตรวจพบว่าเป็นรายจ่ายประจำ" : "🎈 ตรวจพบว่าเป็นรายจ่ายผันแปร";
+  if (type === "Expense") {
+    if (cls === "Fixed") return "🔒 ตรวจพบว่าเป็นรายจ่ายประจำ";
+    if (cls === "Invest") return "🌱 ตรวจพบว่าเป็นรายจ่ายออมและลงทุน";
+    return "🎈 ตรวจพบว่าเป็นรายจ่ายผันแปร";
+  }
   return cls === "Passive" ? "🌿 ตรวจพบว่าเป็นรายรับ Passive" : "💪 ตรวจพบว่าเป็นรายรับ Active";
 }
 function badgeStyle(type: CashFlowType, cls: string): CSSProperties {
   const isSoft = (type === "Expense" && cls === "Fixed") || (type === "Income" && cls === "Passive");
+  const isInvest = type === "Expense" && cls === "Invest";
   return {
     fontSize: 11.5, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20,
-    background: isSoft ? "#DDEFFB" : "#FFE3D6",
-    color: isSoft ? "#4E93B5" : "#D07A4E",
+    background: isInvest ? "#E1F5EE" : isSoft ? "#DDEFFB" : "#FFE3D6",
+    color: isInvest ? "#0F6E56" : isSoft ? "#4E93B5" : "#D07A4E",
   };
 }
 

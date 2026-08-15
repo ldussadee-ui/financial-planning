@@ -176,9 +176,9 @@ export async function seedIfEmpty() {
       ]);
 
       await db.liabilities.bulkAdd([
-        { id: l1, term: "LongTerm", type: "สินเชื่อบ้าน", balance: 1500000, rate: 4.2, monthly: 12000, months: 180 },
-        { id: l2, term: "LongTerm", type: "สินเชื่อรถยนต์", balance: 220000, rate: 3.5, monthly: 8500, months: 30 },
-        { id: uid(), term: "ShortTerm", type: "บัตรเครดิต", balance: 15000, rate: 18, monthly: 3000, months: 5 },
+        { id: l1, term: "LongTerm", type: "สินเชื่อบ้าน", balance: 1500000, rate: 4.2, monthly: 12000 },
+        { id: l2, term: "LongTerm", type: "สินเชื่อรถยนต์", balance: 220000, rate: 3.5, monthly: 8500 },
+        { id: uid(), term: "ShortTerm", type: "บัตรเครดิต", balance: 15000, rate: 18, monthly: 3000 },
       ]);
 
       await db.investmentAssets.bulkAdd([

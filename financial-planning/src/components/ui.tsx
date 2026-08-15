@@ -79,6 +79,10 @@ export const inputStyle: CSSProperties = {
   fontSize: 13, background: "#FFFCFA", color: "var(--ink)", minWidth: 130,
 };
 export const deleteBtn: CSSProperties = { border: "none", background: "transparent", color: "var(--ink-soft)", cursor: "pointer", padding: 4, borderRadius: 8 };
+export const cancelButtonStyle: CSSProperties = {
+  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
+  borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
+};
 
 export function Field({ label, wide, children }: { label: string; wide?: boolean; children: ReactNode }) {
   return (
@@ -149,19 +153,19 @@ export function NestedGroup({
 }
 
 export function Row({
-  left, right, date, onDelete, onClick,
+  left, right, date, icon, onDelete, onClick,
 }: {
-  left: string; right: string; date?: string; onDelete: () => void; onClick?: () => void;
+  left: ReactNode; right: string; date?: string; icon?: ReactNode; onDelete: () => void; onClick?: () => void;
 }) {
   return (
     <div
       className="fp-row"
-      style={{ display: "flex", alignItems: "center", padding: "10px 14px", gap: 8, cursor: onClick ? "pointer" : undefined }}
+      style={{ display: "flex", alignItems: "center", padding: "10px 14px", gap: 10, cursor: onClick ? "pointer" : undefined }}
       onClick={onClick}
     >
-      <span style={{ fontSize: 13 }}>{left}</span>
+      {icon}
+      <div style={{ flex: 1, minWidth: 0, fontSize: 13 }}>{left}</div>
       {date && <span style={{ fontSize: 10.5, color: "var(--ink-soft)", background: "#F5EFFF", padding: "2px 8px", borderRadius: 999 }}>{date}</span>}
-      <span style={{ flex: 1 }} />
       <span className="fp-num" style={{ fontSize: 13.5, fontWeight: 600 }}>{right}</span>
       {onClick && (
         <span style={{ color: "var(--ink-soft)" }} aria-hidden>

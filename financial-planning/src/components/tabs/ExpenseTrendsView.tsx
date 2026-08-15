@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { fmt } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
@@ -29,7 +30,7 @@ const navButtonStyle: CSSProperties = {
 export function ExpenseTrendsView() {
   const [granularity, setGranularity] = useState<Granularity>("month");
   const [period, setPeriod] = useState<Period>(() => defaultPeriod("month"));
-  const { total, fixedTotal, variableTotal, byCategory, loading } = useExpensePeriod(period);
+  const { total, fixedTotal, variableTotal, investTotal, byCategory, loading } = useExpensePeriod(period);
 
   const changeGranularity = (g: Granularity) => { setGranularity(g); setPeriod(defaultPeriod(g)); };
 
@@ -37,10 +38,18 @@ export function ExpenseTrendsView() {
 
   return (
     <div>
-      <Link href="/cashflow" style={{ fontSize: 12.5, color: "var(--ink-soft)", display: "inline-block", marginBottom: 12 }}>
-        ← กลับไปรายรับ-จ่าย
+      <Link
+        href="/cashflow"
+        aria-label="กลับไปรายรับ-จ่าย"
+        style={{
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: 34, height: 34, borderRadius: "50%",
+          background: "#F5EFFF", color: "#7A5C9E", marginBottom: 12,
+        }}
+      >
+        <ArrowLeft size={17} />
       </Link>
-      <SectionHeader title="สรุปรายจ่ายตามช่วงเวลา 📊" sub="ดูว่าช่วงนั้นจ่ายอะไรไปบ้าง แยกประจำ/ผันแปร และแยกตามหมวดหมู่" />
+      <SectionHeader title="สรุปรายจ่ายตามช่วงเวลา 📊" sub="ดูว่าช่วงนั้นจ่ายอะไรไปบ้าง แยกประจำ/ผันแปร/ออมและลงทุน และแยกตามหมวดหมู่" />
 
       <div style={{ display: "flex", gap: 6, marginBottom: 18 }}>
         {(["month", "halfYear", "year"] as Granularity[]).map((g) => (
@@ -63,6 +72,7 @@ export function ExpenseTrendsView() {
         <StatRow label="รวมทั้งหมด" value={fmt(total)} big />
         <StatRow label="🔒 รายจ่ายประจำ (คงที่)" value={fmt(fixedTotal)} />
         <StatRow label="🎈 รายจ่ายผันแปร" value={fmt(variableTotal)} />
+        <StatRow label="🌱 ออมและลงทุน" value={fmt(investTotal)} />
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
