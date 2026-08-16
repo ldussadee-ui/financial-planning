@@ -3,7 +3,9 @@
 import { createContext, useContext, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { classifyExpense, classifyIncome, isoToday, uid } from "@/lib/calc";
+import { classifyExpense, classifyIncome, daysFasterToGoal, hoursOfWork, isoToday, uid } from "@/lib/calc";
+import { useSetting } from "@/hooks/useSetting";
+import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { Field, AddButton, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
@@ -64,6 +66,8 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const paymentMethods = useLiveQuery(() => db.paymentMethods.toArray(), [], []);
   const paymentMethodsSorted = [...(paymentMethods || [])].sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "เงินสด" ? -1 : 1));
   const defaultCashId = (paymentMethods || []).find((m) => m.kind === "เงินสด")?.id ?? null;
+  const [hourlyWage] = useSetting<number>("hourlyWage", 0);
+  const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
 
   const [form, setForm] = useState({ type: "Income" as CashFlowType, category: "", amount: "", date: isoToday(), payment_method_id: "" });
   const [customMode, setCustomMode] = useState(false);
@@ -81,6 +85,20 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
 
   const preview = form.type === "Expense" ? classifyExpense(form.category) : classifyIncome(form.category);
   const cats = (allCategories || []).filter((c) => c.entryType === form.type);
+
+  const amountNum = Number(form.amount || 0);
+  const spendCompare = form.type === "Expense" && amountNum > 0
+    ? (() => {
+        const parts: string[] = [];
+        const hours = hoursOfWork(amountNum, hourlyWage);
+        if (hours !== null) parts.push(`≈ ${hours.toFixed(1)} ชม.`);
+        if (primaryGoal) {
+          const daysFaster = daysFasterToGoal(amountNum, primaryGoal, primaryGoalLinked);
+          if (daysFaster !== null) parts.push(`เร็วขึ้น ${daysFaster.toFixed(1)} วัน (${primaryGoal.name})`);
+        }
+        return parts.length ? parts.join(" · ") : null;
+      })()
+    : null;
 
   const pickCategory = (label: string) => { setCustomMode(false); setForm({ ...form, category: label }); };
 
@@ -281,6 +299,11 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
 
           {form.category && (
             <span style={badgeStyle(form.type, preview)}>{badgeLabel(form.type, preview)}</span>
+          )}
+          {spendCompare && (
+            <span style={{ fontSize: 11.5, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20, background: "#F5EFFF", color: "#7A5C9E" }}>
+              ⏱️ {spendCompare}
+            </span>
           )}
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button type="button" onClick={closeModal} style={cancelButtonStyle}>ยกเลิก</button>

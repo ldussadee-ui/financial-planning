@@ -13,7 +13,12 @@ const firstDateHeaderStyle: CSSProperties = { ...dateHeaderStyle, borderTop: "no
 // Newest first, clustered under one prominent date header per day so a day
 // with several entries doesn't repeat the same date on every row. Shared
 // between the main cashflow list and the payment-method summary page.
-export function renderByDay(entries: CashFlowEntry[], onDelete: (id: string) => void, onEdit?: (entry: CashFlowEntry) => void): ReactNode[] {
+export function renderByDay(
+  entries: CashFlowEntry[],
+  onDelete: (id: string) => void,
+  onEdit?: (entry: CashFlowEntry) => void,
+  extra?: (entry: CashFlowEntry) => ReactNode | null
+): ReactNode[] {
   const sorted = [...entries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   const nodes: ReactNode[] = [];
   let lastDate: string | null = null;
@@ -26,10 +31,20 @@ export function renderByDay(entries: CashFlowEntry[], onDelete: (id: string) => 
       );
       lastDate = c.date;
     }
+    const extraNode = extra ? extra(c) : null;
     nodes.push(
       <Row
         key={c.id}
-        left={c.category}
+        left={
+          extraNode ? (
+            <div>
+              <div>{c.category}</div>
+              <div style={{ fontSize: 10.5, color: "var(--ink-soft)", marginTop: 1 }}>{extraNode}</div>
+            </div>
+          ) : (
+            c.category
+          )
+        }
         right={fmt(c.amount)}
         date={c.owner || undefined}
         onDelete={() => onDelete(c.id)}

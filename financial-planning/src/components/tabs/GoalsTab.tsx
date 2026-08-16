@@ -4,14 +4,14 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trash2, Pencil } from "lucide-react";
 import { db } from "@/lib/db";
-import { fmt, uid } from "@/lib/calc";
+import { fmt, recommendedMonthlySavings, uid } from "@/lib/calc";
 import { GOAL_TYPES } from "@/lib/constants";
 import { SectionHeader, EmptyState, Field, AddButton, Modal, cancelButtonStyle, inputStyle, deleteBtn } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { Goal, GoalType, Priority } from "@/lib/types";
 
-const emptyForm = { type: "เกษียณ" as GoalType, name: "", target: "", date: "", priority: "กลาง" as Priority };
+const emptyForm = { type: "เกษียณ" as GoalType, name: "", target: "", date: "", priority: "กลาง" as Priority, expectedReturn: "" };
 
 export function GoalsTab() {
   const goals = useLiveQuery(() => db.goals.toArray(), [], []);
@@ -23,7 +23,7 @@ export function GoalsTab() {
 
   const openNew = () => { setForm(emptyForm); setEditingId(null); setModalOpen(true); };
   const openEdit = (g: Goal) => {
-    setForm({ type: g.type, name: g.name, target: String(g.target), date: g.date, priority: g.priority });
+    setForm({ type: g.type, name: g.name, target: String(g.target), date: g.date, priority: g.priority, expectedReturn: g.expectedReturn ? String(g.expectedReturn) : "" });
     setEditingId(g.id);
     setModalOpen(true);
   };
@@ -34,6 +34,7 @@ export function GoalsTab() {
     void db.goals.put({
       id: editingId || uid(), type: form.type, name: form.name,
       target: Number(form.target), date: form.date, priority: form.priority,
+      expectedReturn: Number(form.expectedReturn || 0),
     });
     closeModal();
   };
@@ -58,6 +59,9 @@ export function GoalsTab() {
               <option>สูง</option><option>กลาง</option><option>ต่ำ</option>
             </select>
           </Field>
+          <Field label="ผลตอบแทนคาดหวัง (%/ปี)">
+            <input type="number" style={inputStyle} value={form.expectedReturn} onChange={(e) => setForm({ ...form, expectedReturn: e.target.value })} placeholder="0" />
+          </Field>
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button type="button" onClick={closeModal} style={cancelButtonStyle}>ยกเลิก</button>
             <AddButton onClick={submit} label={editingId ? "บันทึกการแก้ไข" : "เพิ่ม"} />
@@ -71,6 +75,7 @@ export function GoalsTab() {
             (investment || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0) +
             (liquid || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0);
           const pct = Math.min(100, (linked / g.target) * 100);
+          const monthlyNeeded = recommendedMonthlySavings(g, linked);
           return (
             <div key={g.id} style={{ padding: "14px 16px", cursor: "pointer" }} onClick={() => openEdit(g)}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -98,6 +103,16 @@ export function GoalsTab() {
               <div style={{ height: 8, background: "#FBF2FF", borderRadius: 999, overflow: "hidden", marginTop: 9 }}>
                 <div style={{ width: pct + "%", height: "100%", background: "#D4577E", borderRadius: 999 }} />
               </div>
+              {monthlyNeeded !== null ? (
+                <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 6 }}>
+                  💡 แนะนำออม {fmt(monthlyNeeded)}/เดือน เพื่อให้ทันกำหนด
+                  {g.expectedReturn ? ` (สมมติผลตอบแทน ${g.expectedReturn}%/ปี — เป็นการประมาณ ไม่รับประกัน)` : " (ไม่มีผลตอบแทนจากการลงทุน)"}
+                </div>
+              ) : !g.date ? (
+                <div style={{ fontSize: 11, color: "#D07A4E", marginTop: 6 }}>⚠️ ใส่วันที่เป้าหมายเพื่อดูคำแนะนำการออม</div>
+              ) : (
+                <div style={{ fontSize: 11, color: "#D07A4E", marginTop: 6 }}>⚠️ วันที่เป้าหมายผ่านไปแล้ว หรือใกล้ถึงกำหนดเกินกว่าจะคำนวณได้</div>
+              )}
             </div>
           );
         }) : <EmptyState text="ยังไม่มีเป้าหมาย" />}

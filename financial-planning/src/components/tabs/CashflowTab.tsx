@@ -4,13 +4,14 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { fmt, fmtRange } from "@/lib/calc";
+import { daysFasterToGoal, fmt, fmtRange, hoursOfWork } from "@/lib/calc";
 import { useMetrics } from "@/hooks/useMetrics";
 import { useSetting } from "@/hooks/useSetting";
+import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { SectionHeader, NestedGroup, DayPicker } from "@/components/ui";
 import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
-import { CashflowExportImport } from "./CashflowExportImport";
+import type { CashFlowEntry } from "@/lib/types";
 
 function chipStyle(active: boolean): CSSProperties {
   return {
@@ -25,8 +26,21 @@ export function CashflowTab() {
   const { metrics, cycleRange } = useMetrics();
   const [cycleStartDay, setCycleStartDay] = useSetting<number>("cycleStartDay", 1);
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
+  const [hourlyWage] = useSetting<number>("hourlyWage", 0);
+  const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
   const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], []);
   const { openEdit, editingId, closeModal } = useCashflowEntry();
+
+  const expenseExtra = (c: CashFlowEntry) => {
+    const parts: string[] = [];
+    const hours = hoursOfWork(c.amount, hourlyWage);
+    if (hours !== null) parts.push(`≈ ${hours.toFixed(1)} ชม.`);
+    if (primaryGoal) {
+      const daysFaster = daysFasterToGoal(c.amount, primaryGoal, primaryGoalLinked);
+      if (daysFaster !== null) parts.push(`เร็วขึ้น ${daysFaster.toFixed(1)} วัน (${primaryGoal.name})`);
+    }
+    return parts.length ? parts.join(" · ") : null;
+  };
 
   const remove = (id: string) => {
     if (editingId === id) closeModal();
@@ -56,7 +70,6 @@ export function CashflowTab() {
           <Link href="/cashflow/payment-summary" style={{ ...chipStyle(false), textDecoration: "none" }}>
             💳 สรุปการจ่ายต่อช่องทาง →
           </Link>
-          <CashflowExportImport />
         </span>
       </div>
 
@@ -72,9 +85,9 @@ export function CashflowTab() {
         title={`Expense — ${fmt(metrics.expenseFixed + metrics.expenseVariable + metrics.expenseInvest)}`}
         tint="#FFEFE6"
         subGroups={[
-          { label: `🔒 Fixed (ประจำ) — ${fmt(metrics.expenseFixed)}`, items: renderByDay(fixedExp, remove, openEdit) },
-          { label: `🎈 Variable (ผันแปร) — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit) },
-          { label: `🌱 ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit) },
+          { label: `🔒 Fixed (ประจำ) — ${fmt(metrics.expenseFixed)}`, items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
+          { label: `🎈 Variable (ผันแปร) — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
+          { label: `🌱 ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
         ]}
       />
 

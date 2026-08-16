@@ -60,6 +60,7 @@ export interface Goal {
   target: number;
   date: string;
   priority: Priority;
+  expectedReturn?: number;
 }
 
 export type CashFlowType = "Income" | "Expense";

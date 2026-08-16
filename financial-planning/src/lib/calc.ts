@@ -1,5 +1,5 @@
 import { FIXED_KEYWORDS, INVEST_KEYWORDS, PASSIVE_KEYWORDS } from "./constants";
-import type { ExpenseClass, IncomeClass } from "./types";
+import type { ExpenseClass, Goal, IncomeClass } from "./types";
 
 export const classifyExpense = (category: string): ExpenseClass => {
   const t = (category || "").toLowerCase();
@@ -79,4 +79,49 @@ export function fmtRange(range: CycleRange): string {
   const s = range.start.toLocaleDateString("th-TH", { day: "numeric", month: "short" });
   const e = range.end.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" });
   return `${s} – ${e}`;
+}
+
+/* ------------------------------- spending comparisons ------------------------------ */
+// How many hours of work a spend represents, at the given hourly wage.
+export function hoursOfWork(amount: number, hourlyWage: number): number | null {
+  if (!hourlyWage || hourlyWage <= 0) return null;
+  return amount / hourlyWage;
+}
+
+// How many days sooner a goal would be reached if this amount were saved
+// toward it now, assuming a steady pace to hit the goal exactly by its
+// deadline. If the goal has an expected annual return set, the amount is
+// grown at that rate up to the deadline first (a simplified approximation —
+// not a full re-solve of the annuity schedule, which recommendedMonthlySavings
+// below does properly since that number carries more weight).
+export function daysFasterToGoal(amount: number, goal: Goal, linked: number, today: Date = new Date()): number | null {
+  if (!goal.date) return null;
+  const deadline = new Date(goal.date + "T00:00:00");
+  const daysRemaining = Math.round((deadline.getTime() - today.getTime()) / 86400000);
+  if (daysRemaining <= 0) return null;
+  const remainingGap = goal.target - linked;
+  if (remainingGap <= 0) return null;
+  const annualReturn = (goal.expectedReturn || 0) / 100;
+  const futureValue = annualReturn > 0 ? amount * Math.pow(1 + annualReturn, daysRemaining / 365.25) : amount;
+  return (futureValue * daysRemaining) / remainingGap;
+}
+
+// The monthly contribution needed to reach a goal exactly by its deadline,
+// given what's already saved and the goal's expected annual return —
+// standard future-value-of-annuity math. Returns 0 if the lump sum alone is
+// already projected to reach the target. Purely an estimate: real returns
+// are never guaranteed, this just answers "at this assumed rate, how much
+// per month."
+export function recommendedMonthlySavings(goal: Goal, linked: number, today: Date = new Date()): number | null {
+  if (!goal.date) return null;
+  const deadline = new Date(goal.date + "T00:00:00");
+  const monthsRemaining = (deadline.getFullYear() - today.getFullYear()) * 12 + (deadline.getMonth() - today.getMonth());
+  if (monthsRemaining <= 0) return null;
+  const annualReturn = (goal.expectedReturn || 0) / 100;
+  const i = annualReturn > 0 ? Math.pow(1 + annualReturn, 1 / 12) - 1 : 0;
+  const futureValueOfLump = i > 0 ? linked * Math.pow(1 + i, monthsRemaining) : linked;
+  const needed = goal.target - futureValueOfLump;
+  if (needed <= 0) return 0;
+  if (i === 0) return needed / monthsRemaining;
+  return (needed * i) / (Math.pow(1 + i, monthsRemaining) - 1);
 }

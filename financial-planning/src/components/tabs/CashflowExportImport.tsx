@@ -17,12 +17,10 @@ interface ExportFile {
   entries: CashFlowEntry[];
 }
 
-function chipStyle(): CSSProperties {
-  return {
-    border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
-    borderRadius: 999, padding: "7px 13px", fontSize: 12.5, fontWeight: 500, cursor: "pointer",
-  };
-}
+const actionButtonStyle: CSSProperties = {
+  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
+  borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer",
+};
 
 function downloadJson(filename: string, data: unknown) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -159,8 +157,10 @@ export function CashflowExportImport() {
   const [importOpen, setImportOpen] = useState(false);
   return (
     <>
-      <button type="button" onClick={() => setExportOpen(true)} style={chipStyle()}>📤 ส่งออกข้อมูล</button>
-      <button type="button" onClick={() => setImportOpen(true)} style={chipStyle()}>📥 นำเข้าข้อมูล</button>
+      <div style={{ display: "flex", gap: 10 }}>
+        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>📤 ส่งออกข้อมูล</button>
+        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 นำเข้าข้อมูล</button>
+      </div>
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} />
     </>

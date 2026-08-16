@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Wallet, Target, Layers, type LucideIcon,
+  LayoutDashboard, Wallet, Target, Layers, Settings, type LucideIcon,
 } from "lucide-react";
 
 const NAV: { key: string; href: string; label: string; icon: LucideIcon }[] = [
@@ -11,6 +11,7 @@ const NAV: { key: string; href: string; label: string; icon: LucideIcon }[] = [
   { key: "cashflow", href: "/cashflow", label: "รายรับ-จ่าย", icon: Wallet },
   { key: "assets", href: "/assets", label: "สินทรัพย์", icon: Layers },
   { key: "goals", href: "/goals", label: "เป้าหมาย", icon: Target },
+  { key: "settings", href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar() {
