@@ -13,7 +13,7 @@ const prompt = Prompt({
 const sarabun = Sarabun({
   variable: "--font-sarabun",
   subsets: ["latin", "thai"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
