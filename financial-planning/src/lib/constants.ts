@@ -39,3 +39,8 @@ export const INVEST_KEYWORDS = ["ออม", "ลงทุน", "กองทุ
 
 // keywords used to auto-detect passive income — everything else defaults to active
 export const PASSIVE_KEYWORDS = ["ปันผล", "ดอกเบี้ย", "ค่าเช่า", "เช่า", "ลิขสิทธิ์", "royalty", "dividend", "แบ่งปันกำไร", "กำไรจากการขาย", "ค่าตอบแทนกองทุน"];
+
+// keywords for Active income that's still one-off/irregular (bonuses,
+// incentives, commissions) — excluded from the hourly-wage estimate so a
+// single spike doesn't inflate it
+export const IRREGULAR_INCOME_KEYWORDS = ["โบนัส", "bonus", "อินเซนทีฟ", "incentive", "คอมมิชชั่น", "commission"];

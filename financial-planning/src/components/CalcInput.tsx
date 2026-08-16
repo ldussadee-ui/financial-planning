@@ -27,7 +27,7 @@ const muteKeyStyle: CSSProperties = { ...keyStyle, background: "#FFEFE6", color:
 const eqKeyStyle: CSSProperties = { ...keyStyle, background: "#D4577E", color: "#fff" };
 const confirmButtonStyle: CSSProperties = {
   width: "100%", marginTop: 12, border: "none", borderRadius: 14, padding: "13px 0",
-  fontSize: 14.5, fontWeight: 700, cursor: "pointer", background: "#3FA88F", color: "#fff",
+  fontSize: 14.5, fontWeight: 700, cursor: "pointer", background: "#0F6E56", color: "#fff",
 };
 
 // Calculator keeps chained state like a physical calculator (not a text

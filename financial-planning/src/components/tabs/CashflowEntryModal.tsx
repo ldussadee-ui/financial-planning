@@ -4,7 +4,7 @@ import { createContext, useContext, useRef, useState, type CSSProperties, type R
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { classifyExpense, classifyIncome, daysFasterToGoal, hoursOfWork, isoToday, uid } from "@/lib/calc";
-import { useSetting } from "@/hooks/useSetting";
+import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { Field, AddButton, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
@@ -20,11 +20,11 @@ function chipStyle(active: boolean): CSSProperties {
 }
 const chipDeleteBadge: CSSProperties = {
   position: "absolute", top: -7, right: -7, width: 18, height: 18, borderRadius: 999,
-  background: "#FF9AA2", color: "#fff", border: "2px solid #FFF8F1", fontSize: 11, lineHeight: "14px",
+  background: "#FF8C7A", color: "#fff", border: "2px solid #FFF8F1", fontSize: 11, lineHeight: "14px",
   textAlign: "center", padding: 0, cursor: "pointer", boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
 };
 const doneButtonStyle: CSSProperties = {
-  background: "#3FA88F", color: "#fff", border: "none",
+  background: "#0F6E56", color: "#fff", border: "none",
   borderRadius: 999, padding: "8px 16px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
 };
 function badgeLabel(type: CashFlowType, cls: string) {
@@ -66,7 +66,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const paymentMethods = useLiveQuery(() => db.paymentMethods.toArray(), [], []);
   const paymentMethodsSorted = [...(paymentMethods || [])].sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "เงินสด" ? -1 : 1));
   const defaultCashId = (paymentMethods || []).find((m) => m.kind === "เงินสด")?.id ?? null;
-  const [hourlyWage] = useSetting<number>("hourlyWage", 0);
+  const { hourlyWage } = useHourlyWage();
   const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
 
   const [form, setForm] = useState({ type: "Income" as CashFlowType, category: "", amount: "", date: isoToday(), payment_method_id: "" });

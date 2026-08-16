@@ -68,7 +68,7 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>💸 ภาพรวมรายจ่าย</div>
+        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>💸 ภาพรวมรายจ่าย</div>
         <StatRow label="รวมทั้งหมด" value={fmt(total)} big />
         <StatRow label="🔒 รายจ่ายประจำ (คงที่)" value={fmt(fixedTotal)} />
         <StatRow label="🎈 รายจ่ายผันแปร" value={fmt(variableTotal)} />
@@ -76,7 +76,7 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>🏷️ แยกตามหมวดหมู่</div>
+        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🏷️ แยกตามหมวดหมู่</div>
         {byCategory.length ? (
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
             <ResponsiveContainer width={180} height={180}>

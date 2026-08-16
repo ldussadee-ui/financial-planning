@@ -145,7 +145,7 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
           </>
         )}
         {done !== null && (
-          <div style={{ fontSize: 12.5, color: "#3FA88F", fontWeight: 600 }}>✓ นำเข้าแล้ว {done} รายการ ของ {owner}</div>
+          <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}>✓ นำเข้าแล้ว {done} รายการ ของ {owner}</div>
         )}
       </div>
     </Modal>

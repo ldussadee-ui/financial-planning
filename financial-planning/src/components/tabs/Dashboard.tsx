@@ -69,7 +69,7 @@ export function Dashboard() {
 
       <div className="fp-grid-2" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 18 }}>
         <div className="fp-card" style={{ padding: 26 }}>
-          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>💗 มูลค่าสุทธิ</div>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>💗 มูลค่าสุทธิ</div>
           <ExpandableStatRow
             label="สินทรัพย์สภาพคล่อง"
             value={fmt(metrics.totalLiquid)}
@@ -108,7 +108,7 @@ export function Dashboard() {
         </div>
 
         <div className="fp-card" style={{ padding: 26 }}>
-          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>🥧 สัดส่วนสินทรัพย์เพื่อการลงทุน</div>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🥧 สัดส่วนสินทรัพย์เพื่อการลงทุน</div>
           {metrics.byCat.length ? (
             <div style={{ height: 190, display: "flex", alignItems: "center" }}>
               <ResponsiveContainer width="55%" height={180}>
@@ -135,10 +135,10 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="fp-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginTop: 18 }}>
+      <div style={{ marginTop: 18 }}>
         <div className="fp-card" style={{ padding: 26 }}>
-          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>🌿 รายรับ Passive</div>
-          <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: "#5FBDAE" }}>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🌿 รายรับ Passive</div>
+          <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: "#0F6E56" }}>
             {metrics.passiveRatio === null ? "—" : (metrics.passiveRatio * 100).toFixed(1) + "%"}
           </div>
           <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 3, marginBottom: 6 }}>ของรายจ่ายรวมในรอบนี้ มาจาก Passive Income</div>
@@ -149,21 +149,10 @@ export function Dashboard() {
           <StatRow label="รายจ่ายออมและลงทุน" value={fmt(metrics.expenseInvest)} />
           <StatRow label="เงินคงเหลือในรอบนี้" value={fmt(metrics.savings)} big />
         </div>
-
-        <div className="fp-card" style={{ padding: 26 }}>
-          <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 8 }}>☔ สภาพคล่องระยะสั้น</div>
-          <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: metrics.currentRatio === null ? "var(--ink-soft)" : metrics.currentRatio >= 1 ? "#5FBDAE" : "#FF8C7A" }}>
-            {metrics.currentRatio === null ? "—" : metrics.currentRatio.toFixed(2) + "x"}
-          </div>
-          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 3, marginBottom: 6 }}>สินทรัพย์สภาพคล่องสูง ÷ หนี้สินระยะสั้น</div>
-          <StatRow label="สินทรัพย์สภาพคล่องสูง" value={fmt(metrics.liquidHigh)} />
-          <StatRow label="หนี้สินระยะสั้น" value={fmt(metrics.liabShort)} />
-          <StatRow label="หนี้สินระยะยาว" value={fmt(metrics.liabLong)} />
-        </div>
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-        <div style={{ fontSize: 13, color: "#B08FD1", fontWeight: 600, marginBottom: 16 }}>🎯 ความคืบหน้าเป้าหมาย</div>
+        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 16 }}>🎯 ความคืบหน้าเป้าหมาย</div>
         {goals && goals.length ? goals.map((g) => {
           const linked =
             (investment || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0) +

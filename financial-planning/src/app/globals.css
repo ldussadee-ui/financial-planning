@@ -77,6 +77,9 @@ a {
 .fp-row:hover {
   background: var(--bg);
 }
+.fp-row + .fp-row {
+  border-top: 1px solid var(--line);
+}
 input,
 select {
   font-family: var(--font-sarabun), "Sarabun", sans-serif;

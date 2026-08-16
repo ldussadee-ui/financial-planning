@@ -25,7 +25,7 @@ export function Sidebar() {
     >
       <div style={{ padding: "0 8px 24px 8px" }}>
         <div className="fp-display" style={{ fontSize: 21, fontWeight: 700, color: "#7A5C9E" }}>เงินทองของเรา 🌱</div>
-        <div style={{ fontSize: 11.5, color: "#9C8FB5", marginTop: 3 }}>เพื่อนช่วยวางแผนการเงิน</div>
+        <div style={{ fontSize: 11.5, color: "#8B7FA0", marginTop: 3 }}>เพื่อนช่วยวางแผนการเงิน</div>
       </div>
       <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         {NAV.map((n) => {

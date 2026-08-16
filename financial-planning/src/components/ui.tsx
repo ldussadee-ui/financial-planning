@@ -45,7 +45,7 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <div className="fp-display" style={{ fontSize: 18, fontWeight: 700, color: "#6B5490" }}>{title}</div>
+          <div className="fp-display" style={{ fontSize: 18, fontWeight: 600, color: "#6B5490" }}>{title}</div>
           <button
             type="button"
             onClick={onClose}
@@ -124,22 +124,27 @@ export function Group({ title, tint, children }: { title: string; tint: string; 
 // sub-sections (e.g. "Active", "Passive") — each keeps its own empty state
 // rather than the whole card collapsing when a sub-section has no items.
 export function NestedGroup({
-  title, tint, subGroups,
+  label, amount, accent, tint, subGroups,
 }: {
-  title: string;
+  label: string;
+  amount: string;
+  accent: string;
   tint: string;
   subGroups: { label: string; items: ReactNode[] }[];
 }) {
   return (
     <div style={{ marginBottom: 18 }}>
-      <div style={{ fontSize: 12.5, color: "#8B7FA0", marginBottom: 7, fontWeight: 600 }}>{title}</div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
+        <span style={{ fontSize: 20, color: accent, fontWeight: 700 }}>{label}</span>
+        <span className="fp-num" style={{ fontSize: 20, fontWeight: 700, color: accent }}>{amount}</span>
+      </div>
       <div className="fp-card" style={{ padding: 8, background: tint }}>
         {subGroups.map((sg, i) => (
           <div key={sg.label}>
             <div
               style={{
-                fontFamily: "var(--font-prompt), 'Prompt', sans-serif", fontSize: 12, fontWeight: 700, color: "#6B5490",
-                padding: "10px 14px 4px", marginTop: i > 0 ? 6 : 0, borderTop: i > 0 ? "1px dashed var(--line)" : "none",
+                fontFamily: "var(--font-prompt), 'Prompt', sans-serif", fontSize: 11, fontWeight: 500, color: "#8B7FA0",
+                padding: "10px 14px 4px", marginTop: i > 0 ? 6 : 0, borderTop: i > 0 ? "1px solid var(--line)" : "none",
               }}
             >
               {sg.label}

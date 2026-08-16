@@ -1,14 +1,29 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Row } from "@/components/ui";
 import { fmt, fmtDateShort } from "@/lib/calc";
+import { ICON_MAP } from "@/lib/constants";
 import type { CashFlowEntry } from "@/lib/types";
 
 const dateHeaderStyle: CSSProperties = {
   fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
-  fontSize: 13, fontWeight: 700, color: "#7A5C9E",
-  padding: "14px 14px 6px", marginTop: 6, borderTop: "1px dashed var(--line)",
+  fontSize: 13, fontWeight: 600, color: "#8B7FA0",
+  padding: "14px 14px 6px", marginTop: 6, borderTop: "1px solid var(--line)",
 };
 const firstDateHeaderStyle: CSSProperties = { ...dateHeaderStyle, borderTop: "none", marginTop: 0 };
+
+function entryIcon(c: CashFlowEntry) {
+  const bg = c.type === "Income" ? "#CDEEDF" : "#FBDCC2";
+  return (
+    <span
+      style={{
+        width: 30, height: 30, borderRadius: 10, background: bg, flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15,
+      }}
+    >
+      {ICON_MAP[c.category] || "🏷️"}
+    </span>
+  );
+}
 
 // Newest first, clustered under one prominent date header per day so a day
 // with several entries doesn't repeat the same date on every row. Shared
@@ -35,6 +50,7 @@ export function renderByDay(
     nodes.push(
       <Row
         key={c.id}
+        icon={entryIcon(c)}
         left={
           extraNode ? (
             <div>

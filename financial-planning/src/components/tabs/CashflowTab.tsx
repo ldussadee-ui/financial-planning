@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { daysFasterToGoal, fmt, fmtRange, hoursOfWork } from "@/lib/calc";
 import { useMetrics } from "@/hooks/useMetrics";
 import { useSetting } from "@/hooks/useSetting";
+import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { SectionHeader, NestedGroup, DayPicker } from "@/components/ui";
 import { renderByDay } from "./cashflowShared";
@@ -26,7 +27,7 @@ export function CashflowTab() {
   const { metrics, cycleRange } = useMetrics();
   const [cycleStartDay, setCycleStartDay] = useSetting<number>("cycleStartDay", 1);
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
-  const [hourlyWage] = useSetting<number>("hourlyWage", 0);
+  const { hourlyWage } = useHourlyWage();
   const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
   const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], []);
   const { openEdit, editingId, closeModal } = useCashflowEntry();
@@ -74,7 +75,9 @@ export function CashflowTab() {
       </div>
 
       <NestedGroup
-        title={`Income — ${fmt(metrics.incomeActive + metrics.incomePassive)}`}
+        label="Income"
+        amount={fmt(metrics.incomeActive + metrics.incomePassive)}
+        accent="#0F6E56"
         tint="#EFFBF6"
         subGroups={[
           { label: `Active — ${fmt(metrics.incomeActive)}`, items: renderByDay(income.filter((c) => c.incomeClass === "Active"), remove, openEdit) },
@@ -82,12 +85,14 @@ export function CashflowTab() {
         ]}
       />
       <NestedGroup
-        title={`Expense — ${fmt(metrics.expenseFixed + metrics.expenseVariable + metrics.expenseInvest)}`}
+        label="Expense"
+        amount={fmt(metrics.expenseFixed + metrics.expenseVariable + metrics.expenseInvest)}
+        accent="#D07A4E"
         tint="#FFEFE6"
         subGroups={[
-          { label: `🔒 Fixed (ประจำ) — ${fmt(metrics.expenseFixed)}`, items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
-          { label: `🎈 Variable (ผันแปร) — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
-          { label: `🌱 ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
+          { label: `Fixed (ประจำ) — ${fmt(metrics.expenseFixed)}`, items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
+          { label: `Variable (ผันแปร) — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
+          { label: `ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
         ]}
       />
 
