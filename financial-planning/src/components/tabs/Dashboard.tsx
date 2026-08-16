@@ -70,77 +70,52 @@ export function Dashboard() {
   if (loading) return null;
 
   const cycleCF = (cashflow || []).filter((c) => inRange(c.date, cycleRange));
-  const budgetAlerts = categoryBudgetStatus(cycleCF, budgetMap).filter((b) => b.pct >= BUDGET_ALERT_THRESHOLD);
+  // Only Variable spend is worth an overspend alert here — Fixed costs
+  // can't be adjusted mid-cycle, and going over an Invest "budget" is good
+  // news, not a warning.
+  const variableCF = cycleCF.filter((c) => c.expense_class !== "Fixed" && c.expense_class !== "Invest");
+  const budgetAlerts = categoryBudgetStatus(variableCF, budgetMap).filter((b) => b.pct >= BUDGET_ALERT_THRESHOLD);
 
   return (
     <div>
       <SectionHeader title="ภาพรวมการเงิน ☺️" sub={`สรุปสถานะสินทรัพย์ หนี้สิน และกระแสเงินสด · รอบปัจจุบัน ${fmtRange(cycleRange)}`} chip="ทดลองใช้งาน" />
 
-      <div className="fp-grid-2" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 18 }}>
-        <div className="fp-card" style={{ padding: 26 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>💗 มูลค่าสุทธิ</div>
-          <ExpandableStatRow
-            label="สินทรัพย์สภาพคล่อง"
-            value={fmt(metrics.totalLiquid)}
-            expanded={expanded.has("liquid")}
-            onToggle={() => toggle("liquid")}
-            items={(liquid || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
-          />
-          <ExpandableStatRow
-            label="สินทรัพย์เพื่อการลงทุน"
-            value={fmt(metrics.totalInvestment)}
-            expanded={expanded.has("investment")}
-            onToggle={() => toggle("investment")}
-            items={(investment || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
-          />
-          <ExpandableStatRow
-            label="สินทรัพย์ส่วนตัว (ไม่ก่อรายได้)"
-            value={fmt(metrics.totalPersonal)}
-            expanded={expanded.has("personal")}
-            onToggle={() => toggle("personal")}
-            items={(personal || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
-          />
-          <ExpandableStatRow
-            label="หนี้สินรวม"
-            value={"− " + fmt(metrics.totalLiab)}
-            expanded={expanded.has("liability")}
-            onToggle={() => toggle("liability")}
-            items={(liabilities || []).map((l) => ({ name: l.type, value: fmt(l.balance) }))}
-          />
-          <div style={{ borderTop: "2px dashed var(--line)", marginTop: 8, paddingTop: 10 }}>
-            <StatRow label="Net Worth รวมทั้งหมด" value={fmt(metrics.totalNetWorth)} big />
-            <StatRow label="Investable Net Worth" value={fmt(metrics.investableNetWorth)} big />
-          </div>
-          <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10 }}>
-            * Investable Net Worth = สินทรัพย์สภาพคล่อง + สินทรัพย์ลงทุน − หนี้สินรวม
-          </div>
+      <div className="fp-card" style={{ padding: 26 }}>
+        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>💗 มูลค่าสุทธิ</div>
+        <ExpandableStatRow
+          label="สินทรัพย์สภาพคล่อง"
+          value={fmt(metrics.totalLiquid)}
+          expanded={expanded.has("liquid")}
+          onToggle={() => toggle("liquid")}
+          items={(liquid || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
+        />
+        <ExpandableStatRow
+          label="สินทรัพย์เพื่อการลงทุน"
+          value={fmt(metrics.totalInvestment)}
+          expanded={expanded.has("investment")}
+          onToggle={() => toggle("investment")}
+          items={(investment || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
+        />
+        <ExpandableStatRow
+          label="สินทรัพย์ส่วนตัว (ไม่ก่อรายได้)"
+          value={fmt(metrics.totalPersonal)}
+          expanded={expanded.has("personal")}
+          onToggle={() => toggle("personal")}
+          items={(personal || []).map((a) => ({ name: a.name, value: fmt(a.current_value) }))}
+        />
+        <ExpandableStatRow
+          label="หนี้สินรวม"
+          value={"− " + fmt(metrics.totalLiab)}
+          expanded={expanded.has("liability")}
+          onToggle={() => toggle("liability")}
+          items={(liabilities || []).map((l) => ({ name: l.type, value: fmt(l.balance) }))}
+        />
+        <div style={{ borderTop: "2px dashed var(--line)", marginTop: 8, paddingTop: 10 }}>
+          <StatRow label="Net Worth รวมทั้งหมด" value={fmt(metrics.totalNetWorth)} big />
+          <StatRow label="Investable Net Worth" value={fmt(metrics.investableNetWorth)} big />
         </div>
-
-        <div className="fp-card" style={{ padding: 26 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🥧 สัดส่วนสินทรัพย์เพื่อการลงทุน</div>
-          {metrics.byCat.length ? (
-            <div style={{ height: 190, display: "flex", alignItems: "center" }}>
-              <ResponsiveContainer width="55%" height={180}>
-                <PieChart>
-                  <Pie data={metrics.byCat} dataKey="value" nameKey="name" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
-                    {metrics.byCat.map((c) => <Cell key={c.key} fill={c.color} stroke="none" />)}
-                  </Pie>
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div style={{ flex: 1, fontSize: 12.5 }}>
-                {metrics.byCat.map((c) => (
-                  <div key={c.key} style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
-                    <span style={{ width: 10, height: 10, borderRadius: 5, background: c.color, display: "inline-block" }} />
-                    <span style={{ color: "var(--ink-soft)" }}>{c.name}</span>
-                    <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>
-                      {((c.value / metrics.totalInvestment) * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
+        <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10 }}>
+          * Investable Net Worth = สินทรัพย์สภาพคล่อง + สินทรัพย์ลงทุน − หนี้สินรวม
         </div>
       </div>
 
@@ -158,6 +133,33 @@ export function Dashboard() {
           ))}
         </div>
       )}
+
+      <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
+        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🥧 สัดส่วนสินทรัพย์เพื่อการลงทุน</div>
+        {metrics.byCat.length ? (
+          <div style={{ height: 190, display: "flex", alignItems: "center" }}>
+            <ResponsiveContainer width="55%" height={180}>
+              <PieChart>
+                <Pie data={metrics.byCat} dataKey="value" nameKey="name" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
+                  {metrics.byCat.map((c) => <Cell key={c.key} fill={c.color} stroke="none" />)}
+                </Pie>
+                <Tooltip formatter={(v) => fmt(Number(v))} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div style={{ flex: 1, fontSize: 12.5 }}>
+              {metrics.byCat.map((c) => (
+                <div key={c.key} style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 5, background: c.color, display: "inline-block" }} />
+                  <span style={{ color: "var(--ink-soft)" }}>{c.name}</span>
+                  <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>
+                    {((c.value / metrics.totalInvestment) * 100).toFixed(0)}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
+      </div>
 
       <div style={{ marginTop: 18 }}>
         <div className="fp-card" style={{ padding: 26 }}>
