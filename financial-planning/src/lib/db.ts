@@ -119,6 +119,32 @@ class FinancialPlanningDB extends Dexie {
             if ((asset.category as string) === "DR") asset.category = "Equity";
           });
       });
+
+    // Adds "ออมเงิน"/"ลงทุน DCA" expense category chips retroactively so
+    // existing installs get them without a data reset (fresh installs get
+    // them from DEFAULT_EXPENSE_LABELS via seedIfEmpty already).
+    this.version(102)
+      .stores({
+        liquidAssets: "id, goal_id",
+        investmentAssets: "id, goal_id, category",
+        personalAssets: "id, liability_id",
+        liabilities: "id, term",
+        goals: "id",
+        cashflow: "id, date, type",
+        categories: "id, entryType, order",
+        settings: "key",
+        paymentMethods: "id, kind",
+      })
+      .upgrade(async (tx) => {
+        const table = tx.table<CategoryChip, string>("categories");
+        const existing = await table.where("entryType").equals("Expense").toArray();
+        const existingLabels = new Set(existing.map((c) => c.label));
+        const maxOrder = existing.reduce((m, c) => Math.max(m, c.order), -1);
+        const toAdd: CategoryChip[] = ["ออมเงิน", "ลงทุน DCA"]
+          .filter((label) => !existingLabels.has(label))
+          .map((label, i) => ({ id: uid(), entryType: "Expense", label, icon: ICON_MAP[label] || "🏷️", order: maxOrder + 1 + i }));
+        if (toAdd.length) await table.bulkAdd(toAdd);
+      });
   }
 }
 
@@ -172,7 +198,7 @@ export async function seedIfEmpty() {
       await db.goals.bulkAdd([
         { id: g1, type: "ท่องเที่ยว", name: "ทริปญี่ปุ่น", target: 100000, date: "2027-03-01", priority: "กลาง" },
         { id: g2, type: "เกษียณ", name: "กองทุนเกษียณอายุ", target: 5000000, date: "2050-01-01", priority: "สูง" },
-        { id: g3, type: "กองทุนฉุกเฉิน", name: "เงินสำรองฉุกเฉิน 6 เดือน", target: 150000, date: "2026-12-01", priority: "สูง" },
+        { id: g3, type: "กองทุนฉุกเฉิน", name: "เงินสำรองฉุกเฉิน 6 เดือน", target: 250000, date: "2026-12-01", priority: "สูง" },
       ]);
 
       await db.liabilities.bulkAdd([
@@ -203,6 +229,7 @@ export async function seedIfEmpty() {
         mkIncome("เงินเดือน", 55000, 3),
         mkIncome("ปันผลหุ้น/DR", 3200, 1),
         mkExpense("ผ่อนบ้าน", 12000, 5),
+        mkExpense("ผ่อนรถ", 8500, 6),
         mkExpense("ค่าน้ำค่าไฟ", 2200, 4),
         mkExpense("ค่าอินเทอร์เน็ต", 590, 2),
         mkExpense("ค่าอาหาร", 9000, 1),

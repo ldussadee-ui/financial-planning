@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
 import { CATS, catInfo } from "@/lib/constants";
-import { SectionHeader, EmptyState, Field, AddButton, Modal, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { InvestmentAsset, InvestmentCategory } from "@/lib/types";
@@ -38,6 +38,11 @@ export function InvestmentTab() {
   };
   const remove = (id: string) => void db.investmentAssets.delete(id);
 
+  const grouped = CATS.map((c) => ({
+    cat: c,
+    items: (investment || []).filter((a) => a.category === c.key),
+  })).filter((g) => g.items.length > 0);
+
   return (
     <div>
       <SectionHeader title="สินทรัพย์เพื่อการลงทุน 📈" sub="กองทุนรวม หุ้น อสังหาริมทรัพย์ ทองคำ และสินทรัพย์ทางเลือก" />
@@ -68,23 +73,25 @@ export function InvestmentTab() {
         </div>
       </Modal>
 
-      <div className="fp-card" style={{ padding: 10 }}>
-        {investment && investment.length ? investment.map((a) => (
-          <Row
-            key={a.id}
-            icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: catInfo(a.category).color, flexShrink: 0 }} />}
-            left={
-              <div>
-                <div style={{ fontSize: 13.5 }}>{a.name}</div>
-                <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{catInfo(a.category).label} · สภาพคล่อง{a.liquidity} {a.goal_id ? "· " + ((goals || []).find((g) => g.id === a.goal_id)?.name || "") : ""}</div>
-              </div>
-            }
-            right={fmt(a.current_value)}
-            onClick={() => openEdit(a)}
-            onDelete={() => remove(a.id)}
-          />
-        )) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
-      </div>
+      {grouped.length ? grouped.map((g) => (
+        <Group key={g.cat.key} title={`${g.cat.label} — ${fmt(g.items.reduce((s, a) => s + a.current_value, 0))}`} tint="#FBF7F2">
+          {g.items.map((a) => (
+            <Row
+              key={a.id}
+              icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: g.cat.color, flexShrink: 0 }} />}
+              left={
+                <div>
+                  <div style={{ fontSize: 13.5 }}>{a.name}</div>
+                  <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>สภาพคล่อง{a.liquidity} {a.goal_id ? "· " + ((goals || []).find((g2) => g2.id === a.goal_id)?.name || "") : ""}</div>
+                </div>
+              }
+              right={fmt(a.current_value)}
+              onClick={() => openEdit(a)}
+              onDelete={() => remove(a.id)}
+            />
+          ))}
+        </Group>
+      )) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
 
       <AddFab onClick={openNew} />
     </div>

@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
 import { LIQUID_TYPES, LIQUID_COLOR } from "@/lib/constants";
-import { SectionHeader, EmptyState, Field, AddButton, Modal, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { LiquidAsset, LiquidType } from "@/lib/types";
@@ -37,6 +37,11 @@ export function LiquidTab() {
   };
   const remove = (id: string) => void db.liquidAssets.delete(id);
 
+  const grouped = LIQUID_TYPES.map((t) => ({
+    type: t,
+    items: (liquid || []).filter((a) => a.type === t),
+  })).filter((g) => g.items.length > 0);
+
   return (
     <div>
       <SectionHeader title="สินทรัพย์สภาพคล่อง 🐷" sub="เงินสด บัญชีออมทรัพย์ และเงินที่พร้อมใช้ได้ทันที — แยกจากสินทรัพย์เพื่อการลงทุน" />
@@ -63,23 +68,27 @@ export function LiquidTab() {
         </div>
       </Modal>
 
-      <div className="fp-card" style={{ padding: 10 }}>
-        {liquid && liquid.length ? liquid.map((a) => (
-          <Row
-            key={a.id}
-            icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: LIQUID_COLOR, flexShrink: 0 }} />}
-            left={
-              <div>
-                <div style={{ fontSize: 13.5 }}>{a.name}</div>
-                <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{a.type} {a.goal_id ? "· " + ((goals || []).find((g) => g.id === a.goal_id)?.name || "") : ""}</div>
-              </div>
-            }
-            right={fmt(a.current_value)}
-            onClick={() => openEdit(a)}
-            onDelete={() => remove(a.id)}
-          />
-        )) : <EmptyState text="ยังไม่มีสินทรัพย์สภาพคล่อง" />}
-      </div>
+      {grouped.length ? grouped.map((g) => (
+        <Group key={g.type} title={`${g.type} — ${fmt(g.items.reduce((s, a) => s + a.current_value, 0))}`} tint="#FBF7F2">
+          {g.items.map((a) => (
+            <Row
+              key={a.id}
+              icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: LIQUID_COLOR, flexShrink: 0 }} />}
+              left={
+                <div>
+                  <div style={{ fontSize: 13.5 }}>{a.name}</div>
+                  {a.goal_id && (
+                    <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{(goals || []).find((g2) => g2.id === a.goal_id)?.name || ""}</div>
+                  )}
+                </div>
+              }
+              right={fmt(a.current_value)}
+              onClick={() => openEdit(a)}
+              onDelete={() => remove(a.id)}
+            />
+          ))}
+        </Group>
+      )) : <EmptyState text="ยังไม่มีสินทรัพย์สภาพคล่อง" />}
 
       <AddFab onClick={openNew} />
     </div>

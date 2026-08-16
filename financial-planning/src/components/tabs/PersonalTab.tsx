@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
 import { PERSONAL_TYPES } from "@/lib/constants";
-import { SectionHeader, EmptyState, Field, AddButton, Modal, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { PersonalAsset, PersonalItemType } from "@/lib/types";
@@ -37,6 +37,11 @@ export function PersonalTab() {
   };
   const remove = (id: string) => void db.personalAssets.delete(id);
 
+  const grouped = PERSONAL_TYPES.map((t) => ({
+    type: t,
+    items: (personal || []).filter((a) => a.item_type === t),
+  })).filter((g) => g.items.length > 0);
+
   return (
     <div>
       <SectionHeader title="สินทรัพย์ส่วนตัว 🚗" sub="ทรัพย์สินที่ใช้งาน ไม่ก่อให้เกิดรายได้ — นับใน Total Net Worth เท่านั้น" />
@@ -63,22 +68,26 @@ export function PersonalTab() {
         </div>
       </Modal>
 
-      <div className="fp-card" style={{ padding: 10 }}>
-        {personal && personal.length ? personal.map((a) => (
-          <Row
-            key={a.id}
-            left={
-              <div>
-                <div style={{ fontSize: 13.5 }}>{a.name}</div>
-                <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{a.item_type}{a.liability_id ? " · ผูกกับ " + ((liabilities || []).find((l) => l.id === a.liability_id)?.type || "") : ""}</div>
-              </div>
-            }
-            right={fmt(a.current_value)}
-            onClick={() => openEdit(a)}
-            onDelete={() => remove(a.id)}
-          />
-        )) : <EmptyState text="ยังไม่มีสินทรัพย์ส่วนตัว" />}
-      </div>
+      {grouped.length ? grouped.map((g) => (
+        <Group key={g.type} title={`${g.type} — ${fmt(g.items.reduce((s, a) => s + a.current_value, 0))}`} tint="#FBF7F2">
+          {g.items.map((a) => (
+            <Row
+              key={a.id}
+              left={
+                <div>
+                  <div style={{ fontSize: 13.5 }}>{a.name}</div>
+                  {a.liability_id && (
+                    <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>ผูกกับ {(liabilities || []).find((l) => l.id === a.liability_id)?.type || ""}</div>
+                  )}
+                </div>
+              }
+              right={fmt(a.current_value)}
+              onClick={() => openEdit(a)}
+              onDelete={() => remove(a.id)}
+            />
+          ))}
+        </Group>
+      )) : <EmptyState text="ยังไม่มีสินทรัพย์ส่วนตัว" />}
 
       <AddFab onClick={openNew} />
     </div>
