@@ -3,12 +3,13 @@
 import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { fmt } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
 import { defaultPeriod, shiftPeriod, periodLabel, type Granularity, type Period } from "@/lib/period";
 import { useExpensePeriod } from "@/hooks/useExpensePeriod";
 import { useBudgets } from "@/hooks/useBudgets";
+import { useMonthlyCategoryTrend } from "@/hooks/useMonthlyCategoryTrend";
 import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
 
 const CATEGORY_PALETTE = ["#FF9AA2", "#7FD1C9", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
@@ -30,6 +31,54 @@ const navButtonStyle: CSSProperties = {
   border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
   borderRadius: 999, width: 32, height: 32, fontSize: 14, cursor: "pointer",
 };
+const compactAmount = (n: number) => (n >= 1000 ? Math.round(n / 1000) + "k" : String(n));
+
+const TREND_TITLE: Record<Granularity, string> = {
+  month: "",
+  halfYear: "📈 แนวโน้มรายจ่ายรายเดือน (ครึ่งปีนี้)",
+  year: "📈 แนวโน้มรายจ่ายรายเดือน (ปีนี้)",
+};
+
+function TrendChart({ period }: { period: Period }) {
+  const { data, categories, loading } = useMonthlyCategoryTrend(period);
+  const [selected, setSelected] = useState<string | null>(null);
+
+  if (period.granularity === "month" || loading) return null;
+  const chartData = data.map((d) => ({ month: d.month, ...d.byCategory }));
+
+  return (
+    <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
+      <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>{TREND_TITLE[period.granularity]}</div>
+      {categories.length ? (
+        <>
+          <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
+            <button type="button" onClick={() => setSelected(null)} style={toggleStyle(selected === null)}>ทั้งหมด</button>
+            {categories.map((cat) => (
+              <button key={cat} type="button" onClick={() => setSelected(cat)} style={toggleStyle(selected === cat)}>
+                {ICON_MAP[cat] || "🏷️"} {cat}
+              </button>
+            ))}
+          </div>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
+              <Tooltip formatter={(v) => fmt(Number(v))} />
+              {selected === null
+                ? categories.map((cat, i) => (
+                    <Bar key={cat} dataKey={cat} stackId="a" fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]} />
+                  ))
+                : <Bar dataKey={selected} fill="#7FD1C9" radius={[6, 6, 0, 0]} />}
+            </BarChart>
+          </ResponsiveContainer>
+        </>
+      ) : (
+        <EmptyState text="ยังไม่มีรายจ่ายในช่วงนี้" />
+      )}
+    </div>
+  );
+}
 
 export function ExpenseTrendsView() {
   const [granularity, setGranularity] = useState<Granularity>("month");
@@ -114,6 +163,8 @@ export function ExpenseTrendsView() {
           <EmptyState text="ยังไม่มีรายจ่ายในช่วงนี้" />
         )}
       </div>
+
+      <TrendChart period={period} />
     </div>
   );
 }

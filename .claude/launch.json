@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "financial-planning-dev",
-      "runtimeExecutable": "C:\\Program Files\\nodejs\\npm.cmd",
-      "runtimeArgs": ["--prefix", "financial-planning", "run", "dev"],
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["financial-planning/node_modules/next/dist/bin/next", "dev", "financial-planning"],
       "port": 3000,
       "autoPort": true
     }
