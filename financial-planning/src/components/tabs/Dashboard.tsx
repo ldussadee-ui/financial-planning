@@ -5,9 +5,13 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { db } from "@/lib/db";
-import { fmt, fmtRange } from "@/lib/calc";
+import { categoryBudgetStatus, fmt, fmtRange, inRange } from "@/lib/calc";
+import { ICON_MAP } from "@/lib/constants";
 import { useMetrics } from "@/hooks/useMetrics";
-import { SectionHeader, StatRow, EmptyState } from "@/components/ui";
+import { useBudgets } from "@/hooks/useBudgets";
+import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
+
+const BUDGET_ALERT_THRESHOLD = 80;
 
 // A StatRow that expands in place to list the individual items behind the
 // total — read-only (editing still happens in the dedicated asset tabs), so
@@ -54,6 +58,8 @@ export function Dashboard() {
   const liquid = useLiveQuery(() => db.liquidAssets.toArray(), [], []);
   const personal = useLiveQuery(() => db.personalAssets.toArray(), [], []);
   const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
+  const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], []);
+  const { map: budgetMap } = useBudgets();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const toggle = (key: string) => setExpanded((prev) => {
     const next = new Set(prev);
@@ -62,6 +68,9 @@ export function Dashboard() {
   });
 
   if (loading) return null;
+
+  const cycleCF = (cashflow || []).filter((c) => inRange(c.date, cycleRange));
+  const budgetAlerts = categoryBudgetStatus(cycleCF, budgetMap).filter((b) => b.pct >= BUDGET_ALERT_THRESHOLD);
 
   return (
     <div>
@@ -134,6 +143,21 @@ export function Dashboard() {
           ) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
         </div>
       </div>
+
+      {budgetAlerts.length > 0 && (
+        <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 16 }}>🎯 งบประมาณ</div>
+          {budgetAlerts.map((b) => (
+            <div key={b.category} style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, marginBottom: 6 }}>
+                <span>{ICON_MAP[b.category] || "🏷️"}</span>
+                <span>{b.category}</span>
+              </div>
+              <BudgetBar spent={b.spent} budget={b.budget} />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div style={{ marginTop: 18 }}>
         <div className="fp-card" style={{ padding: 26 }}>

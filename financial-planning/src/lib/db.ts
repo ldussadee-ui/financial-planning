@@ -11,6 +11,7 @@ import type {
   CategoryChip,
   SettingEntry,
   PaymentMethod,
+  Budget,
 } from "./types";
 
 export const CASH_METHOD_NAME = "เงินสด";
@@ -25,6 +26,7 @@ class FinancialPlanningDB extends Dexie {
   categories!: EntityTable<CategoryChip, "id">;
   settings!: EntityTable<SettingEntry, "key">;
   paymentMethods!: EntityTable<PaymentMethod, "id">;
+  budgets!: EntityTable<Budget, "category">;
 
   constructor() {
     super("financial-planning-db");
@@ -145,6 +147,21 @@ class FinancialPlanningDB extends Dexie {
           .map((label, i) => ({ id: uid(), entryType: "Expense", label, icon: ICON_MAP[label] || "🏷️", order: maxOrder + 1 + i }));
         if (toAdd.length) await table.bulkAdd(toAdd);
       });
+
+    // Per-category monthly spending budgets, set in Settings and shown as
+    // progress bars in the cashflow/reports/dashboard views.
+    this.version(103).stores({
+      liquidAssets: "id, goal_id",
+      investmentAssets: "id, goal_id, category",
+      personalAssets: "id, liability_id",
+      liabilities: "id, term",
+      goals: "id",
+      cashflow: "id, date, type",
+      categories: "id, entryType, order",
+      settings: "key",
+      paymentMethods: "id, kind",
+      budgets: "category",
+    });
   }
 }
 

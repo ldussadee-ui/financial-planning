@@ -4,12 +4,14 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { daysFasterToGoal, fmt, fmtRange, hoursOfWork } from "@/lib/calc";
+import { categoryBudgetStatus, daysFasterToGoal, fmt, fmtRange, hoursOfWork } from "@/lib/calc";
+import { ICON_MAP } from "@/lib/constants";
 import { useMetrics } from "@/hooks/useMetrics";
 import { useSetting } from "@/hooks/useSetting";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
-import { SectionHeader, NestedGroup, DayPicker } from "@/components/ui";
+import { useBudgets } from "@/hooks/useBudgets";
+import { SectionHeader, NestedGroup, DayPicker, BudgetBar } from "@/components/ui";
 import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
 import type { CashFlowEntry } from "@/lib/types";
@@ -29,6 +31,7 @@ export function CashflowTab() {
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
   const { hourlyWage } = useHourlyWage();
   const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
+  const { map: budgetMap } = useBudgets();
   const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], []);
   const { openEdit, editingId, closeModal } = useCashflowEntry();
 
@@ -56,6 +59,7 @@ export function CashflowTab() {
   const fixedExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Fixed");
   const investExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Invest");
   const varExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class !== "Fixed" && c.expense_class !== "Invest");
+  const budgetStatus = categoryBudgetStatus(cycleCF, budgetMap);
 
   return (
     <div>
@@ -95,6 +99,23 @@ export function CashflowTab() {
           { label: `ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
         ]}
       />
+
+      {budgetStatus.length > 0 && (
+        <div className="fp-card" style={{ padding: 20, marginTop: 18 }}>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 12 }}>🎯 งบประมาณรอบนี้</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {budgetStatus.map((b) => (
+              <div key={b.category}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13 }}>
+                  <span>{ICON_MAP[b.category] || "🏷️"}</span>
+                  <span>{b.category}</span>
+                </div>
+                <BudgetBar spent={b.spent} budget={b.budget} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ fontSize: 11.5, color: "var(--ink-soft)", marginTop: 4 }}>
         * แสดงเฉพาะรายการในรอบบัญชีปัจจุบันด้านบน · รายจ่ายแยกประจำ/ผันแปร/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข

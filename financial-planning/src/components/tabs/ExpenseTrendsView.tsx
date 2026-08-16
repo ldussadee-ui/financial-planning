@@ -8,11 +8,15 @@ import { fmt } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
 import { defaultPeriod, shiftPeriod, periodLabel, type Granularity, type Period } from "@/lib/period";
 import { useExpensePeriod } from "@/hooks/useExpensePeriod";
-import { SectionHeader, StatRow, EmptyState } from "@/components/ui";
+import { useBudgets } from "@/hooks/useBudgets";
+import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
 
 const CATEGORY_PALETTE = ["#FF9AA2", "#7FD1C9", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
 
 const GRANULARITY_LABEL: Record<Granularity, string> = { month: "เดือน", halfYear: "ครึ่งปี", year: "ปี" };
+// A category budget is a monthly figure; scale it to however many months
+// the currently-viewed period spans so the comparison stays meaningful.
+const MONTHS_IN_PERIOD: Record<Granularity, number> = { month: 1, halfYear: 6, year: 12 };
 
 function toggleStyle(active: boolean): CSSProperties {
   return {
@@ -31,6 +35,7 @@ export function ExpenseTrendsView() {
   const [granularity, setGranularity] = useState<Granularity>("month");
   const [period, setPeriod] = useState<Period>(() => defaultPeriod("month"));
   const { total, fixedTotal, variableTotal, investTotal, byCategory, loading } = useExpensePeriod(period);
+  const { map: budgetMap } = useBudgets();
 
   const changeGranularity = (g: Granularity) => { setGranularity(g); setPeriod(defaultPeriod(g)); };
 
@@ -89,15 +94,18 @@ export function ExpenseTrendsView() {
             </ResponsiveContainer>
             <div style={{ flex: 1, minWidth: 220, fontSize: 12.5 }}>
               {byCategory.map((c, i) => (
-                <div key={c.category} style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 5, background: CATEGORY_PALETTE[i % CATEGORY_PALETTE.length], flexShrink: 0 }} />
-                  <span>{ICON_MAP[c.category] || "🏷️"}</span>
-                  <span style={{ color: "var(--ink)" }}>{c.category}</span>
-                  <span style={{ fontSize: 10.5, color: "var(--ink-soft)" }}>({c.count} รายการ)</span>
-                  <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>{fmt(c.amount)}</span>
-                  <span className="fp-num" style={{ width: 40, textAlign: "right", color: "var(--ink-soft)" }}>
-                    {total > 0 ? ((c.amount / total) * 100).toFixed(0) : 0}%
-                  </span>
+                <div key={c.category} style={{ marginBottom: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: 5, background: CATEGORY_PALETTE[i % CATEGORY_PALETTE.length], flexShrink: 0 }} />
+                    <span>{ICON_MAP[c.category] || "🏷️"}</span>
+                    <span style={{ color: "var(--ink)" }}>{c.category}</span>
+                    <span style={{ fontSize: 10.5, color: "var(--ink-soft)" }}>({c.count} รายการ)</span>
+                    <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>{fmt(c.amount)}</span>
+                    <span className="fp-num" style={{ width: 40, textAlign: "right", color: "var(--ink-soft)" }}>
+                      {total > 0 ? ((c.amount / total) * 100).toFixed(0) : 0}%
+                    </span>
+                  </div>
+                  <BudgetBar spent={c.amount} budget={(budgetMap.get(c.category) || 0) * MONTHS_IN_PERIOD[period.granularity]} />
                 </div>
               ))}
             </div>

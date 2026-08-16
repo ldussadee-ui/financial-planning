@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Plus, Trash2, Pencil, X } from "lucide-react";
+import { fmt } from "@/lib/calc";
 
 export function SectionHeader({ title, sub, chip }: { title: string; sub?: string; chip?: string }) {
   return (
@@ -66,6 +67,27 @@ export function StatRow({ label, value, big }: { label: string; value: string; b
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "7px 0" }}>
       <span style={{ fontSize: big ? 14 : 13, color: "var(--ink-soft)" }}>{label}</span>
       <span className="fp-num" style={{ fontSize: big ? 18 : 14, fontWeight: 600 }}>{value}</span>
+    </div>
+  );
+}
+
+// A thin progress bar for "spent vs budget", used wherever a per-category
+// budget is shown (cashflow tab, reports, dashboard alert card). Renders
+// nothing when no budget is set for the category, so callers can render it
+// unconditionally.
+export function BudgetBar({ spent, budget }: { spent: number; budget: number }) {
+  if (!budget) return null;
+  const pct = Math.min((spent / budget) * 100, 100);
+  const over = spent > budget;
+  const color = over ? "#FF8C7A" : pct >= 80 ? "#D07A4E" : "#0F6E56";
+  return (
+    <div>
+      <div style={{ height: 5, background: "#F0E9E2", borderRadius: 999, overflow: "hidden", marginTop: 4 }}>
+        <div style={{ width: pct + "%", height: "100%", background: color, borderRadius: 999 }} />
+      </div>
+      <div className="fp-num" style={{ fontSize: 10.5, color: over ? "#FF8C7A" : "var(--ink-soft)", marginTop: 2 }}>
+        {fmt(spent)} / {fmt(budget)}{over ? " · เกินงบ" : ""}
+      </div>
     </div>
   );
 }

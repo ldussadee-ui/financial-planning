@@ -1,5 +1,5 @@
 import { FIXED_KEYWORDS, INVEST_KEYWORDS, PASSIVE_KEYWORDS } from "./constants";
-import type { ExpenseClass, Goal, IncomeClass } from "./types";
+import type { CashFlowEntry, ExpenseClass, Goal, IncomeClass } from "./types";
 
 export const classifyExpense = (category: string): ExpenseClass => {
   const t = (category || "").toLowerCase();
@@ -124,4 +124,30 @@ export function recommendedMonthlySavings(goal: Goal, linked: number, today: Dat
   if (needed <= 0) return 0;
   if (i === 0) return needed / monthsRemaining;
   return (needed * i) / (Math.pow(1 + i, monthsRemaining) - 1);
+}
+
+/* -------------------------------- budgets ------------------------------- */
+export interface BudgetStatus {
+  category: string;
+  spent: number;
+  budget: number;
+  pct: number;
+}
+
+// Pairs each budgeted category with what's actually been spent in the given
+// entries (already pre-filtered to whatever date range matters), skipping
+// categories with no budget set. Sorted worst-first so callers that only
+// want the top offenders (e.g. a Dashboard alert card) can just slice it.
+export function categoryBudgetStatus(entries: CashFlowEntry[], budgets: Map<string, number>): BudgetStatus[] {
+  const spentByCategory = new Map<string, number>();
+  for (const e of entries) {
+    if (e.type !== "Expense") continue;
+    spentByCategory.set(e.category, (spentByCategory.get(e.category) || 0) + Number(e.amount || 0));
+  }
+  const result: BudgetStatus[] = [];
+  for (const [category, budget] of budgets) {
+    if (budget <= 0) continue;
+    result.push({ category, spent: spentByCategory.get(category) || 0, budget, pct: (spentByCategory.get(category) || 0) / budget * 100 });
+  }
+  return result.sort((a, b) => b.pct - a.pct);
 }

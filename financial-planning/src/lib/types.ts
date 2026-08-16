@@ -99,3 +99,8 @@ export interface SettingEntry {
   key: string;
   value: unknown;
 }
+
+export interface Budget {
+  category: string;
+  amount: number;
+}

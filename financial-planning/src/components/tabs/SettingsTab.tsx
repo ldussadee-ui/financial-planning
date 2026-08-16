@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db";
 import { fmt } from "@/lib/calc";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
+import { useBudgets } from "@/hooks/useBudgets";
 import { SectionHeader, Field, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { CashflowExportImport } from "./CashflowExportImport";
@@ -64,12 +69,50 @@ function SpendCompareSettings() {
   );
 }
 
+function BudgetSettings() {
+  const categories = useLiveQuery(() => db.categories.where("entryType").equals("Expense").sortBy("order"), [], []);
+  const { map, setBudget } = useBudgets();
+  const [open, setOpen] = useState(false);
+  const summary = map.size > 0 ? `ตั้งไว้แล้ว ${map.size} หมวด` : "ยังไม่ได้ตั้งงบ";
+
+  return (
+    <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
+      <div onClick={() => setOpen((v) => !v)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+          {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+          🎯 งบประมาณรายจ่าย
+        </div>
+        <span style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{summary}</span>
+      </div>
+      {open && (
+        <>
+          <div style={{ fontSize: 12, color: "var(--ink-soft)", margin: "10px 0 14px" }}>
+            ตั้งวงเงินต่อเดือนต่อหมวดหมู่ ปล่อยว่างไว้ = ไม่ตั้งงบหมวดนั้น
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {(categories || []).map((c) => (
+              <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ width: 22, textAlign: "center" }}>{c.icon}</span>
+                <span style={{ flex: 1, fontSize: 13 }}>{c.label}</span>
+                <div style={{ width: 130 }}>
+                  <CalcInput value={String(map.get(c.label) || "")} onChange={(v) => setBudget(c.label, Number(v) || 0)} placeholder="ไม่ตั้งงบ" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function SettingsTab() {
   return (
     <div>
       <SectionHeader title="Settings ⚙️" sub="นำเข้า/ส่งออกข้อมูล และตั้งค่าอื่นๆ ของแอป" />
 
       <SpendCompareSettings />
+      <BudgetSettings />
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
         <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 4 }}>💸 รายรับ-จ่าย</div>
