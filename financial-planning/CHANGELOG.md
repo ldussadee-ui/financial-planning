@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.4.2] - 2026-08-17
+
+### Changed
+- Goal progress rows on the Dashboard now show the % complete next to the saved/target amounts, matching the Goals tab
+
 ## [0.4.1] - 2026-08-17
 
 ### Changed

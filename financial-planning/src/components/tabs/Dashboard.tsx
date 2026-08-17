@@ -210,9 +210,12 @@ export function Dashboard() {
           const pct = Math.min(100, (linked / g.target) * 100);
           return (
             <div key={g.id} style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 13, marginBottom: 6 }}>
                 <span>{g.name} <span style={{ color: "var(--ink-soft)", fontSize: 12 }}>({g.type})</span></span>
-                <span className="fp-num">{fmt(linked)} / {fmt(g.target)}</span>
+                <span style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                  <span className="fp-num">{fmt(linked)} / {fmt(g.target)}</span>
+                  <span className="fp-num" style={{ fontWeight: 600 }}>{pct.toFixed(0)}%</span>
+                </span>
               </div>
               <div style={{ height: 10, background: "#FBF2FF", borderRadius: 999, overflow: "hidden" }}>
                 <div style={{ width: pct + "%", height: "100%", background: "#D4577E", borderRadius: 999 }} />
