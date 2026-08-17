@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.4.0] - 2026-08-17
+
+### Added
+- Personal financial ratios (the standard 10-ratio CFP-style set: survival, passive income, liquidity, wealth, debt-to-asset, debt service, savings, investment, current ratio) on a new "อัตราส่วนทางการเงิน" page, each with a pass/fail badge against its standard benchmark
+- Dashboard summary card (between the asset-allocation chart and the Passive Income card) showing "X จาก 10 ข้อ ผ่านเกณฑ์" with a link through to the full breakdown
+- Short actionable advice shown under any ratio that fails its benchmark
+
 ## [0.3.1] - 2026-08-17
 
 ### Changed

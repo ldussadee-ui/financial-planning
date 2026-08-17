@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
@@ -9,6 +10,7 @@ import { categoryBudgetStatus, fmt, fmtRange, inRange } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
 import { useMetrics } from "@/hooks/useMetrics";
 import { useBudgets } from "@/hooks/useBudgets";
+import { useFinancialRatios } from "@/hooks/useFinancialRatios";
 import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
 
 const BUDGET_ALERT_THRESHOLD = 80;
@@ -60,6 +62,7 @@ export function Dashboard() {
   const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
   const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], []);
   const { map: budgetMap } = useBudgets();
+  const { passCount: ratioPassCount, total: ratioTotal, loading: ratiosLoading } = useFinancialRatios();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const toggle = (key: string) => setExpanded((prev) => {
     const next = new Set(prev);
@@ -161,6 +164,27 @@ export function Dashboard() {
         ) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
       </div>
 
+      {!ratiosLoading && (
+        <Link
+          href="/dashboard/financial-ratios"
+          className="fp-card"
+          style={{ padding: 26, marginTop: 18, display: "block", textDecoration: "none", color: "inherit" }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>📐 อัตราส่วนทางการเงิน</div>
+            <span style={{ fontSize: 12, color: "#7A5C9E", fontWeight: 600 }}>ดูรายละเอียด →</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span className="fp-display" style={{ fontSize: 26, fontWeight: 700, color: "#0F6E56" }}>{ratioPassCount}</span>
+            <span style={{ fontSize: 14, color: "var(--ink-soft)" }}>จาก {ratioTotal} ข้อ ผ่านเกณฑ์มาตรฐาน</span>
+          </div>
+          <div style={{ display: "flex", gap: 3, marginTop: 10 }}>
+            <div style={{ flex: ratioPassCount, height: 6, borderRadius: 999, background: "#0F6E56" }} />
+            <div style={{ flex: ratioTotal - ratioPassCount, height: 6, borderRadius: 999, background: "#FF8C7A" }} />
+          </div>
+        </Link>
+      )}
+
       <div style={{ marginTop: 18 }}>
         <div className="fp-card" style={{ padding: 26 }}>
           <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🌿 รายรับ Passive</div>
@@ -187,7 +211,7 @@ export function Dashboard() {
           return (
             <div key={g.id} style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-                <span>{g.name} <span style={{ color: "var(--ink-soft)", fontSize: 11.5 }}>({g.type})</span></span>
+                <span>{g.name} <span style={{ color: "var(--ink-soft)", fontSize: 12 }}>({g.type})</span></span>
                 <span className="fp-num">{fmt(linked)} / {fmt(g.target)}</span>
               </div>
               <div style={{ height: 10, background: "#FBF2FF", borderRadius: 999, overflow: "hidden" }}>
