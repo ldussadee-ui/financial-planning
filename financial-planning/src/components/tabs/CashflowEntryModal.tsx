@@ -31,7 +31,7 @@ function badgeLabel(type: CashFlowType, cls: string) {
   if (type === "Expense") {
     if (cls === "Fixed") return "🔒 ตรวจพบว่าเป็นรายจ่ายประจำ";
     if (cls === "Invest") return "🌱 ตรวจพบว่าเป็นรายจ่ายออมและลงทุน";
-    return "🎈 ตรวจพบว่าเป็นรายจ่ายผันแปร";
+    return "🎈 ตรวจพบว่าเป็นรายจ่ายทั่วไป";
   }
   return cls === "Passive" ? "🌿 ตรวจพบว่าเป็นรายรับ Passive" : "💪 ตรวจพบว่าเป็นรายรับ Active";
 }

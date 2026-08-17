@@ -63,7 +63,7 @@ export function CashflowTab() {
 
   return (
     <div>
-      <SectionHeader title="รายรับ-จ่าย 💸" sub="รายรับแยก Active/Passive และรายจ่ายแยกประจำ/ผันแปร/ออมและลงทุนให้อัตโนมัติ" />
+      <SectionHeader title="รายรับ-จ่าย 💸" sub="รายรับแยก Active/Passive และรายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนให้อัตโนมัติ" />
 
       <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
         <span>🗓️ รอบบัญชีปัจจุบัน: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange)}</b></span>
@@ -95,7 +95,7 @@ export function CashflowTab() {
         tint="#FFEFE6"
         subGroups={[
           { label: `Fixed (ประจำ) — ${fmt(metrics.expenseFixed)}`, items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
-          { label: `Variable (ผันแปร) — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
+          { label: `ทั่วไป — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
           { label: `ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
         ]}
       />
@@ -118,7 +118,7 @@ export function CashflowTab() {
       )}
 
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 4 }}>
-        * แสดงเฉพาะรายการในรอบบัญชีปัจจุบันด้านบน · รายจ่ายแยกประจำ/ผันแปร/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
+        * แสดงเฉพาะรายการในรอบบัญชีปัจจุบันด้านบน · รายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
       </div>
     </div>
   );

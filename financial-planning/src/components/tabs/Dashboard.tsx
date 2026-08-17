@@ -195,7 +195,7 @@ export function Dashboard() {
           <StatRow label="รายได้ Active" value={fmt(metrics.incomeActive)} />
           <StatRow label="รายได้ Passive" value={fmt(metrics.incomePassive)} />
           <StatRow label="รายจ่ายประจำ (คงที่)" value={fmt(metrics.expenseFixed)} />
-          <StatRow label="รายจ่ายผันแปร" value={fmt(metrics.expenseVariable)} />
+          <StatRow label="รายจ่ายทั่วไป" value={fmt(metrics.expenseVariable)} />
           <StatRow label="รายจ่ายออมและลงทุน" value={fmt(metrics.expenseInvest)} />
           <StatRow label="เงินคงเหลือในรอบนี้" value={fmt(metrics.savings)} big />
         </div>

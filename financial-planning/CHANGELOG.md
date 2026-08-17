@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.4.1] - 2026-08-17
+
+### Changed
+- Renamed the "Variable (ผันแปร)" expense class to "ทั่วไป" everywhere it's shown (cashflow tab, reports, entry-modal badge) — plainer, easier-to-understand wording
+
 ## [0.4.0] - 2026-08-17
 
 ### Added

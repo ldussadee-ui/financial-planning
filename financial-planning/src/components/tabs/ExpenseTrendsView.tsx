@@ -103,7 +103,7 @@ export function ExpenseTrendsView() {
       >
         <ArrowLeft size={17} />
       </Link>
-      <SectionHeader title="สรุปรายจ่ายตามช่วงเวลา 📊" sub="ดูว่าช่วงนั้นจ่ายอะไรไปบ้าง แยกประจำ/ผันแปร/ออมและลงทุน และแยกตามหมวดหมู่" />
+      <SectionHeader title="สรุปรายจ่ายตามช่วงเวลา 📊" sub="ดูว่าช่วงนั้นจ่ายอะไรไปบ้าง แยกประจำ/ทั่วไป/ออมและลงทุน และแยกตามหมวดหมู่" />
 
       <div style={{ display: "flex", gap: 6, marginBottom: 18 }}>
         {(["month", "halfYear", "year"] as Granularity[]).map((g) => (
@@ -125,7 +125,7 @@ export function ExpenseTrendsView() {
         <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>💸 ภาพรวมรายจ่าย</div>
         <StatRow label="รวมทั้งหมด" value={fmt(total)} big />
         <StatRow label="🔒 รายจ่ายประจำ (คงที่)" value={fmt(fixedTotal)} />
-        <StatRow label="🎈 รายจ่ายผันแปร" value={fmt(variableTotal)} />
+        <StatRow label="🎈 รายจ่ายทั่วไป" value={fmt(variableTotal)} />
         <StatRow label="🌱 ออมและลงทุน" value={fmt(investTotal)} />
       </div>
 
