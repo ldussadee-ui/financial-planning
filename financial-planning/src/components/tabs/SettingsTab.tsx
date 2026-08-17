@@ -16,7 +16,7 @@ import pkg from "../../../package.json";
 
 const syncButtonStyle = {
   border: "none", background: "#F5EFFF", color: "#7A5C9E",
-  borderRadius: 999, padding: "3px 10px", fontSize: 11, fontWeight: 600, cursor: "pointer",
+  borderRadius: 999, padding: "3px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer",
 } as const;
 
 function SpendCompareSettings() {
@@ -60,12 +60,12 @@ function SpendCompareSettings() {
       </div>
 
       {!autoWage && computedWage > 0 && (
-        <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10, display: "flex", alignItems: "center", gap: 6 }}>
+        <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 10, display: "flex", alignItems: "center", gap: 6 }}>
           แนะนำตอนนี้: {fmt(computedWage)}/ชม.
           <button type="button" onClick={() => setManualWage(computedWage)} style={syncButtonStyle}>ใช้ค่านี้</button>
         </div>
       )}
-      {hourlyWage > 0 && <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10 }}>ตอนนี้ใช้ {fmt(hourlyWage)}/ชั่วโมง</div>}
+      {hourlyWage > 0 && <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 10 }}>ตอนนี้ใช้ {fmt(hourlyWage)}/ชั่วโมง</div>}
     </div>
   );
 }
@@ -83,7 +83,7 @@ function BudgetSettings() {
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           🎯 งบประมาณรายจ่าย
         </div>
-        <span style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{summary}</span>
+        <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{summary}</span>
       </div>
       {open && (
         <>
@@ -131,7 +131,7 @@ export function SettingsTab() {
         <AssetExportImport />
       </div>
 
-      <div style={{ fontSize: 11, color: "var(--ink-soft)", textAlign: "center", marginTop: 18 }}>
+      <div style={{ fontSize: 12, color: "var(--ink-soft)", textAlign: "center", marginTop: 18 }}>
         เวอร์ชัน {pkg.version}
       </div>
     </div>

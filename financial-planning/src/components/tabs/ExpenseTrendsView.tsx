@@ -63,7 +63,7 @@ function TrendChart({ period }: { period: Period }) {
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
+              <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
               <Tooltip formatter={(v) => fmt(Number(v))} />
               {selected === null
                 ? categories.map((cat, i) => (
@@ -141,14 +141,14 @@ export function ExpenseTrendsView() {
                 <Tooltip formatter={(v) => fmt(Number(v))} />
               </PieChart>
             </ResponsiveContainer>
-            <div style={{ flex: 1, minWidth: 220, fontSize: 12.5 }}>
+            <div style={{ flex: 1, minWidth: 220, fontSize: 13 }}>
               {byCategory.map((c, i) => (
                 <div key={c.category} style={{ marginBottom: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <span style={{ width: 10, height: 10, borderRadius: 5, background: CATEGORY_PALETTE[i % CATEGORY_PALETTE.length], flexShrink: 0 }} />
                     <span>{ICON_MAP[c.category] || "🏷️"}</span>
                     <span style={{ color: "var(--ink)" }}>{c.category}</span>
-                    <span style={{ fontSize: 10.5, color: "var(--ink-soft)" }}>({c.count} รายการ)</span>
+                    <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>({c.count} รายการ)</span>
                     <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>{fmt(c.amount)}</span>
                     <span className="fp-num" style={{ width: 40, textAlign: "right", color: "var(--ink-soft)" }}>
                       {total > 0 ? ((c.amount / total) * 100).toFixed(0) : 0}%

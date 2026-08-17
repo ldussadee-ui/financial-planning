@@ -75,9 +75,9 @@ export function PersonalTab() {
               key={a.id}
               left={
                 <div>
-                  <div style={{ fontSize: 13.5 }}>{a.name}</div>
+                  <div style={{ fontSize: 14 }}>{a.name}</div>
                   {a.liability_id && (
-                    <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>ผูกกับ {(liabilities || []).find((l) => l.id === a.liability_id)?.type || ""}</div>
+                    <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>ผูกกับ {(liabilities || []).find((l) => l.id === a.liability_id)?.type || ""}</div>
                   )}
                 </div>
               }

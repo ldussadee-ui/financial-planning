@@ -55,7 +55,7 @@ export function renderByDay(
           extraNode ? (
             <div>
               <div>{c.category}</div>
-              <div style={{ fontSize: 10.5, color: "var(--ink-soft)", marginTop: 1 }}>{extraNode}</div>
+              <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 1 }}>{extraNode}</div>
             </div>
           ) : (
             c.category

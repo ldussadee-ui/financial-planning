@@ -39,7 +39,7 @@ function badgeStyle(type: CashFlowType, cls: string): CSSProperties {
   const isSoft = (type === "Expense" && cls === "Fixed") || (type === "Income" && cls === "Passive");
   const isInvest = type === "Expense" && cls === "Invest";
   return {
-    fontSize: 11.5, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20,
+    fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20,
     background: isInvest ? "#E1F5EE" : isSoft ? "#DDEFFB" : "#FFE3D6",
     color: isInvest ? "#0F6E56" : isSoft ? "#4E93B5" : "#D07A4E",
   };
@@ -239,7 +239,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                 <button type="button" onClick={() => setEditing(false)} style={doneButtonStyle}>✓ เสร็จสิ้น</button>
               )}
             </div>
-            <div style={{ fontSize: 10.5, color: "var(--ink-soft)", marginTop: 6 }}>
+            <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
               {editing ? "ลากเพื่อจัดเรียงใหม่ · แตะ × เพื่อลบปุ่ม" : "กดค้างที่ปุ่มเพื่อจัดเรียงหรือลบ"}
             </div>
             {customMode && (
@@ -251,7 +251,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   placeholder="พิมพ์หมวดหมู่ของคุณเอง"
                 />
-                <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, color: "var(--ink-soft)", marginTop: 6, cursor: "pointer" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--ink-soft)", marginTop: 6, cursor: "pointer" }}>
                   <input type="checkbox" checked={saveShortcut} onChange={(e) => setSaveShortcut(e.target.checked)} />
                   บันทึกเป็นปุ่มลัดไว้ใช้ครั้งหน้า
                 </label>
@@ -301,7 +301,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
             <span style={badgeStyle(form.type, preview)}>{badgeLabel(form.type, preview)}</span>
           )}
           {spendCompare && (
-            <span style={{ fontSize: 11.5, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20, background: "#F5EFFF", color: "#7A5C9E" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20, background: "#F5EFFF", color: "#7A5C9E" }}>
               ⏱️ {spendCompare}
             </span>
           )}

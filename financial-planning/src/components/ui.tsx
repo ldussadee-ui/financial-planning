@@ -85,7 +85,7 @@ export function BudgetBar({ spent, budget }: { spent: number; budget: number }) 
       <div style={{ height: 5, background: "#F0E9E2", borderRadius: 999, overflow: "hidden", marginTop: 4 }}>
         <div style={{ width: pct + "%", height: "100%", background: color, borderRadius: 999 }} />
       </div>
-      <div className="fp-num" style={{ fontSize: 10.5, color: over ? "#FF8C7A" : "var(--ink-soft)", marginTop: 2 }}>
+      <div className="fp-num" style={{ fontSize: 12, color: over ? "#FF8C7A" : "var(--ink-soft)", marginTop: 2 }}>
         {fmt(spent)} / {fmt(budget)}{over ? " · เกินงบ" : ""}
       </div>
     </div>
@@ -109,7 +109,7 @@ export const cancelButtonStyle: CSSProperties = {
 export function Field({ label, wide, children }: { label: string; wide?: boolean; children: ReactNode }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: wide ? 480 : undefined }}>
-      <label style={{ fontSize: 10.5, color: "var(--ink-soft)", fontWeight: 600 }}>{label}</label>
+      <label style={{ fontSize: 12, color: "var(--ink-soft)", fontWeight: 600 }}>{label}</label>
       {children}
     </div>
   );
@@ -165,7 +165,7 @@ export function NestedGroup({
           <div key={sg.label}>
             <div
               style={{
-                fontFamily: "var(--font-prompt), 'Prompt', sans-serif", fontSize: 11, fontWeight: 500, color: "#8B7FA0",
+                fontFamily: "var(--font-prompt), 'Prompt', sans-serif", fontSize: 12, fontWeight: 500, color: "#8B7FA0",
                 padding: "10px 14px 4px", marginTop: i > 0 ? 6 : 0, borderTop: i > 0 ? "1px solid var(--line)" : "none",
               }}
             >
@@ -191,9 +191,9 @@ export function Row({
       onClick={onClick}
     >
       {icon}
-      <div style={{ flex: 1, minWidth: 0, fontSize: 13 }}>{left}</div>
-      {date && <span style={{ fontSize: 10.5, color: "var(--ink-soft)", background: "#F5EFFF", padding: "2px 8px", borderRadius: 999 }}>{date}</span>}
-      <span className="fp-num" style={{ fontSize: 13.5, fontWeight: 600 }}>{right}</span>
+      <div style={{ flex: 1, minWidth: 0, fontSize: 14 }}>{left}</div>
+      {date && <span style={{ fontSize: 12, color: "var(--ink-soft)", background: "#F5EFFF", padding: "2px 8px", borderRadius: 999 }}>{date}</span>}
+      <span className="fp-num" style={{ fontSize: 14, fontWeight: 600 }}>{right}</span>
       {onClick && (
         <span style={{ color: "var(--ink-soft)" }} aria-hidden>
           <Pencil size={12} />
@@ -256,7 +256,7 @@ export function DayPicker({
       </button>
       {open && (
         <div style={dayPickerPopoverStyle}>
-          <div style={{ fontSize: 11, color: "var(--ink-soft)", marginBottom: 8, fontWeight: 600 }}>เลือกวันเริ่มรอบบัญชี</div>
+          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 8, fontWeight: 600 }}>เลือกวันเริ่มรอบบัญชี</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 5 }}>
             {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
               <button key={d} type="button" onClick={() => { onChange(d); setOpen(false); }} style={dayCellStyle(d === value)}>
@@ -264,7 +264,7 @@ export function DayPicker({
               </button>
             ))}
           </div>
-          <label style={{ display: "flex", alignItems: "flex-start", gap: 6, fontSize: 11, color: "var(--ink-soft)", marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--line)", cursor: "pointer" }}>
+          <label style={{ display: "flex", alignItems: "flex-start", gap: 6, fontSize: 12, color: "var(--ink-soft)", marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--line)", cursor: "pointer" }}>
             <input type="checkbox" checked={shiftWeekend} onChange={(e) => onShiftWeekendChange(e.target.checked)} style={{ marginTop: 1 }} />
             ถ้าวันเริ่มตรงเสาร์-อาทิตย์ เลื่อนเป็นวันศุกร์ก่อนหน้า
           </label>

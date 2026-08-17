@@ -81,8 +81,8 @@ export function InvestmentTab() {
               icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: g.cat.color, flexShrink: 0 }} />}
               left={
                 <div>
-                  <div style={{ fontSize: 13.5 }}>{a.name}</div>
-                  <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>สภาพคล่อง{a.liquidity} {a.goal_id ? "· " + ((goals || []).find((g2) => g2.id === a.goal_id)?.name || "") : ""}</div>
+                  <div style={{ fontSize: 14 }}>{a.name}</div>
+                  <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>สภาพคล่อง{a.liquidity} {a.goal_id ? "· " + ((goals || []).find((g2) => g2.id === a.goal_id)?.name || "") : ""}</div>
                 </div>
               }
               right={fmt(a.current_value)}

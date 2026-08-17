@@ -114,7 +114,7 @@ export function Dashboard() {
           <StatRow label="Net Worth รวมทั้งหมด" value={fmt(metrics.totalNetWorth)} big />
           <StatRow label="Investable Net Worth" value={fmt(metrics.investableNetWorth)} big />
         </div>
-        <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10 }}>
+        <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 10 }}>
           * Investable Net Worth = สินทรัพย์สภาพคล่อง + สินทรัพย์ลงทุน − หนี้สินรวม
         </div>
       </div>

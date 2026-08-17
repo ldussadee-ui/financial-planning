@@ -117,7 +117,7 @@ export function CashflowTab() {
         </div>
       )}
 
-      <div style={{ fontSize: 11.5, color: "var(--ink-soft)", marginTop: 4 }}>
+      <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 4 }}>
         * แสดงเฉพาะรายการในรอบบัญชีปัจจุบันด้านบน · รายจ่ายแยกประจำ/ผันแปร/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
       </div>
     </div>

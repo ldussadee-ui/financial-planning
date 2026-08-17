@@ -30,9 +30,9 @@ function toggleStyle(active: boolean): CSSProperties {
     borderRadius: 999, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
   };
 }
-const smallToggleStyle = (active: boolean): CSSProperties => ({ ...toggleStyle(active), padding: "5px 11px", fontSize: 11.5, height: 28 });
+const smallToggleStyle = (active: boolean): CSSProperties => ({ ...toggleStyle(active), padding: "5px 11px", fontSize: 12, height: 28 });
 
-const thStyle: CSSProperties = { textAlign: "right", padding: "8px 10px", fontSize: 11, color: "var(--ink-soft)", fontWeight: 600, whiteSpace: "nowrap" };
+const thStyle: CSSProperties = { textAlign: "right", padding: "8px 10px", fontSize: 12, color: "var(--ink-soft)", fontWeight: 600, whiteSpace: "nowrap" };
 const tdStyle: CSSProperties = { padding: "8px 10px", whiteSpace: "nowrap" };
 const tdNumStyle: CSSProperties = { ...tdStyle, textAlign: "right", fontFamily: "var(--font-prompt), 'Prompt', sans-serif" };
 
@@ -62,7 +62,7 @@ export function AssetTrendTab() {
             <BarChart data={points}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
+              <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
               <Tooltip formatter={(v) => fmt(Number(v))} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               {SERIES.map((s) => (
@@ -77,7 +77,7 @@ export function AssetTrendTab() {
 
       <div className="fp-card" style={{ padding: 20, marginTop: 4 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
-          <div style={{ fontSize: 12.5, color: "#8B7FA0", fontWeight: 600 }}>ตารางเปรียบเทียบรายเดือน</div>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>ตารางเปรียบเทียบรายเดือน</div>
           <div style={{ display: "flex", gap: 6 }}>
             {TABLE_COUNTS.map((n) => (
               <button key={n} type="button" onClick={() => setTableCount(n)} style={smallToggleStyle(tableCount === n)}>
@@ -87,7 +87,7 @@ export function AssetTrendTab() {
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--line)" }}>
                 <th style={{ ...thStyle, textAlign: "left" }}>เดือน</th>

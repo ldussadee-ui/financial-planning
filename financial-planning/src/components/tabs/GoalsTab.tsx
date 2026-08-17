@@ -80,11 +80,11 @@ export function GoalsTab() {
             <div key={g.id} style={{ padding: "14px 16px", cursor: "pointer" }} onClick={() => openEdit(g)}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                  <div style={{ fontSize: 13.5 }}>{g.name}</div>
-                  <div style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{g.type} · ความสำคัญ{g.priority} {g.date ? "· ครบกำหนด " + g.date : ""}</div>
+                  <div style={{ fontSize: 14 }}>{g.name}</div>
+                  <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>{g.type} · ความสำคัญ{g.priority} {g.date ? "· ครบกำหนด " + g.date : ""}</div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span className="fp-num" style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{fmt(linked)} / {fmt(g.target)}</span>
+                  <span className="fp-num" style={{ fontSize: 12, color: "var(--ink-soft)" }}>{fmt(linked)} / {fmt(g.target)}</span>
                   <span className="fp-num" style={{ fontSize: 13, fontWeight: 600 }}>{pct.toFixed(0)}%</span>
                   <span style={{ color: "var(--ink-soft)" }} aria-hidden><Pencil size={12} /></span>
                   <button
@@ -104,14 +104,14 @@ export function GoalsTab() {
                 <div style={{ width: pct + "%", height: "100%", background: "#D4577E", borderRadius: 999 }} />
               </div>
               {monthlyNeeded !== null ? (
-                <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 6 }}>
+                <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
                   💡 แนะนำออม {fmt(monthlyNeeded)}/เดือน เพื่อให้ทันกำหนด
                   {g.expectedReturn ? ` (สมมติผลตอบแทน ${g.expectedReturn}%/ปี — เป็นการประมาณ ไม่รับประกัน)` : " (ไม่มีผลตอบแทนจากการลงทุน)"}
                 </div>
               ) : !g.date ? (
-                <div style={{ fontSize: 11, color: "#D07A4E", marginTop: 6 }}>⚠️ ใส่วันที่เป้าหมายเพื่อดูคำแนะนำการออม</div>
+                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>⚠️ ใส่วันที่เป้าหมายเพื่อดูคำแนะนำการออม</div>
               ) : (
-                <div style={{ fontSize: 11, color: "#D07A4E", marginTop: 6 }}>⚠️ วันที่เป้าหมายผ่านไปแล้ว หรือใกล้ถึงกำหนดเกินกว่าจะคำนวณได้</div>
+                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>⚠️ วันที่เป้าหมายผ่านไปแล้ว หรือใกล้ถึงกำหนดเกินกว่าจะคำนวณได้</div>
               )}
             </div>
           );

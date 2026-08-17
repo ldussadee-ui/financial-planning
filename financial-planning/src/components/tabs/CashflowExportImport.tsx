@@ -64,7 +64,7 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
         <Field label="ถึงวันที่"><input type="date" style={inputStyle} value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
         <AddButton onClick={doExport} label="ดาวน์โหลดไฟล์" />
       </div>
-      <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10 }}>
+      <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 10 }}>
         จะดึงเฉพาะรายการรายรับ-จ่ายในช่วงวันที่ที่เลือกเท่านั้น
       </div>
     </Modal>

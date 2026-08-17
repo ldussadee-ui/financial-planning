@@ -132,7 +132,7 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
             <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
               พบ {totalInFile} รายการในไฟล์ (สภาพคล่อง {fileData.liquidAssets.length} · เพื่อการลงทุน {fileData.investmentAssets.length} · ส่วนตัว {fileData.personalAssets.length} · หนี้สิน {fileData.liabilities.length})
             </div>
-            <div style={{ fontSize: 11, color: "var(--ink-soft)" }}>
+            <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
               รายการจะถูกเพิ่มเป็นรายการใหม่ทั้งหมด (การผูกเป้าหมาย/หนี้สินเดิมจะไม่ติดมาด้วย เพราะเป็นคนละอุปกรณ์)
             </div>
             <div><AddButton onClick={doImport} label="นำเข้า" /></div>
