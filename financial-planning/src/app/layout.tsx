@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Prompt, Sarabun } from "next/font/google";
 import { DbInit } from "@/components/DbInit";
 import { PwaRegister } from "@/components/PwaRegister";
+import { NetWorthSnapshotter } from "@/components/NetWorthSnapshotter";
 import "./globals.css";
 
 const prompt = Prompt({
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <DbInit />
         <PwaRegister />
+        <NetWorthSnapshotter />
         {children}
       </body>
     </html>

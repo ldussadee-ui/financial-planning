@@ -5,14 +5,16 @@ import { LiquidTab } from "./LiquidTab";
 import { InvestmentTab } from "./InvestmentTab";
 import { PersonalTab } from "./PersonalTab";
 import { LiabilityTab } from "./LiabilityTab";
+import { AssetTrendTab } from "./AssetTrendTab";
 
-type AssetCategory = "liquid" | "investment" | "personal" | "liability";
+type AssetCategory = "liquid" | "investment" | "personal" | "liability" | "trend";
 
 const CATEGORIES: { key: AssetCategory; label: string }[] = [
   { key: "liquid", label: "สภาพคล่อง" },
   { key: "investment", label: "เพื่อการลงทุน" },
   { key: "personal", label: "ส่วนตัว" },
   { key: "liability", label: "หนี้สิน" },
+  { key: "trend", label: "แนวโน้ม" },
 ];
 
 function toggleStyle(active: boolean): CSSProperties {
@@ -41,6 +43,7 @@ export function AssetsTab() {
       {category === "investment" && <InvestmentTab />}
       {category === "personal" && <PersonalTab />}
       {category === "liability" && <LiabilityTab />}
+      {category === "trend" && <AssetTrendTab />}
     </div>
   );
 }

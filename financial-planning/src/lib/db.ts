@@ -12,6 +12,7 @@ import type {
   SettingEntry,
   PaymentMethod,
   Budget,
+  NetWorthSnapshot,
 } from "./types";
 
 export const CASH_METHOD_NAME = "เงินสด";
@@ -27,6 +28,7 @@ class FinancialPlanningDB extends Dexie {
   settings!: EntityTable<SettingEntry, "key">;
   paymentMethods!: EntityTable<PaymentMethod, "id">;
   budgets!: EntityTable<Budget, "category">;
+  netWorthHistory!: EntityTable<NetWorthSnapshot, "date">;
 
   constructor() {
     super("financial-planning-db");
@@ -161,6 +163,25 @@ class FinancialPlanningDB extends Dexie {
       settings: "key",
       paymentMethods: "id, kind",
       budgets: "category",
+    });
+
+    // Daily net-worth snapshots (total liquid/investment/personal/liability),
+    // recorded automatically whenever an asset or liability changes or the
+    // app is opened on a new day. Powers the asset trend charts/table —
+    // there's no way to backfill history from before this version, since
+    // asset rows only ever stored their current value.
+    this.version(104).stores({
+      liquidAssets: "id, goal_id",
+      investmentAssets: "id, goal_id, category",
+      personalAssets: "id, liability_id",
+      liabilities: "id, term",
+      goals: "id",
+      cashflow: "id, date, type",
+      categories: "id, entryType, order",
+      settings: "key",
+      paymentMethods: "id, kind",
+      budgets: "category",
+      netWorthHistory: "date",
     });
   }
 }

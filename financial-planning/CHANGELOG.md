@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.3.0] - 2026-08-17
+
+### Added
+- Asset trend chart on a new "แนวโน้ม" tab in Assets: total assets, total liabilities, and net worth as grouped bars per period, switchable between month/quarter/half-year/year
+- Daily net-worth snapshots (`netWorthHistory`), recorded automatically whenever an asset or liability changes or the app opens on a new day — the only source of history, since asset rows only ever stored their current value
+- Month-by-month comparison table (assets/liabilities/net worth plus the change and % change vs the previous month), with a selectable row count
+
 ## [0.2.0] - 2026-08-16
 
 ### Added

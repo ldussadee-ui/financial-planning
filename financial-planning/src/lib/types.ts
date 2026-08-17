@@ -104,3 +104,11 @@ export interface Budget {
   category: string;
   amount: number;
 }
+
+export interface NetWorthSnapshot {
+  date: string;
+  totalLiquid: number;
+  totalInvestment: number;
+  totalPersonal: number;
+  totalLiab: number;
+}
