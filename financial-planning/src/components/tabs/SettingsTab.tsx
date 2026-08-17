@@ -12,6 +12,7 @@ import { SectionHeader, Field, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { CashflowExportImport } from "./CashflowExportImport";
 import { AssetExportImport } from "./AssetExportImport";
+import pkg from "../../../package.json";
 
 const syncButtonStyle = {
   border: "none", background: "#F5EFFF", color: "#7A5C9E",
@@ -128,6 +129,10 @@ export function SettingsTab() {
           ส่งออก/นำเข้าสินทรัพย์สภาพคล่อง เพื่อการลงทุน ส่วนตัว และหนี้สินทั้งหมด — ใช้ย้ายข้อมูลข้ามเบราว์เซอร์/เครื่อง
         </div>
         <AssetExportImport />
+      </div>
+
+      <div style={{ fontSize: 11, color: "var(--ink-soft)", textAlign: "center", marginTop: 18 }}>
+        เวอร์ชัน {pkg.version}
       </div>
     </div>
   );
