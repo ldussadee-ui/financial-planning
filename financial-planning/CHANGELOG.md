@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.5.0] - 2026-08-19
+
+### Added
+- Cashflow tab can now navigate to previous/next billing cycles (‹ › buttons) to view and edit past months' entries, instead of only ever showing the current cycle
+- Dashboard cards (goal progress, investment allocation, passive income) are now collapsible accordions, showing just the key stat by default and expanding to full detail on tap — keeps the page shorter on mobile
+
+### Changed
+- "อัตราส่วนสภาพคล่องพื้นฐาน" now only fails on the low side (< 3 เท่า) instead of also failing above 6 เท่า — the "too much idle cash" signal is already covered separately by the investment ratio, and the two-sided check could make it read as contradicting "สภาพคล่องต่อความมั่งคั่งสุทธิ" for low-net-worth cases
+
 ## [0.4.2] - 2026-08-17
 
 ### Changed

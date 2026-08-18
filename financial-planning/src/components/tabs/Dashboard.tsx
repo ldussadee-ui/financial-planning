@@ -79,6 +79,14 @@ export function Dashboard() {
   const variableCF = cycleCF.filter((c) => c.expense_class !== "Fixed" && c.expense_class !== "Invest");
   const budgetAlerts = categoryBudgetStatus(variableCF, budgetMap).filter((b) => b.pct >= BUDGET_ALERT_THRESHOLD);
 
+  const goalProgress = (goals || []).map((g) => {
+    const linked =
+      (investment || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0) +
+      (liquid || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0);
+    return { goal: g, linked, pct: Math.min(100, (linked / g.target) * 100) };
+  });
+  const avgGoalPct = goalProgress.length ? goalProgress.reduce((s, g) => s + g.pct, 0) / goalProgress.length : 0;
+
   return (
     <div>
       <SectionHeader title="ภาพรวมการเงิน ☺️" sub={`สรุปสถานะสินทรัพย์ หนี้สิน และกระแสเงินสด · รอบปัจจุบัน ${fmtRange(cycleRange)}`} chip="ทดลองใช้งาน" />
@@ -138,29 +146,52 @@ export function Dashboard() {
       )}
 
       <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🥧 สัดส่วนสินทรัพย์เพื่อการลงทุน</div>
+        <div
+          onClick={() => toggle("allocation")}
+          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
+        >
+          <span style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🥧 สัดส่วนสินทรัพย์เพื่อการลงทุน</span>
+          {expanded.has("allocation") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
+        </div>
         {metrics.byCat.length ? (
-          <div style={{ height: 190, display: "flex", alignItems: "center" }}>
-            <ResponsiveContainer width="55%" height={180}>
-              <PieChart>
-                <Pie data={metrics.byCat} dataKey="value" nameKey="name" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
-                  {metrics.byCat.map((c) => <Cell key={c.key} fill={c.color} stroke="none" />)}
-                </Pie>
-                <Tooltip formatter={(v) => fmt(Number(v))} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div style={{ flex: 1, fontSize: 12.5 }}>
-              {metrics.byCat.map((c) => (
-                <div key={c.key} style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 5, background: c.color, display: "inline-block" }} />
-                  <span style={{ color: "var(--ink-soft)" }}>{c.name}</span>
-                  <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>
-                    {((c.value / metrics.totalInvestment) * 100).toFixed(0)}%
-                  </span>
-                </div>
-              ))}
+          expanded.has("allocation") ? (
+            <div style={{ height: 190, display: "flex", alignItems: "center", marginTop: 10 }}>
+              <ResponsiveContainer width="55%" height={180}>
+                <PieChart>
+                  <Pie data={metrics.byCat} dataKey="value" nameKey="name" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
+                    {metrics.byCat.map((c) => <Cell key={c.key} fill={c.color} stroke="none" />)}
+                  </Pie>
+                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ flex: 1, fontSize: 12.5 }}>
+                {metrics.byCat.map((c) => (
+                  <div key={c.key} style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: 5, background: c.color, display: "inline-block" }} />
+                    <span style={{ color: "var(--ink-soft)" }}>{c.name}</span>
+                    <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>
+                      {((c.value / metrics.totalInvestment) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 10, fontSize: 13 }}>
+              {(() => {
+                const topCat = [...metrics.byCat].sort((a, b) => b.value - a.value)[0];
+                return (
+                  <>
+                    <span style={{ width: 10, height: 10, borderRadius: 5, background: topCat.color, display: "inline-block" }} />
+                    <span style={{ color: "var(--ink-soft)" }}>สัดส่วนมากสุด: {topCat.name}</span>
+                    <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>
+                      {((topCat.value / metrics.totalInvestment) * 100).toFixed(0)}%
+                    </span>
+                  </>
+                );
+              })()}
+            </div>
+          )
         ) : <EmptyState text="ยังไม่มีสินทรัพย์เพื่อการลงทุน" />}
       </div>
 
@@ -187,42 +218,62 @@ export function Dashboard() {
 
       <div style={{ marginTop: 18 }}>
         <div className="fp-card" style={{ padding: 26 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>🌿 รายรับ Passive</div>
-          <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: "#0F6E56" }}>
+          <div
+            onClick={() => toggle("passive")}
+            style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
+          >
+            <span style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🌿 รายรับ Passive</span>
+            {expanded.has("passive") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
+          </div>
+          <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: "#0F6E56", marginTop: 8 }}>
             {metrics.passiveRatio === null ? "—" : (metrics.passiveRatio * 100).toFixed(1) + "%"}
           </div>
-          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 3, marginBottom: 6 }}>ของรายจ่ายรวมในรอบนี้ มาจาก Passive Income</div>
-          <StatRow label="รายได้ Active" value={fmt(metrics.incomeActive)} />
-          <StatRow label="รายได้ Passive" value={fmt(metrics.incomePassive)} />
-          <StatRow label="รายจ่ายประจำ (คงที่)" value={fmt(metrics.expenseFixed)} />
-          <StatRow label="รายจ่ายทั่วไป" value={fmt(metrics.expenseVariable)} />
-          <StatRow label="รายจ่ายออมและลงทุน" value={fmt(metrics.expenseInvest)} />
-          <StatRow label="เงินคงเหลือในรอบนี้" value={fmt(metrics.savings)} big />
+          {expanded.has("passive") && (
+            <>
+              <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 3, marginBottom: 6 }}>ของรายจ่ายรวมในรอบนี้ มาจาก Passive Income</div>
+              <StatRow label="รายได้ Active" value={fmt(metrics.incomeActive)} />
+              <StatRow label="รายได้ Passive" value={fmt(metrics.incomePassive)} />
+              <StatRow label="รายจ่ายประจำ (คงที่)" value={fmt(metrics.expenseFixed)} />
+              <StatRow label="รายจ่ายทั่วไป" value={fmt(metrics.expenseVariable)} />
+              <StatRow label="รายจ่ายออมและลงทุน" value={fmt(metrics.expenseInvest)} />
+              <StatRow label="เงินคงเหลือในรอบนี้" value={fmt(metrics.savings)} big />
+            </>
+          )}
         </div>
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 16 }}>🎯 ความคืบหน้าเป้าหมาย</div>
-        {goals && goals.length ? goals.map((g) => {
-          const linked =
-            (investment || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0) +
-            (liquid || []).filter((a) => a.goal_id === g.id).reduce((s, a) => s + Number(a.current_value || 0), 0);
-          const pct = Math.min(100, (linked / g.target) * 100);
-          return (
-            <div key={g.id} style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 13, marginBottom: 6 }}>
-                <span>{g.name} <span style={{ color: "var(--ink-soft)", fontSize: 12 }}>({g.type})</span></span>
-                <span style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                  <span className="fp-num">{fmt(linked)} / {fmt(g.target)}</span>
-                  <span className="fp-num" style={{ fontWeight: 600 }}>{pct.toFixed(0)}%</span>
-                </span>
-              </div>
-              <div style={{ height: 10, background: "#FBF2FF", borderRadius: 999, overflow: "hidden" }}>
-                <div style={{ width: pct + "%", height: "100%", background: "#D4577E", borderRadius: 999 }} />
-              </div>
+        <div
+          onClick={() => toggle("goals")}
+          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
+        >
+          <span style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🎯 ความคืบหน้าเป้าหมาย</span>
+          {expanded.has("goals") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
+        </div>
+        {goalProgress.length ? (
+          expanded.has("goals") ? (
+            <div style={{ marginTop: 16 }}>
+              {goalProgress.map(({ goal: g, linked, pct }) => (
+                <div key={g.id} style={{ marginBottom: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 13, marginBottom: 6 }}>
+                    <span>{g.name} <span style={{ color: "var(--ink-soft)", fontSize: 12 }}>({g.type})</span></span>
+                    <span style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                      <span className="fp-num">{fmt(linked)} / {fmt(g.target)}</span>
+                      <span className="fp-num" style={{ fontWeight: 600 }}>{pct.toFixed(0)}%</span>
+                    </span>
+                  </div>
+                  <div style={{ height: 10, background: "#FBF2FF", borderRadius: 999, overflow: "hidden" }}>
+                    <div style={{ width: pct + "%", height: "100%", background: "#D4577E", borderRadius: 999 }} />
+                  </div>
+                </div>
+              ))}
             </div>
-          );
-        }) : <EmptyState text="ยังไม่มีเป้าหมาย" />}
+          ) : (
+            <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 10 }}>
+              {goalProgress.length} เป้าหมาย · เฉลี่ยคืบหน้า {avgGoalPct.toFixed(0)}%
+            </div>
+          )
+        ) : <EmptyState text="ยังไม่มีเป้าหมาย" />}
       </div>
     </div>
   );

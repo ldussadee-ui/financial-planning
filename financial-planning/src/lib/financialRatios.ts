@@ -39,8 +39,8 @@ export function computeFinancialRatios(metrics: Metrics, debtServicePerMonth: nu
       totalIncome, livingExpense, (v) => v >= 1),
     ratio("passiveIncome", "Passive Income Ratio", "รายได้จากสินทรัพย์ ÷ ค่าใช้จ่ายรวม", "≥ 1 เท่า", "x",
       metrics.incomePassive, livingExpense, (v) => v >= 1),
-    ratio("basicLiquidity", "อัตราส่วนสภาพคล่องพื้นฐาน", "สินทรัพย์สภาพคล่อง ÷ ค่าใช้จ่ายต่อเดือน", "3–6 เท่า", "x",
-      metrics.totalLiquid, livingExpense, (v) => v >= 3 && v <= 6),
+    ratio("basicLiquidity", "อัตราส่วนสภาพคล่องพื้นฐาน", "สินทรัพย์สภาพคล่อง ÷ ค่าใช้จ่ายต่อเดือน", "≥ 3 เท่า (แนะนำ 3–6 เท่า)", "x",
+      metrics.totalLiquid, livingExpense, (v) => v >= 3),
     ratio("liquidityToNetWorth", "สภาพคล่องต่อความมั่งคั่งสุทธิ", "สินทรัพย์สภาพคล่อง ÷ ความมั่งคั่งสุทธิ", "≥ 15%", "%",
       metrics.totalLiquid, netWorth, (v) => v >= 15),
     ratio("wealth", "อัตราส่วนความมั่งคั่ง", "ความมั่งคั่งสุทธิ ÷ สินทรัพย์รวม", "≥ 50%", "%",
@@ -58,9 +58,13 @@ export function computeFinancialRatios(metrics: Metrics, debtServicePerMonth: nu
   ];
 }
 
-// Short, actionable advice shown only under a failing ratio card. Basic
-// liquidity is the one two-sided range (3–6x), so it needs to explain
-// which direction the number missed by.
+// Short, actionable advice shown only under a failing ratio card.
+// Basic liquidity only fails on the low side (< 3x) — it no longer flags
+// "too much" cash as a failure, since that signal is already covered by
+// the investment ratio, and treating both as hard failures at once could
+// make this ratio and liquidityToNetWorth read as contradicting each
+// other (plenty of liquidity relative to a still-small net worth doesn't
+// mean too much relative to spending, and vice versa).
 export function getRatioAdvice(r: FinancialRatio): string | null {
   if (r.status !== "fail" || r.value === null) return null;
   switch (r.key) {
@@ -69,9 +73,7 @@ export function getRatioAdvice(r: FinancialRatio): string | null {
     case "passiveIncome":
       return "รายได้แบบ Passive ยังน้อย ลองสร้างสินทรัพย์ที่สร้างรายได้ เช่น เงินปันผล ดอกเบี้ย หรือค่าเช่า";
     case "basicLiquidity":
-      return r.value < 3
-        ? "เงินสำรองสภาพคล่องยังน้อยไป ควรมีสำรองให้พอใช้จ่าย 3–6 เดือน"
-        : "มีเงินสดสำรองเยอะเกินความจำเป็น ลองนำส่วนเกินไปลงทุนเพื่อผลตอบแทนที่ดีขึ้น";
+      return "เงินสำรองสภาพคล่องยังน้อยไป ควรมีสำรองให้พอใช้จ่าย 3–6 เดือน";
     case "liquidityToNetWorth":
       return "สัดส่วนเงินสด/เงินฝากต่อความมั่งคั่งสุทธิยังต่ำ ลองเพิ่มเงินสำรองสภาพคล่อง";
     case "wealth":

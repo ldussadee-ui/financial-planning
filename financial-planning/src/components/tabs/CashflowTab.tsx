@@ -1,12 +1,11 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { categoryBudgetStatus, daysFasterToGoal, fmt, fmtRange, hoursOfWork } from "@/lib/calc";
+import { categoryBudgetStatus, daysFasterToGoal, fmt, fmtRange, getCycleRange, hoursOfWork } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
-import { useMetrics } from "@/hooks/useMetrics";
 import { useSetting } from "@/hooks/useSetting";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
@@ -24,11 +23,21 @@ function chipStyle(active: boolean): CSSProperties {
     borderRadius: 999, padding: "7px 13px", fontSize: 12.5, fontWeight: 500, cursor: "pointer",
   };
 }
+const navButtonStyle: CSSProperties = {
+  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
+  borderRadius: 999, width: 26, height: 26, fontSize: 13, cursor: "pointer", lineHeight: "1",
+};
+const sum = (arr: CashFlowEntry[]) => arr.reduce((s, c) => s + Number(c.amount || 0), 0);
 
 export function CashflowTab() {
-  const { metrics, cycleRange } = useMetrics();
   const [cycleStartDay, setCycleStartDay] = useSetting<number>("cycleStartDay", 1);
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
+  const [cycleOffset, setCycleOffset] = useState(0);
+  const cycleRange = useMemo(() => {
+    const today = new Date();
+    const ref = new Date(today.getFullYear(), today.getMonth() + cycleOffset, 15);
+    return getCycleRange(cycleStartDay, shiftWeekend, ref);
+  }, [cycleStartDay, shiftWeekend, cycleOffset]);
   const { hourlyWage } = useHourlyWage();
   const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
   const { map: budgetMap } = useBudgets();
@@ -56,17 +65,29 @@ export function CashflowTab() {
     return d >= cycleRange.start && d <= cycleRange.end;
   });
   const income = cycleCF.filter((c) => c.type === "Income");
+  const incomeActive = income.filter((c) => c.incomeClass === "Active");
+  const incomePassive = income.filter((c) => c.incomeClass === "Passive");
   const fixedExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Fixed");
   const investExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Invest");
   const varExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class !== "Fixed" && c.expense_class !== "Invest");
   const budgetStatus = categoryBudgetStatus(cycleCF, budgetMap);
+  const isCurrentCycle = cycleOffset === 0;
 
   return (
     <div>
       <SectionHeader title="รายรับ-จ่าย 💸" sub="รายรับแยก Active/Passive และรายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนให้อัตโนมัติ" />
 
       <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
-        <span>🗓️ รอบบัญชีปัจจุบัน: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange)}</b></span>
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <button type="button" onClick={() => setCycleOffset((o) => o - 1)} style={navButtonStyle} aria-label="รอบก่อนหน้า">‹</button>
+          🗓️ {isCurrentCycle ? "รอบบัญชีปัจจุบัน" : "รอบบัญชี"}: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange)}</b>
+          <button type="button" onClick={() => setCycleOffset((o) => o + 1)} style={navButtonStyle} aria-label="รอบถัดไป">›</button>
+          {!isCurrentCycle && (
+            <button type="button" onClick={() => setCycleOffset(0)} style={{ ...chipStyle(false), padding: "5px 11px", fontSize: 11.5 }}>
+              กลับไปรอบปัจจุบัน
+            </button>
+          )}
+        </span>
         <DayPicker value={cycleStartDay} onChange={setCycleStartDay} shiftWeekend={shiftWeekend} onShiftWeekendChange={setShiftWeekend} />
         <span style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
           <Link href="/cashflow/reports" style={{ ...chipStyle(false), textDecoration: "none" }}>
@@ -80,23 +101,23 @@ export function CashflowTab() {
 
       <NestedGroup
         label="Income"
-        amount={fmt(metrics.incomeActive + metrics.incomePassive)}
+        amount={fmt(sum(incomeActive) + sum(incomePassive))}
         accent="#0F6E56"
         tint="#EFFBF6"
         subGroups={[
-          { label: `Active — ${fmt(metrics.incomeActive)}`, items: renderByDay(income.filter((c) => c.incomeClass === "Active"), remove, openEdit) },
-          { label: `Passive — ${fmt(metrics.incomePassive)}`, items: renderByDay(income.filter((c) => c.incomeClass === "Passive"), remove, openEdit) },
+          { label: `Active — ${fmt(sum(incomeActive))}`, items: renderByDay(incomeActive, remove, openEdit) },
+          { label: `Passive — ${fmt(sum(incomePassive))}`, items: renderByDay(incomePassive, remove, openEdit) },
         ]}
       />
       <NestedGroup
         label="Expense"
-        amount={fmt(metrics.expenseFixed + metrics.expenseVariable + metrics.expenseInvest)}
+        amount={fmt(sum(fixedExp) + sum(varExp) + sum(investExp))}
         accent="#D07A4E"
         tint="#FFEFE6"
         subGroups={[
-          { label: `Fixed (ประจำ) — ${fmt(metrics.expenseFixed)}`, items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
-          { label: `ทั่วไป — ${fmt(metrics.expenseVariable)}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
-          { label: `ออมและลงทุน — ${fmt(metrics.expenseInvest)}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
+          { label: `Fixed (ประจำ) — ${fmt(sum(fixedExp))}`, items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
+          { label: `ทั่วไป — ${fmt(sum(varExp))}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
+          { label: `ออมและลงทุน — ${fmt(sum(investExp))}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
         ]}
       />
 
@@ -118,7 +139,7 @@ export function CashflowTab() {
       )}
 
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 4 }}>
-        * แสดงเฉพาะรายการในรอบบัญชีปัจจุบันด้านบน · รายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
+        * แสดงเฉพาะรายการในรอบบัญชีที่เลือกด้านบน (เลื่อน ‹ › ดูรอบอื่นได้) · รายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
       </div>
     </div>
   );
