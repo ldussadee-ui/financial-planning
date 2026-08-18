@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.5.2] - 2026-08-19
+
+### Fixed
+- Asset trend chart legend order (was jumping "Net Worth" to the front) — Recharts' default legend sorting is alphabetical, which ranks the Latin label ahead of the Thai ones regardless of bar order; now matches the bars left-to-right (สินทรัพย์ทั้งหมด/หนี้สินทั้งหมด/Net Worth)
+
 ## [0.5.1] - 2026-08-19
 
 ### Fixed

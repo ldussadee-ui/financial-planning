@@ -64,7 +64,9 @@ export function AssetTrendTab() {
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
               <Tooltip formatter={(v) => fmt(Number(v))} />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
+              {/* itemSorter default ("value") sorts alphabetically, which puts the
+                  Latin "Net Worth" ahead of the Thai labels regardless of Bar order */}
+              <Legend wrapperStyle={{ fontSize: 12 }} itemSorter={null} />
               {SERIES.map((s) => (
                 <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} radius={[4, 4, 0, 0]} />
               ))}
