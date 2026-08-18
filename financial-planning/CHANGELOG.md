@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.5.1] - 2026-08-19
+
+### Fixed
+- Category chips in the income/expense entry form couldn't be reordered on mobile — they used the HTML5 drag-and-drop API, which never fires on touch; switched to Pointer Events so long-press-and-drag reordering works on phones
+
+### Added
+- "ของใช้ในบ้าน" default expense category, added retroactively for existing installs too
+
 ## [0.5.0] - 2026-08-19
 
 ### Added

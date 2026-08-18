@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { createContext, useContext, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { classifyExpense, classifyIncome, daysFasterToGoal, hoursOfWork, isoToday, uid } from "@/lib/calc";
@@ -81,7 +81,13 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
 
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressFired = useRef(false);
-  const dragFrom = useRef<number | null>(null);
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+  // Pointer handlers read/write these refs (not the state above) so the
+  // reorder math never depends on a re-render having landed yet — state is
+  // only for the opacity/outline visual feedback, which can lag a frame.
+  const draggingIdxRef = useRef<number | null>(null);
+  const dragOverIdxRef = useRef<number | null>(null);
 
   const preview = form.type === "Expense" ? classifyExpense(form.category) : classifyIncome(form.category);
   const cats = (allCategories || []).filter((c) => c.entryType === form.type);
@@ -120,15 +126,39 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
     void db.categories.delete(id);
     if (form.category === label) setForm({ ...form, category: "" });
   };
-  const onDragStart = (idx: number) => { dragFrom.current = idx; };
-  const onDrop = (idx: number) => {
-    const from = dragFrom.current;
-    if (from === null || from === idx) return;
+  // Pointer Events (not the HTML5 drag-and-drop API) so reordering works on
+  // touch devices — native `draggable`/`ondragstart` never fires on mobile.
+  const onChipPointerDown = (idx: number) => (e: ReactPointerEvent) => {
+    if (!editing) return;
+    e.preventDefault();
+    draggingIdxRef.current = idx;
+    dragOverIdxRef.current = idx;
+    setDraggingIdx(idx);
+    setDragOverIdx(idx);
+  };
+  const onCatsPointerMove = (e: ReactPointerEvent) => {
+    if (draggingIdxRef.current === null) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const wrapper = el instanceof Element ? el.closest<HTMLElement>("[data-cat-idx]") : null;
+    if (!wrapper) return;
+    const idx = Number(wrapper.dataset.catIdx);
+    if (!Number.isNaN(idx) && idx !== dragOverIdxRef.current) {
+      dragOverIdxRef.current = idx;
+      setDragOverIdx(idx);
+    }
+  };
+  const onCatsPointerUp = () => {
+    const from = draggingIdxRef.current;
+    const to = dragOverIdxRef.current;
+    draggingIdxRef.current = null;
+    dragOverIdxRef.current = null;
+    setDraggingIdx(null);
+    setDragOverIdx(null);
+    if (from === null || to === null || from === to) return;
     const next = [...cats];
     const [moved] = next.splice(from, 1);
-    next.splice(idx, 0, moved);
+    next.splice(to, 0, moved);
     void db.categories.bulkPut(next.map((c, i) => ({ ...c, order: i })));
-    dragFrom.current = null;
   };
 
   const closeModal = () => {
@@ -205,16 +235,25 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
           <Field label="วันที่"><input type="date" style={inputStyle} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
 
           <Field label="หมวดหมู่" wide>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, maxWidth: 480 }}>
+            <div
+              style={{ display: "flex", flexWrap: "wrap", gap: 10, maxWidth: 480 }}
+              onPointerMove={onCatsPointerMove}
+              onPointerUp={onCatsPointerUp}
+              onPointerCancel={onCatsPointerUp}
+            >
               {cats.map((c, idx) => (
                 <div
                   key={c.id}
-                  className={editing ? "fp-wiggle" : ""}
-                  style={{ position: "relative", display: "inline-block" }}
-                  draggable={editing}
-                  onDragStart={() => onDragStart(idx)}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => onDrop(idx)}
+                  data-cat-idx={idx}
+                  className={editing && draggingIdx !== idx ? "fp-wiggle" : ""}
+                  style={{
+                    position: "relative", display: "inline-block",
+                    touchAction: editing ? "none" : undefined,
+                    opacity: draggingIdx === idx ? 0.4 : 1,
+                    outline: dragOverIdx === idx && draggingIdx !== null && draggingIdx !== idx ? "2px dashed #7FD1C9" : "none",
+                    outlineOffset: 3,
+                  }}
+                  onPointerDown={onChipPointerDown(idx)}
                 >
                   <button
                     type="button"

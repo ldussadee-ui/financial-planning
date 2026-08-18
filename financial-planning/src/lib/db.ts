@@ -183,6 +183,31 @@ class FinancialPlanningDB extends Dexie {
       budgets: "category",
       netWorthHistory: "date",
     });
+
+    // Adds "ของใช้ในบ้าน" expense category chip retroactively so existing
+    // installs get it without a data reset (fresh installs get it from
+    // DEFAULT_EXPENSE_LABELS via seedIfEmpty already).
+    this.version(105)
+      .stores({
+        liquidAssets: "id, goal_id",
+        investmentAssets: "id, goal_id, category",
+        personalAssets: "id, liability_id",
+        liabilities: "id, term",
+        goals: "id",
+        cashflow: "id, date, type",
+        categories: "id, entryType, order",
+        settings: "key",
+        paymentMethods: "id, kind",
+        budgets: "category",
+        netWorthHistory: "date",
+      })
+      .upgrade(async (tx) => {
+        const table = tx.table<CategoryChip, string>("categories");
+        const existing = await table.where("entryType").equals("Expense").toArray();
+        if (existing.some((c) => c.label === "ของใช้ในบ้าน")) return;
+        const maxOrder = existing.reduce((m, c) => Math.max(m, c.order), -1);
+        await table.add({ id: uid(), entryType: "Expense", label: "ของใช้ในบ้าน", icon: ICON_MAP["ของใช้ในบ้าน"], order: maxOrder + 1 });
+      });
   }
 }
 
