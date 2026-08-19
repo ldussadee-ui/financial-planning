@@ -35,14 +35,22 @@ function badgeLabel(type: CashFlowType, cls: string) {
   }
   return cls === "Passive" ? "🌿 ตรวจพบว่าเป็นรายรับ Passive" : "💪 ตรวจพบว่าเป็นรายรับ Active";
 }
+// Income classes share the app's original green (Active = deeper, Passive =
+// lighter); expense classes share the original orange (Fixed = deeper,
+// ทั่วไป = lighter) — matches the Income/Expense group colors elsewhere, so
+// the hue itself signals income vs expense while the shade signals which
+// class. Invest keeps the same deep green as Active — they're never shown
+// side by side, so the reuse isn't ambiguous in practice.
 function badgeStyle(type: CashFlowType, cls: string): CSSProperties {
-  const isSoft = (type === "Expense" && cls === "Fixed") || (type === "Income" && cls === "Passive");
-  const isInvest = type === "Expense" && cls === "Invest";
-  return {
-    fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20,
-    background: isInvest ? "#E1F5EE" : isSoft ? "#DDEFFB" : "#FFE3D6",
-    color: isInvest ? "#0F6E56" : isSoft ? "#4E93B5" : "#D07A4E",
-  };
+  const base = { fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20 };
+  if (type === "Expense") {
+    if (cls === "Invest") return { ...base, background: "#E1F5EE", color: "#0F6E56" };
+    if (cls === "Fixed") return { ...base, background: "#FFE3D6", color: "#D07A4E" };
+    return { ...base, background: "#FFF1E6", color: "#E3A874" };
+  }
+  return cls === "Passive"
+    ? { ...base, background: "#EEF9F2", color: "#5FA98A" }
+    : { ...base, background: "#DFF3EA", color: "#0F6E56" };
 }
 
 interface CashflowEntryApi {

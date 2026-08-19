@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { fmt } from "@/lib/calc";
 import { useNetWorthTrend } from "@/hooks/useNetWorthTrend";
 import { useNetWorthTable } from "@/hooks/useNetWorthTable";
-import { SectionHeader, EmptyState } from "@/components/ui";
+import { SectionHeader, EmptyState, SegmentedControl } from "@/components/ui";
 import type { AssetGranularity } from "@/lib/netWorthBuckets";
 
 const SERIES = [
@@ -14,23 +14,14 @@ const SERIES = [
   { key: "netWorth", name: "Net Worth", color: "#0F6E56" },
 ] as const;
 
-const GRANULARITY_LABEL: Record<AssetGranularity, string> = {
-  month: "รายเดือน", quarter: "รายไตรมาส", halfYear: "รายครึ่งปี", year: "รายปี",
-};
+const GRANULARITY_OPTIONS: { value: AssetGranularity; label: string }[] = [
+  { value: "month", label: "รายเดือน" }, { value: "quarter", label: "รายไตรมาส" },
+  { value: "halfYear", label: "รายครึ่งปี" }, { value: "year", label: "รายปี" },
+];
 const GRANULARITY_COUNT: Record<AssetGranularity, number> = { month: 6, quarter: 4, halfYear: 4, year: 5 };
-const TABLE_COUNTS = [3, 6, 12, 24];
+const TABLE_COUNT_OPTIONS = [3, 6, 12, 24].map((n) => ({ value: String(n), label: `${n} ด.` }));
 
 const compactAmount = (n: number) => (Math.abs(n) >= 1000 ? Math.round(n / 1000) + "k" : String(n));
-
-function toggleStyle(active: boolean): CSSProperties {
-  return {
-    border: active ? "none" : "1px solid var(--line)",
-    background: active ? "#7FD1C9" : "#FFFCFA",
-    color: active ? "#fff" : "var(--ink-soft)",
-    borderRadius: 999, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
-  };
-}
-const smallToggleStyle = (active: boolean): CSSProperties => ({ ...toggleStyle(active), padding: "5px 11px", fontSize: 12, height: 28 });
 
 const thStyle: CSSProperties = { textAlign: "right", padding: "8px 10px", fontSize: 12, color: "var(--ink-soft)", fontWeight: 600, whiteSpace: "nowrap" };
 const tdStyle: CSSProperties = { padding: "8px 10px", whiteSpace: "nowrap" };
@@ -48,12 +39,8 @@ export function AssetTrendTab() {
     <div>
       <SectionHeader title="แนวโน้มทรัพย์สิน 📉" sub="เทียบมูลค่าทรัพย์สินย้อนหลัง จาก snapshot ล่าสุดที่บันทึกไว้ในแต่ละช่วง — เริ่มนับจากวันนี้เป็นต้นไป" />
 
-      <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
-        {(["month", "quarter", "halfYear", "year"] as AssetGranularity[]).map((g) => (
-          <button key={g} type="button" onClick={() => setGranularity(g)} style={toggleStyle(granularity === g)}>
-            {GRANULARITY_LABEL[g]}
-          </button>
-        ))}
+      <div style={{ marginBottom: 18 }}>
+        <SegmentedControl options={GRANULARITY_OPTIONS} value={granularity} onChange={setGranularity} />
       </div>
 
       <div className="fp-card" style={{ padding: 20, marginBottom: 18 }}>
@@ -80,12 +67,8 @@ export function AssetTrendTab() {
       <div className="fp-card" style={{ padding: 20, marginTop: 4 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
           <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>ตารางเปรียบเทียบรายเดือน</div>
-          <div style={{ display: "flex", gap: 6 }}>
-            {TABLE_COUNTS.map((n) => (
-              <button key={n} type="button" onClick={() => setTableCount(n)} style={smallToggleStyle(tableCount === n)}>
-                {n} ด.
-              </button>
-            ))}
+          <div style={{ width: 200 }}>
+            <SegmentedControl small options={TABLE_COUNT_OPTIONS} value={String(tableCount)} onChange={(v) => setTableCount(Number(v))} />
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { Plus, Trash2, Pencil, X } from "lucide-react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { Plus, Trash2, ChevronRight, X } from "lucide-react";
 import { fmt } from "@/lib/calc";
 
 export function SectionHeader({ title, sub, chip }: { title: string; sub?: string; chip?: string }) {
@@ -28,11 +28,40 @@ export function Modal({
   title: string;
   children: ReactNode;
 }) {
+  const [dragY, setDragY] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  // Refs (not the state above) drive the dismiss decision so it never
+  // depends on a re-render having landed yet — state is only for the
+  // translateY visual, which can lag a frame without breaking anything.
+  const startYRef = useRef<number | null>(null);
+  const dragYRef = useRef(0);
+
   if (!open) return null;
+
+  const onHandlePointerDown = (e: ReactPointerEvent) => {
+    startYRef.current = e.clientY;
+    setDragging(true);
+  };
+  const onSheetPointerMove = (e: ReactPointerEvent) => {
+    if (startYRef.current === null) return;
+    const delta = Math.max(0, e.clientY - startYRef.current);
+    dragYRef.current = delta;
+    setDragY(delta);
+  };
+  const onSheetPointerUp = () => {
+    if (startYRef.current === null) return;
+    startYRef.current = null;
+    setDragging(false);
+    setDragY(0);
+    if (dragYRef.current > 120) onClose();
+    dragYRef.current = 0;
+  };
+
   return (
     <div
       style={{
-        position: "fixed", inset: 0, background: "rgba(74,68,88,0.35)", zIndex: 100,
+        position: "fixed", inset: 0, background: "rgba(28,24,34,0.32)",
+        backdropFilter: "blur(3px)", WebkitBackdropFilter: "blur(3px)", zIndex: 100,
         display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 12px",
       }}
       onClick={onClose}
@@ -42,19 +71,29 @@ export function Modal({
         style={{
           width: "100%", maxWidth: 480, maxHeight: "88vh", overflowY: "auto",
           padding: 22, borderRadius: "22px 22px 0 0", marginBottom: 0,
+          transform: `translateY(${dragY}px)`, transition: dragging ? "none" : "transform 0.2s ease",
         }}
         onClick={(e) => e.stopPropagation()}
+        onPointerMove={onSheetPointerMove}
+        onPointerUp={onSheetPointerUp}
+        onPointerCancel={onSheetPointerUp}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <div className="fp-display" style={{ fontSize: 18, fontWeight: 600, color: "#6B5490" }}>{title}</div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="ปิด"
-            style={{ border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-soft)", padding: 4 }}
-          >
-            <X size={20} />
-          </button>
+        <div
+          onPointerDown={onHandlePointerDown}
+          style={{ margin: "-22px -22px 10px", padding: "10px 22px 6px", cursor: "grab", touchAction: "none" }}
+        >
+          <div style={{ width: 36, height: 5, background: "#e3d9ce", borderRadius: 999, margin: "0 auto 14px" }} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="fp-display" style={{ fontSize: 18, fontWeight: 600, color: "#6B5490" }}>{title}</div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="ปิด"
+              style={{ border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-soft)", padding: 4 }}
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
         {children}
       </div>
@@ -115,6 +154,48 @@ export function Field({ label, wide, children }: { label: string; wide?: boolean
   );
 }
 
+// Single-track control for choosing one of a small, fixed set of options —
+// e.g. a granularity or sub-tab switch — as an alternative to a row of
+// separate chip buttons, matching iOS's segmented control pattern.
+export function SegmentedControl<T extends string>({
+  options, value, onChange, small,
+}: {
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+  small?: boolean;
+}) {
+  const n = options.length;
+  const idx = Math.max(0, options.findIndex((o) => o.value === value));
+  return (
+    <div style={{ position: "relative", display: "flex", background: "var(--track)", borderRadius: small ? 9 : 11, padding: 3 }}>
+      <div
+        style={{
+          position: "absolute", top: 3, bottom: 3,
+          left: `calc(${(idx * 100) / n}% + 3px)`, width: `calc(${100 / n}% - 6px)`,
+          background: "#fff", borderRadius: small ? 7 : 8, boxShadow: "0 1px 4px rgba(74,68,88,0.18)",
+          transition: "left 0.2s ease",
+        }}
+      />
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          onClick={() => onChange(o.value)}
+          style={{
+            position: "relative", zIndex: 1, flex: 1, textAlign: "center", border: "none", background: "transparent",
+            cursor: "pointer", padding: small ? "5px 2px" : "7px 4px",
+            fontSize: small ? 11 : 12.5, fontWeight: 600,
+            color: o.value === value ? "var(--ink)" : "var(--ink-soft)",
+          }}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function AddButton({ onClick, label = "เพิ่ม" }: { onClick: () => void; label?: string }) {
   return (
     <button
@@ -152,7 +233,7 @@ export function NestedGroup({
   amount: string;
   accent: string;
   tint: string;
-  subGroups: { label: string; items: ReactNode[] }[];
+  subGroups: { label: string; amount: string; items: ReactNode[]; dot?: string }[];
 }) {
   return (
     <div style={{ marginBottom: 18 }}>
@@ -165,11 +246,16 @@ export function NestedGroup({
           <div key={sg.label}>
             <div
               style={{
-                fontFamily: "var(--font-prompt), 'Prompt', sans-serif", fontSize: 12, fontWeight: 500, color: "#8B7FA0",
+                display: "flex", alignItems: "center", gap: 7,
+                fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
                 padding: "10px 14px 4px", marginTop: i > 0 ? 6 : 0, borderTop: i > 0 ? "1px solid var(--line)" : "none",
               }}
             >
-              {sg.label}
+              {sg.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: sg.dot, flexShrink: 0 }} />}
+              <span style={{ fontSize: 13, fontWeight: 600, color: sg.dot || "#8B7FA0" }}>{sg.label}</span>
+              <span className="fp-num" style={{ marginLeft: "auto", fontSize: 13, fontWeight: 700, color: sg.dot || "#8B7FA0" }}>
+                {sg.amount}
+              </span>
             </div>
             {sg.items.length ? sg.items : <EmptyState text="ยังไม่มีรายการ" />}
           </div>
@@ -195,8 +281,8 @@ export function Row({
       {date && <span style={{ fontSize: 12, color: "var(--ink-soft)", background: "#F5EFFF", padding: "2px 8px", borderRadius: 999 }}>{date}</span>}
       <span className="fp-num" style={{ fontSize: 14, fontWeight: 600 }}>{right}</span>
       {onClick && (
-        <span style={{ color: "var(--ink-soft)" }} aria-hidden>
-          <Pencil size={12} />
+        <span style={{ color: "var(--ink-soft)", display: "flex" }} aria-hidden>
+          <ChevronRight size={16} />
         </span>
       )}
       <button

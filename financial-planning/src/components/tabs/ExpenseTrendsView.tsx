@@ -10,11 +10,13 @@ import { defaultPeriod, shiftPeriod, periodLabel, type Granularity, type Period 
 import { useExpensePeriod } from "@/hooks/useExpensePeriod";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useMonthlyCategoryTrend } from "@/hooks/useMonthlyCategoryTrend";
-import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
+import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl } from "@/components/ui";
 
 const CATEGORY_PALETTE = ["#FF9AA2", "#7FD1C9", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
 
-const GRANULARITY_LABEL: Record<Granularity, string> = { month: "เดือน", halfYear: "ครึ่งปี", year: "ปี" };
+const GRANULARITY_OPTIONS: { value: Granularity; label: string }[] = [
+  { value: "month", label: "รายเดือน" }, { value: "halfYear", label: "รายครึ่งปี" }, { value: "year", label: "รายปี" },
+];
 // A category budget is a monthly figure; scale it to however many months
 // the currently-viewed period spans so the comparison stays meaningful.
 const MONTHS_IN_PERIOD: Record<Granularity, number> = { month: 1, halfYear: 6, year: 12 };
@@ -105,12 +107,8 @@ export function ExpenseTrendsView() {
       </Link>
       <SectionHeader title="สรุปรายจ่ายตามช่วงเวลา 📊" sub="ดูว่าช่วงนั้นจ่ายอะไรไปบ้าง แยกประจำ/ทั่วไป/ออมและลงทุน และแยกตามหมวดหมู่" />
 
-      <div style={{ display: "flex", gap: 6, marginBottom: 18 }}>
-        {(["month", "halfYear", "year"] as Granularity[]).map((g) => (
-          <button key={g} type="button" onClick={() => changeGranularity(g)} style={toggleStyle(granularity === g)}>
-            ราย{GRANULARITY_LABEL[g]}
-          </button>
-        ))}
+      <div style={{ marginBottom: 18, maxWidth: 320 }}>
+        <SegmentedControl options={GRANULARITY_OPTIONS} value={granularity} onChange={changeGranularity} />
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 18 }}>

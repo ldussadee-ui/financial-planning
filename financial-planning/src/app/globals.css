@@ -10,6 +10,7 @@
   --mint: #b7e4c7;
   --line: #f2e9e1;
   --danger: #ff8c7a;
+  --track: #f0e6db;
 }
 
 html {
@@ -51,7 +52,7 @@ a {
 }
 .fp-card {
   background: var(--panel);
-  border-radius: 22px;
+  border-radius: 14px;
   box-shadow: 0 1px 3px rgba(74, 68, 88, 0.06);
 }
 .fp-chip {
@@ -71,13 +72,21 @@ a {
   border-radius: 16px;
 }
 .fp-row {
+  position: relative;
   border-radius: 16px;
   transition: background 0.15s ease;
 }
 .fp-row:hover {
   background: var(--bg);
 }
-.fp-row + .fp-row {
+/* Inset to roughly clear the row icon (30px) + row padding/gap, matching
+   the grouped-list divider style instead of a full-width line. */
+.fp-row + .fp-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 54px;
+  right: 14px;
   border-top: 1px solid var(--line);
 }
 input,

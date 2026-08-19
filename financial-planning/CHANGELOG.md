@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.6.0] - 2026-08-20
+
+### Added
+- iOS-style UI pass: segmented controls (asset sub-tabs, trend granularity, table row count, expense report granularity) replacing separate chip-button rows; bottom sheet gets a drag handle, blurred backdrop, and drag-to-dismiss; bottom nav bar is translucent/blurred with a filled icon for the active tab
+- Colored subgroup headers in the cashflow tab (Active/Passive/Fixed/ทั่วไป/ออมและลงทุน) — label and amount both tinted to the class's color and right-aligned, instead of a plain gray line
+
+### Changed
+- Grouped-list look app-wide: card corner radius reduced (22px → 14px), row dividers inset past the icon instead of full-width, and tappable rows show a trailing chevron instead of a pencil icon
+- Income/Expense entry badges now distinguish Active vs Passive (two shades of green) and Fixed vs ทั่วไป (two shades of orange), matching each section's own color instead of sharing one shade across income and expense
+
 ## [0.5.2] - 2026-08-19
 
 ### Fixed

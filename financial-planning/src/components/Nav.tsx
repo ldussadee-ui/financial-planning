@@ -61,10 +61,11 @@ export function BottomNav() {
       className="fp-bottomnav"
       style={{
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: "#FFFFFF", borderTop: "1px solid var(--line)",
+        background: "rgba(255,255,255,0.72)",
+        backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)",
+        borderTop: "1px solid rgba(74,68,88,0.08)",
         display: "flex", justifyContent: "space-around",
         paddingBottom: "env(safe-area-inset-bottom)",
-        boxShadow: "0 -1px 3px rgba(74,68,88,0.06)",
       }}
     >
       {NAV.map((n) => {
@@ -80,7 +81,7 @@ export function BottomNav() {
               fontWeight: active ? 600 : 400,
             }}
           >
-            <Icon size={19} strokeWidth={2} />
+            <Icon size={19} strokeWidth={2} fill={active ? "#7A5C9E" : "none"} />
             {n.label}
           </Link>
         );

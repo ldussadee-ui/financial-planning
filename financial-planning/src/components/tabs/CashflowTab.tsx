@@ -105,8 +105,8 @@ export function CashflowTab() {
         accent="#0F6E56"
         tint="#EFFBF6"
         subGroups={[
-          { label: `Active — ${fmt(sum(incomeActive))}`, items: renderByDay(incomeActive, remove, openEdit) },
-          { label: `Passive — ${fmt(sum(incomePassive))}`, items: renderByDay(incomePassive, remove, openEdit) },
+          { label: "Active", amount: fmt(sum(incomeActive)), dot: "#0F6E56", items: renderByDay(incomeActive, remove, openEdit) },
+          { label: "Passive", amount: fmt(sum(incomePassive)), dot: "#5FA98A", items: renderByDay(incomePassive, remove, openEdit) },
         ]}
       />
       <NestedGroup
@@ -115,9 +115,9 @@ export function CashflowTab() {
         accent="#D07A4E"
         tint="#FFEFE6"
         subGroups={[
-          { label: `Fixed (ประจำ) — ${fmt(sum(fixedExp))}`, items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
-          { label: `ทั่วไป — ${fmt(sum(varExp))}`, items: renderByDay(varExp, remove, openEdit, expenseExtra) },
-          { label: `ออมและลงทุน — ${fmt(sum(investExp))}`, items: renderByDay(investExp, remove, openEdit, expenseExtra) },
+          { label: "Fixed (ประจำ)", amount: fmt(sum(fixedExp)), dot: "#D07A4E", items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
+          { label: "ทั่วไป", amount: fmt(sum(varExp)), dot: "#E3A874", items: renderByDay(varExp, remove, openEdit, expenseExtra) },
+          { label: "ออมและลงทุน", amount: fmt(sum(investExp)), dot: "#0F6E56", items: renderByDay(investExp, remove, openEdit, expenseExtra) },
         ]}
       />
 
