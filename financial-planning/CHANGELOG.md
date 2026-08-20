@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.6.2] - 2026-08-20
+
+### Fixed
+- Calculator popup opened from inside another sheet (editing an asset or cashflow amount) still rendered incomplete after the 0.6.1 fix — the real cause was the drag-to-dismiss `transform` on the outer sheet, which (per CSS spec) turns it into a containing block for any `position:fixed` descendant, clipping the nested calculator to the outer sheet's own box instead of the real viewport. `transform` is now only applied while actively dragging, not at rest
+
 ## [0.6.1] - 2026-08-20
 
 ### Fixed

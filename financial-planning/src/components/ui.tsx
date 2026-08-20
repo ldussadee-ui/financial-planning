@@ -70,18 +70,22 @@ export function Modal({
         className="fp-card fp-sheet"
         style={{
           width: "100%", maxWidth: 480, overflowY: "auto",
-          padding: 22, borderRadius: "22px 22px 0 0", marginBottom: 0,
-          transform: `translateY(${dragY}px)`, transition: dragging ? "none" : "transform 0.2s ease",
+          padding: "14px 22px 22px", borderRadius: "22px 22px 0 0", marginBottom: 0,
+          // Only set `transform` while actually offset — a `transform` (even
+          // translateY(0)) makes this element a containing block for any
+          // position:fixed descendant, which breaks nested modals (e.g. the
+          // amount field's calculator popup opened from inside this sheet):
+          // the nested modal ends up clipped to this sheet's own box instead
+          // of the real viewport.
+          transform: dragY !== 0 ? `translateY(${dragY}px)` : undefined,
+          transition: dragging ? "none" : "transform 0.2s ease",
         }}
         onClick={(e) => e.stopPropagation()}
         onPointerMove={onSheetPointerMove}
         onPointerUp={onSheetPointerUp}
         onPointerCancel={onSheetPointerUp}
       >
-        <div
-          onPointerDown={onHandlePointerDown}
-          style={{ margin: "-22px -22px 10px", padding: "10px 22px 6px", cursor: "grab", touchAction: "none" }}
-        >
+        <div onPointerDown={onHandlePointerDown} style={{ cursor: "grab", touchAction: "none", marginBottom: 8 }}>
           <div style={{ width: 36, height: 5, background: "#e3d9ce", borderRadius: 999, margin: "0 auto 14px" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div className="fp-display" style={{ fontSize: 18, fontWeight: 600, color: "#6B5490" }}>{title}</div>
