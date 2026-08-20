@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.6.1] - 2026-08-20
+
+### Fixed
+- Calculator popup (and other bottom sheets) could render taller than the visible screen on mobile Safari, pushing the top rows off-screen while the address bar was showing — `vh` sizes against the viewport with browser chrome hidden, not the currently-visible one; switched to `dvh` (with a `vh` fallback) so the sheet sizes against what's actually visible
+
 ## [0.6.0] - 2026-08-20
 
 ### Added

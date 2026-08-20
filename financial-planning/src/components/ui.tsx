@@ -67,9 +67,9 @@ export function Modal({
       onClick={onClose}
     >
       <div
-        className="fp-card"
+        className="fp-card fp-sheet"
         style={{
-          width: "100%", maxWidth: 480, maxHeight: "88vh", overflowY: "auto",
+          width: "100%", maxWidth: 480, overflowY: "auto",
           padding: 22, borderRadius: "22px 22px 0 0", marginBottom: 0,
           transform: `translateY(${dragY}px)`, transition: dragging ? "none" : "transform 0.2s ease",
         }}
