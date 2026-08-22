@@ -1,4 +1,4 @@
-import type { InvestmentCategory, LiquidType, PersonalItemType, GoalType, LiquidityTier } from "./types";
+import type { InvestmentCategory, LiquidType, PersonalItemType, GoalType, LiquidityTier, PolicyType } from "./types";
 
 export interface CatInfo {
   key: InvestmentCategory;
@@ -22,6 +22,7 @@ export const LIQUID_COLOR = "#BFE3F0";
 
 export const PERSONAL_TYPES: PersonalItemType[] = ["รถยนต์", "บ้านอยู่เอง", "ของสะสม", "เครื่องประดับ", "เฟอร์นิเจอร์", "อื่นๆ"];
 export const GOAL_TYPES: GoalType[] = ["เกษียณ", "บ้าน", "การศึกษา", "ท่องเที่ยว", "กองทุนฉุกเฉิน", "อื่นๆ"];
+export const POLICY_TYPES: PolicyType[] = ["ชีวิต", "สุขภาพ", "อุบัติเหตุ", "โรคร้ายแรง", "คุ้มครองสินเชื่อ"];
 
 export const ICON_MAP: Record<string, string> = {
   "เงินเดือน": "💼", "ฟรีแลนซ์": "💻", "โบนัส": "🎁", "ปันผลหุ้น/DR": "📈", "ดอกเบี้ย": "🏦", "ค่าเช่า": "🏠",

@@ -13,6 +13,7 @@ import type {
   PaymentMethod,
   Budget,
   NetWorthSnapshot,
+  InsurancePolicy,
 } from "./types";
 
 export const CASH_METHOD_NAME = "เงินสด";
@@ -29,6 +30,7 @@ class FinancialPlanningDB extends Dexie {
   paymentMethods!: EntityTable<PaymentMethod, "id">;
   budgets!: EntityTable<Budget, "category">;
   netWorthHistory!: EntityTable<NetWorthSnapshot, "date">;
+  insurancePolicies!: EntityTable<InsurancePolicy, "id">;
 
   constructor() {
     super("financial-planning-db");
@@ -208,6 +210,23 @@ class FinancialPlanningDB extends Dexie {
         const maxOrder = existing.reduce((m, c) => Math.max(m, c.order), -1);
         await table.add({ id: uid(), entryType: "Expense", label: "ของใช้ในบ้าน", icon: ICON_MAP["ของใช้ในบ้าน"], order: maxOrder + 1 });
       });
+
+    // Insurance policies for the risk-protection page (life/health/
+    // accident/critical-illness/credit-life gap checks).
+    this.version(106).stores({
+      liquidAssets: "id, goal_id",
+      investmentAssets: "id, goal_id, category",
+      personalAssets: "id, liability_id",
+      liabilities: "id, term",
+      goals: "id",
+      cashflow: "id, date, type",
+      categories: "id, entryType, order",
+      settings: "key",
+      paymentMethods: "id, kind",
+      budgets: "category",
+      netWorthHistory: "date",
+      insurancePolicies: "id, policyType",
+    });
   }
 }
 

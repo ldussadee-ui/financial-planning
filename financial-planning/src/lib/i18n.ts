@@ -51,6 +51,7 @@ export const TR = {
     noGoals: { th: "ยังไม่มีเป้าหมาย", en: "No goals yet" } as Text,
     goalsCountSuffix: { th: "เป้าหมาย", en: "goals" } as Text,
     avgProgress: { th: "เฉลี่ยคืบหน้า", en: "avg. progress" } as Text,
+    riskProtection: { th: "การป้องกันความเสี่ยง", en: "Risk Protection" } as Text,
   },
   common: {
     cancel: { th: "ยกเลิก", en: "Cancel" } as Text,
@@ -285,6 +286,60 @@ export const TR = {
     noData: { th: "– ไม่มีข้อมูล", en: "– No data" } as Text,
     times: { th: " เท่า", en: "x" } as Text,
   },
+  insurance: {
+    title: { th: "การป้องกันความเสี่ยง 🛡️", en: "Risk Protection 🛡️" } as Text,
+    subtitle: {
+      th: "เช็คว่าประกันที่มีอยู่ครอบคลุมความเสี่ยงหลักหรือยัง — คำนวณจากมาตรฐานทั่วไป ไม่ใช่คำแนะนำเฉพาะบุคคล",
+      en: "Checks whether your existing insurance covers the main risks — based on general standards, not personalized advice",
+    } as Text,
+    checksTitle: { th: "สรุปความคุ้มครอง", en: "Coverage Summary" } as Text,
+    policiesTitle: { th: "กรมธรรม์ของฉัน", en: "My Policies" } as Text,
+    addTitle: { th: "เพิ่มกรมธรรม์", en: "Add Policy" } as Text,
+    editTitle: { th: "แก้ไขกรมธรรม์", en: "Edit Policy" } as Text,
+    empty: { th: "ยังไม่มีกรมธรรม์ประกัน", en: "No insurance policies yet" } as Text,
+    policyType: { th: "ประเภทกรมธรรม์", en: "Policy Type" } as Text,
+    provider: { th: "บริษัทประกัน", en: "Provider" } as Text,
+    providerPlaceholder: { th: "เช่น AIA, เมืองไทยประกันชีวิต", en: "e.g. AIA, Prudential" } as Text,
+    sumAssured: { th: "ทุนประกัน", en: "Sum Assured" } as Text,
+    annualPremium: { th: "เบี้ยประกัน/ปี", en: "Annual Premium" } as Text,
+    expiryDate: { th: "วันหมดอายุ/ต่ออายุ", en: "Expiry/Renewal Date" } as Text,
+    beneficiarySet: { th: "ระบุผู้รับผลประโยชน์แล้ว", en: "Beneficiary is set" } as Text,
+    deleteConfirm: { th: "ลบกรมธรรม์นี้ใช่หรือไม่?", en: "Delete this policy?" } as Text,
+    deleteAria: { th: "ลบกรมธรรม์", en: "Delete policy" } as Text,
+    expiringSoon: { th: "ใกล้หมดอายุ", en: "Expiring soon" } as Text,
+    noBeneficiaryBadge: { th: "ยังไม่ระบุผู้รับผลประโยชน์", en: "No beneficiary set" } as Text,
+    alertsTitle: { th: "⚠️ ข้อควรระวัง", en: "⚠️ Things to check" } as Text,
+    expiringWithin: { th: "หมดอายุภายใน 60 วัน:", en: "Expiring within 60 days:" } as Text,
+    noBeneficiaryList: { th: "ยังไม่ระบุผู้รับผลประโยชน์:", en: "No beneficiary set:" } as Text,
+    ratiosFooter: { th: "กองทุนฉุกเฉินและภาระหนี้สินต่อรายได้ ดูได้ที่หน้าอัตราส่วนทางการเงิน →", en: "Emergency fund and debt-service checks are on the Financial Ratios page →" } as Text,
+    // check names/formulas
+    lifeGapName: { th: "ช่องว่างทุนประกันชีวิต", en: "Life Insurance Gap" } as Text,
+    lifeGapFormula: { th: "ทุนประกันชีวิตที่มี เทียบกับทุนที่แนะนำ", en: "Existing life coverage vs. recommended coverage" } as Text,
+    lifeGapAdvice: {
+      th: "ทุนประกันชีวิตที่มีอยู่อาจไม่พอครอบคลุมค่าใช้จ่ายและหนี้สินของครอบครัว ลองพิจารณาเพิ่มความคุ้มครอง",
+      en: "Existing life coverage may not be enough to cover your family's expenses and debts — consider increasing coverage",
+    } as Text,
+    healthName: { th: "ความคุ้มครองสุขภาพ", en: "Health Coverage" } as Text,
+    healthFormula: { th: "มีกรมธรรม์ประเภทสุขภาพหรือไม่", en: "Whether you hold a health policy" } as Text,
+    healthStandard: { th: "ควรมีอย่างน้อย 1 ฉบับ", en: "Should have at least 1" } as Text,
+    healthHas: { th: "มี", en: "Have coverage" } as Text,
+    healthNone: { th: "ไม่มี", en: "No coverage" } as Text,
+    healthAdvice: { th: "ยังไม่มีกรมธรรม์ประกันสุขภาพ ลองพิจารณาทำความคุ้มครองค่ารักษาพยาบาลไว้", en: "No health insurance policy yet — consider getting medical coverage" } as Text,
+    creditLifeName: { th: "ประกันคุ้มครองวงเงินสินเชื่อ", en: "Credit Life Coverage" } as Text,
+    creditLifeFormula: { th: "ทุนประกันคุ้มครองสินเชื่อ เทียบกับหนี้สินระยะยาวคงเหลือ", en: "Credit life coverage vs. remaining long-term debt" } as Text,
+    creditLifeAdvice: {
+      th: "หนี้สินระยะยาวที่มี (เช่น บ้าน/รถ) ยังไม่มีประกันคุ้มครองวงเงินสินเชื่อ ถ้าผู้กู้เป็นอะไรไป ภาระหนี้อาจตกเป็นของครอบครัว",
+      en: "Your long-term debt (e.g. home/car loan) isn't covered by credit life insurance — if something happens to the borrower, the debt burden could fall on the family",
+    } as Text,
+    premiumName: { th: "เบี้ยประกันรวมต่อรายได้", en: "Premium to Income" } as Text,
+    premiumFormula: { th: "เบี้ยประกันรวมต่อปี ÷ รายได้รวมต่อปี", en: "Total annual premiums ÷ total annual income" } as Text,
+    premiumStandard: { th: "ไม่เกิน 15%", en: "≤ 15%" } as Text,
+    premiumAdvice: {
+      th: "เบี้ยประกันรวมต่อปีสูงเทียบกับรายได้ อาจเป็นภาระเกินไป ลองทบทวนความคุ้มครองที่ซ้ำซ้อน",
+      en: "Total annual premiums are high relative to income and may be a burden — review coverage for overlap",
+    } as Text,
+    recommendedAtLeast: { th: "ควรมีอย่างน้อย", en: "Should have at least" } as Text,
+  },
 } as const;
 
 // Default category/goal-type labels are stored in Thai regardless of UI
@@ -326,6 +381,11 @@ export const INVESTMENT_CAT_LABEL_EN: Record<string, string> = {
 // concepts, so one map covers both.
 export const LEVEL_LABEL_EN: Record<string, string> = {
   "สูง": "High", "กลาง": "Medium", "ต่ำ": "Low",
+};
+
+export const POLICY_TYPE_LABEL_EN: Record<string, string> = {
+  "ชีวิต": "Life", "สุขภาพ": "Health", "อุบัติเหตุ": "Accident",
+  "โรคร้ายแรง": "Critical Illness", "คุ้มครองสินเชื่อ": "Credit Life",
 };
 
 // The auto-created default cash payment method is always named/typed

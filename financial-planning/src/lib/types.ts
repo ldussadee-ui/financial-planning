@@ -112,3 +112,15 @@ export interface NetWorthSnapshot {
   totalPersonal: number;
   totalLiab: number;
 }
+
+export type PolicyType = "ชีวิต" | "สุขภาพ" | "อุบัติเหตุ" | "โรคร้ายแรง" | "คุ้มครองสินเชื่อ";
+
+export interface InsurancePolicy {
+  id: string;
+  policyType: PolicyType;
+  provider: string;
+  sumAssured: number;
+  annualPremium: number;
+  expiryDate: string; // "" if not tracked
+  beneficiarySet: boolean;
+}

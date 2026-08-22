@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.8.0] - 2026-08-23
+
+### Added
+- Risk Protection page (`/dashboard/insurance`): tracks insurance policies (life, health, accident, critical illness, credit life) and checks them against 4 standard-based rules — life coverage gap (10 years of living expenses plus liabilities, net of liquid/investment assets), health coverage (existence check), credit-life coverage vs. remaining long-term debt, and total premiums vs. 15% of annual income
+- Alerts for policies expiring within 60 days and policies missing a named beneficiary
+- New "🛡️ Risk Protection" card on the Dashboard showing pass/fail count, linking to the full page
+- Fully bilingual (TH/EN), consistent with the rest of the app
+
 ## [0.7.1] - 2026-08-21
 
 ### Fixed

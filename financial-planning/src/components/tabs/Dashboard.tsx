@@ -11,6 +11,7 @@ import { ICON_MAP } from "@/lib/constants";
 import { useMetrics } from "@/hooks/useMetrics";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useFinancialRatios } from "@/hooks/useFinancialRatios";
+import { useInsuranceAnalysis } from "@/hooks/useInsuranceAnalysis";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, GOAL_TYPE_LABEL_EN, INVESTMENT_CAT_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl } from "@/components/ui";
@@ -67,6 +68,7 @@ export function Dashboard() {
   const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], []);
   const { map: budgetMap } = useBudgets();
   const { passCount: ratioPassCount, total: ratioTotal, loading: ratiosLoading } = useFinancialRatios(lang);
+  const { passCount: insurancePassCount, total: insuranceTotal, loading: insuranceLoading } = useInsuranceAnalysis(lang);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const toggle = (key: string) => setExpanded((prev) => {
     const next = new Set(prev);
@@ -231,6 +233,27 @@ export function Dashboard() {
           <div style={{ display: "flex", gap: 3, marginTop: 10 }}>
             <div style={{ flex: ratioPassCount, height: 6, borderRadius: 999, background: "#0F6E56" }} />
             <div style={{ flex: ratioTotal - ratioPassCount, height: 6, borderRadius: 999, background: "#FF8C7A" }} />
+          </div>
+        </Link>
+      )}
+
+      {!insuranceLoading && (
+        <Link
+          href="/dashboard/insurance"
+          className="fp-card"
+          style={{ padding: 26, marginTop: 18, display: "block", textDecoration: "none", color: "inherit" }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🛡️ {t(TR.dashboard.riskProtection)}</div>
+            <span style={{ fontSize: 12, color: "#7A5C9E", fontWeight: 600 }}>{t(TR.dashboard.viewDetails)}</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span className="fp-display" style={{ fontSize: 26, fontWeight: 700, color: "#0F6E56" }}>{insurancePassCount}</span>
+            <span style={{ fontSize: 14, color: "var(--ink-soft)" }}>{t(TR.dashboard.ratiosOutOf)} {insuranceTotal} {t(TR.dashboard.ratiosPassed)}</span>
+          </div>
+          <div style={{ display: "flex", gap: 3, marginTop: 10 }}>
+            <div style={{ flex: insurancePassCount, height: 6, borderRadius: 999, background: "#0F6E56" }} />
+            <div style={{ flex: insuranceTotal - insurancePassCount, height: 6, borderRadius: 999, background: "#FF8C7A" }} />
           </div>
         </Link>
       )}
