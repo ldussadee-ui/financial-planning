@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.7.1] - 2026-08-21
+
+### Fixed
+- Pie chart tooltips (expense-by-category on the reports page, investment allocation on the Dashboard) still showed the raw Thai category/investment-category name in English mode — Recharts reads pie labels straight from the data instead of the translated `name` prop used elsewhere; the tooltip formatter now translates the label too
+
 ## [0.7.0] - 2026-08-21
 
 ### Added

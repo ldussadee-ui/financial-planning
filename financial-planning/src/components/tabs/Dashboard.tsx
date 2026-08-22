@@ -180,7 +180,7 @@ export function Dashboard() {
                   <Pie data={metrics.byCat} dataKey="value" nameKey="name" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
                     {metrics.byCat.map((c) => <Cell key={c.key} fill={c.color} stroke="none" />)}
                   </Pie>
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, INVESTMENT_CAT_LABEL_EN)]} />
                 </PieChart>
               </ResponsiveContainer>
               <div style={{ flex: 1, fontSize: 12.5 }}>

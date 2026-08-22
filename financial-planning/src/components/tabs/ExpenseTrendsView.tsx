@@ -135,7 +135,7 @@ export function ExpenseTrendsView() {
                 <Pie data={byCategory} dataKey="amount" nameKey="category" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
                   {byCategory.map((c, i) => <Cell key={c.category} fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]} stroke="none" />)}
                 </Pie>
-                <Tooltip formatter={(v) => fmt(Number(v))} />
+                <Tooltip formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, CATEGORY_LABEL_EN)]} />
               </PieChart>
             </ResponsiveContainer>
             <div style={{ flex: 1, minWidth: 220, fontSize: 13 }}>
