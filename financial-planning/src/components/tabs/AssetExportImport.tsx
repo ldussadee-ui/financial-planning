@@ -3,6 +3,8 @@
 import { useState, type ChangeEvent, type CSSProperties } from "react";
 import { db } from "@/lib/db";
 import { uid } from "@/lib/calc";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 import { AddButton, Field, Modal, inputStyle } from "@/components/ui";
 import type { LiquidAsset, InvestmentAsset, PersonalAsset, Liability } from "@/lib/types";
 
@@ -38,6 +40,7 @@ function downloadJson(filename: string, data: unknown) {
 // Assets have no date field to filter by, so export/import is always a full
 // snapshot of everything currently saved — unlike cashflow's date-ranged export.
 function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { lang, t } = useLanguage();
   const doExport = async () => {
     const [liquidAssets, investmentAssets, personalAssets, liabilities] = await Promise.all([
       db.liquidAssets.toArray(),
@@ -51,16 +54,16 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       exportedAt: new Date().toISOString(),
       liquidAssets, investmentAssets, personalAssets, liabilities,
     };
-    downloadJson(`สินทรัพย์_${new Date().toISOString().slice(0, 10)}.json`, file);
+    downloadJson(`${lang === "en" ? "assets" : "สินทรัพย์"}_${new Date().toISOString().slice(0, 10)}.json`, file);
     onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="📤 ส่งออกสินทรัพย์">
+    <Modal open={open} onClose={onClose} title={t(TR.exportImport.exportAssetsTitle)}>
       <div style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 14 }}>
-        จะส่งออกสินทรัพย์สภาพคล่อง เพื่อการลงทุน ส่วนตัว และหนี้สินทั้งหมดที่มีอยู่ตอนนี้
+        {t(TR.exportImport.exportAssetsNote)}
       </div>
-      <AddButton onClick={doExport} label="ดาวน์โหลดไฟล์" />
+      <AddButton onClick={doExport} label={t(TR.common.downloadFile)} />
     </Modal>
   );
 }
@@ -70,6 +73,7 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
 // those ids won't exist on a different device — the item still imports, just
 // unlinked, rather than silently pointing at the wrong goal.
 function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useLanguage();
   const [fileData, setFileData] = useState<AssetExportFile | null>(null);
   const [error, setError] = useState("");
   const [done, setDone] = useState<number | null>(null);
@@ -97,7 +101,7 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
         liabilities: parsed.liabilities || [],
       });
     } catch {
-      setError("ไฟล์ไม่ถูกต้อง หรือไม่ใช่ไฟล์ที่ส่งออกจากแอปนี้");
+      setError(t(TR.common.invalidFile));
     }
   };
 
@@ -121,37 +125,38 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
     : 0;
 
   return (
-    <Modal open={open} onClose={handleClose} title="📥 นำเข้าสินทรัพย์">
+    <Modal open={open} onClose={handleClose} title={t(TR.exportImport.importAssetsTitle)}>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <Field label="เลือกไฟล์">
+        <Field label={t(TR.common.selectFile)}>
           <input type="file" accept="application/json" onChange={onFile} style={{ ...inputStyle, minWidth: 220 }} />
         </Field>
         {error && <div style={{ fontSize: 12, color: "#D07A4E" }}>{error}</div>}
         {fileData && done === null && (
           <>
             <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
-              พบ {totalInFile} รายการในไฟล์ (สภาพคล่อง {fileData.liquidAssets.length} · เพื่อการลงทุน {fileData.investmentAssets.length} · ส่วนตัว {fileData.personalAssets.length} · หนี้สิน {fileData.liabilities.length})
+              {t(TR.exportImport.foundItemsInFile)} {totalInFile} {t(TR.exportImport.itemsInFile)} ({t(TR.exportImport.liquidWord)} {fileData.liquidAssets.length} · {t(TR.exportImport.investWord)} {fileData.investmentAssets.length} · {t(TR.exportImport.personalWord)} {fileData.personalAssets.length} · {t(TR.exportImport.liabilityWord)} {fileData.liabilities.length})
             </div>
             <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
-              รายการจะถูกเพิ่มเป็นรายการใหม่ทั้งหมด (การผูกเป้าหมาย/หนี้สินเดิมจะไม่ติดมาด้วย เพราะเป็นคนละอุปกรณ์)
+              {t(TR.exportImport.importAsNew)}
             </div>
-            <div><AddButton onClick={doImport} label="นำเข้า" /></div>
+            <div><AddButton onClick={doImport} label={t(TR.common.importAction)} /></div>
           </>
         )}
-        {done !== null && <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}>✓ นำเข้าแล้ว {done} รายการ</div>}
+        {done !== null && <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}>{t(TR.exportImport.importedCount)} {done} {t(TR.exportImport.itemsWord)}</div>}
       </div>
     </Modal>
   );
 }
 
 export function AssetExportImport() {
+  const { t } = useLanguage();
   const [exportOpen, setExportOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   return (
     <>
       <div style={{ display: "flex", gap: 10 }}>
-        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>📤 ส่งออกข้อมูล</button>
-        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 นำเข้าข้อมูล</button>
+        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>📤 {t(TR.common.exportData)}</button>
+        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 {t(TR.common.importData)}</button>
       </div>
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} />

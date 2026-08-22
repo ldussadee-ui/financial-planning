@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { periodContains, type Period } from "@/lib/period";
+import type { Language } from "@/lib/i18n";
 import type { CashFlowEntry } from "@/lib/types";
 
 export interface MonthlyCategoryPoint {
@@ -14,7 +15,7 @@ export interface MonthlyCategoryPoint {
 // individual months, so the trend chart can compare categories against
 // each other across those months. Not meaningful for a single month
 // itself — callers should only use this when period.granularity !== "month".
-export function useMonthlyCategoryTrend(period: Period) {
+export function useMonthlyCategoryTrend(period: Period, lang: Language = "th") {
   const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], [] as CashFlowEntry[]);
   const loading = cashflow === undefined;
 
@@ -25,7 +26,7 @@ export function useMonthlyCategoryTrend(period: Period) {
 
   const data: MonthlyCategoryPoint[] = monthIndices.map((index) => {
     const monthPeriod: Period = { granularity: "month", year: period.year, index };
-    const label = new Date(period.year, index, 1).toLocaleDateString("th-TH", { month: "short" });
+    const label = new Date(period.year, index, 1).toLocaleDateString(lang === "en" ? "en-US" : "th-TH", { month: "short" });
     const byCategory: Record<string, number> = {};
     for (const e of cashflow || []) {
       if (e.type !== "Expense" || !periodContains(monthPeriod, e.date)) continue;

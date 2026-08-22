@@ -5,21 +5,12 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { fmt } from "@/lib/calc";
 import { useNetWorthTrend } from "@/hooks/useNetWorthTrend";
 import { useNetWorthTable } from "@/hooks/useNetWorthTable";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 import { SectionHeader, EmptyState, SegmentedControl } from "@/components/ui";
 import type { AssetGranularity } from "@/lib/netWorthBuckets";
 
-const SERIES = [
-  { key: "assets", name: "สินทรัพย์ทั้งหมด", color: "#7FB8D9" },
-  { key: "liab", name: "หนี้สินทั้งหมด", color: "#FF8C7A" },
-  { key: "netWorth", name: "Net Worth", color: "#0F6E56" },
-] as const;
-
-const GRANULARITY_OPTIONS: { value: AssetGranularity; label: string }[] = [
-  { value: "month", label: "รายเดือน" }, { value: "quarter", label: "รายไตรมาส" },
-  { value: "halfYear", label: "รายครึ่งปี" }, { value: "year", label: "รายปี" },
-];
 const GRANULARITY_COUNT: Record<AssetGranularity, number> = { month: 6, quarter: 4, halfYear: 4, year: 5 };
-const TABLE_COUNT_OPTIONS = [3, 6, 12, 24].map((n) => ({ value: String(n), label: `${n} ด.` }));
 
 const compactAmount = (n: number) => (Math.abs(n) >= 1000 ? Math.round(n / 1000) + "k" : String(n));
 
@@ -28,16 +19,28 @@ const tdStyle: CSSProperties = { padding: "8px 10px", whiteSpace: "nowrap" };
 const tdNumStyle: CSSProperties = { ...tdStyle, textAlign: "right", fontFamily: "var(--font-prompt), 'Prompt', sans-serif" };
 
 export function AssetTrendTab() {
+  const { lang, t } = useLanguage();
   const [granularity, setGranularity] = useState<AssetGranularity>("month");
   const [tableCount, setTableCount] = useState(6);
-  const { points, loading: chartLoading } = useNetWorthTrend(granularity, GRANULARITY_COUNT[granularity]);
-  const { rows, loading: tableLoading } = useNetWorthTable(tableCount);
+  const { points, loading: chartLoading } = useNetWorthTrend(granularity, GRANULARITY_COUNT[granularity], lang);
+  const { rows, loading: tableLoading } = useNetWorthTable(tableCount, lang);
 
   if (chartLoading || tableLoading) return null;
 
+  const SERIES = [
+    { key: "assets", name: t(TR.assets.assetsAll), color: "#7FB8D9" },
+    { key: "liab", name: t(TR.assets.liabAll), color: "#FF8C7A" },
+    { key: "netWorth", name: "Net Worth", color: "#0F6E56" },
+  ] as const;
+  const GRANULARITY_OPTIONS: { value: AssetGranularity; label: string }[] = [
+    { value: "month", label: t(TR.assets.granMonth) }, { value: "quarter", label: t(TR.assets.granQuarter) },
+    { value: "halfYear", label: t(TR.assets.granHalfYear) }, { value: "year", label: t(TR.assets.granYear) },
+  ];
+  const TABLE_COUNT_OPTIONS = [3, 6, 12, 24].map((n) => ({ value: String(n), label: `${n}${lang === "en" ? "mo" : " ด."}` }));
+
   return (
     <div>
-      <SectionHeader title="แนวโน้มทรัพย์สิน 📉" sub="เทียบมูลค่าทรัพย์สินย้อนหลัง จาก snapshot ล่าสุดที่บันทึกไว้ในแต่ละช่วง — เริ่มนับจากวันนี้เป็นต้นไป" />
+      <SectionHeader title={t(TR.assets.trendTitle)} sub={t(TR.assets.trendSub)} />
 
       <div style={{ marginBottom: 18 }}>
         <SegmentedControl options={GRANULARITY_OPTIONS} value={granularity} onChange={setGranularity} />
@@ -60,13 +63,13 @@ export function AssetTrendTab() {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <EmptyState text="ยังไม่มีข้อมูลย้อนหลัง" />
+          <EmptyState text={t(TR.assets.noHistory)} />
         )}
       </div>
 
       <div className="fp-card" style={{ padding: 20, marginTop: 4 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>ตารางเปรียบเทียบรายเดือน</div>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>{t(TR.assets.comparisonTable)}</div>
           <div style={{ width: 200 }}>
             <SegmentedControl small options={TABLE_COUNT_OPTIONS} value={String(tableCount)} onChange={(v) => setTableCount(Number(v))} />
           </div>
@@ -75,12 +78,12 @@ export function AssetTrendTab() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--line)" }}>
-                <th style={{ ...thStyle, textAlign: "left" }}>เดือน</th>
-                <th style={thStyle}>สินทรัพย์</th>
-                <th style={thStyle}>หนี้สิน</th>
+                <th style={{ ...thStyle, textAlign: "left" }}>{t(TR.assets.month)}</th>
+                <th style={thStyle}>{t(TR.assets.totalAssets)}</th>
+                <th style={thStyle}>{t(TR.assets.totalLiab)}</th>
                 <th style={thStyle}>Net Worth</th>
-                <th style={thStyle}>Δ เทียบเดือนก่อน</th>
-                <th style={thStyle}>% เทียบเดือนก่อน</th>
+                <th style={thStyle}>{t(TR.assets.deltaVsPrev)}</th>
+                <th style={thStyle}>{t(TR.assets.pctVsPrev)}</th>
               </tr>
             </thead>
             <tbody>

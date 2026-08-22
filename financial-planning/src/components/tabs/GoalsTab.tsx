@@ -6,6 +6,8 @@ import { Trash2, Pencil } from "lucide-react";
 import { db } from "@/lib/db";
 import { fmt, recommendedMonthlySavings, uid } from "@/lib/calc";
 import { GOAL_TYPES } from "@/lib/constants";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR, GOAL_TYPE_LABEL_EN, LEVEL_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, EmptyState, Field, AddButton, Modal, cancelButtonStyle, inputStyle, deleteBtn } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
@@ -14,6 +16,7 @@ import type { Goal, GoalType, Priority } from "@/lib/types";
 const emptyForm = { type: "เกษียณ" as GoalType, name: "", target: "", date: "", priority: "กลาง" as Priority, expectedReturn: "" };
 
 export function GoalsTab() {
+  const { lang, t } = useLanguage();
   const goals = useLiveQuery(() => db.goals.toArray(), [], []);
   const investment = useLiveQuery(() => db.investmentAssets.toArray(), [], []);
   const liquid = useLiveQuery(() => db.liquidAssets.toArray(), [], []);
@@ -42,29 +45,31 @@ export function GoalsTab() {
 
   return (
     <div>
-      <SectionHeader title="เป้าหมายทางการเงิน 🎯" sub="ผูกเป้าหมายกับสินทรัพย์เพื่อการลงทุนในแท็บก่อนหน้า" />
+      <SectionHeader title={t(TR.goals.title)} sub={t(TR.goals.subtitle)} />
 
-      <Modal open={modalOpen} onClose={closeModal} title={editingId ? "แก้ไขเป้าหมาย" : "เพิ่มเป้าหมาย"}>
+      <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.goals.editTitle) : t(TR.goals.addTitle)}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-          <Field label="ประเภทเป้าหมาย">
+          <Field label={t(TR.goals.goalType)}>
             <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as GoalType })} style={inputStyle}>
-              {GOAL_TYPES.map((t) => <option key={t}>{t}</option>)}
+              {GOAL_TYPES.map((gt) => <option key={gt} value={gt}>{translateLabel(gt, lang, GOAL_TYPE_LABEL_EN)}</option>)}
             </select>
           </Field>
-          <Field label="ชื่อเป้าหมาย"><input style={inputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="เช่น กองทุนเกษียณ" /></Field>
-          <Field label="เป้าหมาย (บาท)"><CalcInput value={form.target} onChange={(v) => setForm({ ...form, target: v })} placeholder="0" /></Field>
-          <Field label="วันที่เป้าหมาย"><input type="date" style={inputStyle} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
-          <Field label="ความสำคัญ">
+          <Field label={t(TR.goals.goalName)}><input style={inputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t(TR.goals.goalNamePlaceholder)} /></Field>
+          <Field label={t(TR.goals.targetAmount)}><CalcInput value={form.target} onChange={(v) => setForm({ ...form, target: v })} placeholder="0" /></Field>
+          <Field label={t(TR.goals.targetDate)}><input type="date" style={inputStyle} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
+          <Field label={t(TR.goals.priority)}>
             <select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value as Priority })} style={inputStyle}>
-              <option>สูง</option><option>กลาง</option><option>ต่ำ</option>
+              <option value="สูง">{translateLabel("สูง", lang, LEVEL_LABEL_EN)}</option>
+              <option value="กลาง">{translateLabel("กลาง", lang, LEVEL_LABEL_EN)}</option>
+              <option value="ต่ำ">{translateLabel("ต่ำ", lang, LEVEL_LABEL_EN)}</option>
             </select>
           </Field>
-          <Field label="ผลตอบแทนคาดหวัง (%/ปี)">
+          <Field label={t(TR.goals.expectedReturn)}>
             <input type="number" style={inputStyle} value={form.expectedReturn} onChange={(e) => setForm({ ...form, expectedReturn: e.target.value })} placeholder="0" />
           </Field>
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-            <button type="button" onClick={closeModal} style={cancelButtonStyle}>ยกเลิก</button>
-            <AddButton onClick={submit} label={editingId ? "บันทึกการแก้ไข" : "เพิ่ม"} />
+            <button type="button" onClick={closeModal} style={cancelButtonStyle}>{t(TR.common.cancel)}</button>
+            <AddButton onClick={submit} label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)} />
           </div>
         </div>
       </Modal>
@@ -81,7 +86,9 @@ export function GoalsTab() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 14 }}>{g.name}</div>
-                  <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>{g.type} · ความสำคัญ{g.priority} {g.date ? "· ครบกำหนด " + g.date : ""}</div>
+                  <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
+                    {translateLabel(g.type, lang, GOAL_TYPE_LABEL_EN)} · {t(TR.goals.priorityWord)}{translateLabel(g.priority, lang, LEVEL_LABEL_EN)} {g.date ? `${t(TR.goals.dueDate)} ${g.date}` : ""}
+                  </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <span className="fp-num" style={{ fontSize: 12, color: "var(--ink-soft)" }}>{fmt(linked)} / {fmt(g.target)}</span>
@@ -91,10 +98,10 @@ export function GoalsTab() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (window.confirm("ลบเป้าหมายนี้ใช่หรือไม่?")) remove(g.id);
+                      if (window.confirm(t(TR.goals.deleteConfirm))) remove(g.id);
                     }}
                     style={deleteBtn}
-                    aria-label="ลบเป้าหมาย"
+                    aria-label={t(TR.goals.deleteAria)}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -105,17 +112,17 @@ export function GoalsTab() {
               </div>
               {monthlyNeeded !== null ? (
                 <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
-                  💡 แนะนำออม {fmt(monthlyNeeded)}/เดือน เพื่อให้ทันกำหนด
-                  {g.expectedReturn ? ` (สมมติผลตอบแทน ${g.expectedReturn}%/ปี — เป็นการประมาณ ไม่รับประกัน)` : " (ไม่มีผลตอบแทนจากการลงทุน)"}
+                  {t(TR.goals.recommendedSavings)} {fmt(monthlyNeeded)}{t(TR.goals.perMonthToMakeIt)}
+                  {g.expectedReturn ? ` ${t(TR.goals.assumedReturn)} ${g.expectedReturn}${t(TR.goals.perYearEstimate)}` : ` ${t(TR.goals.noInvestmentReturn)}`}
                 </div>
               ) : !g.date ? (
-                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>⚠️ ใส่วันที่เป้าหมายเพื่อดูคำแนะนำการออม</div>
+                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>{t(TR.goals.setDateForAdvice)}</div>
               ) : (
-                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>⚠️ วันที่เป้าหมายผ่านไปแล้ว หรือใกล้ถึงกำหนดเกินกว่าจะคำนวณได้</div>
+                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>{t(TR.goals.datePassedOrTooClose)}</div>
               )}
             </div>
           );
-        }) : <EmptyState text="ยังไม่มีเป้าหมาย" />}
+        }) : <EmptyState text={t(TR.goals.empty)} />}
       </div>
 
       <AddFab onClick={openNew} />

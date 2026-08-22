@@ -2,6 +2,8 @@
 
 import { Plus } from "lucide-react";
 import type { CSSProperties } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 
 const fabStyle: CSSProperties = {
   position: "fixed", left: 20, bottom: 90, zIndex: 40,
@@ -14,8 +16,9 @@ const fabStyle: CSSProperties = {
 // Fixed (non-draggable) floating add button, mirrored on the opposite
 // corner from the รับ/จ่าย FAB so the two never overlap.
 export function AddFab({ onClick }: { onClick: () => void }) {
+  const { t } = useLanguage();
   return (
-    <button type="button" onClick={onClick} style={fabStyle} aria-label="เพิ่มรายการ">
+    <button type="button" onClick={onClick} style={fabStyle} aria-label={t(TR.common.addItemAria)}>
       <Plus size={24} />
     </button>
   );

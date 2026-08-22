@@ -1,6 +1,7 @@
 // A navigable calendar period at month / half-year / year granularity, used
 // by the expense report to drill into "what did I spend in August 2026"
 // rather than trend lines across many periods at once.
+import type { Language } from "./i18n";
 
 export type Granularity = "month" | "halfYear" | "year";
 
@@ -45,13 +46,14 @@ export function periodContains(period: Period, iso: string): boolean {
   return d >= start && d <= end;
 }
 
-export function periodLabel(period: Period): string {
+export function periodLabel(period: Period, lang: Language = "th"): string {
+  const locale = lang === "en" ? "en-US" : "th-TH";
   if (period.granularity === "month") {
-    return new Date(period.year, period.index, 1).toLocaleDateString("th-TH", { month: "long", year: "numeric" });
+    return new Date(period.year, period.index, 1).toLocaleDateString(locale, { month: "long", year: "numeric", calendar: "gregory" });
   }
   if (period.granularity === "halfYear") {
-    const yearLabel = new Date(period.year, 0, 1).toLocaleDateString("th-TH", { year: "numeric" });
-    return `ครึ่งปี${period.index === 0 ? "แรก" : "หลัง"} ${yearLabel}`;
+    const yearLabel = new Date(period.year, 0, 1).toLocaleDateString(locale, { year: "numeric", calendar: "gregory" });
+    return lang === "en" ? `H${period.index + 1} ${yearLabel}` : `ครึ่งปี${period.index === 0 ? "แรก" : "หลัง"} ${yearLabel}`;
   }
-  return new Date(period.year, 0, 1).toLocaleDateString("th-TH", { year: "numeric" });
+  return new Date(period.year, 0, 1).toLocaleDateString(locale, { year: "numeric", calendar: "gregory" });
 }

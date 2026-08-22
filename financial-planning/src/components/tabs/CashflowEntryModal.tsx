@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { classifyExpense, classifyIncome, daysFasterToGoal, hoursOfWork, isoToday, uid } from "@/lib/calc";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR, CATEGORY_LABEL_EN, PAYMENT_METHOD_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import { Field, AddButton, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
@@ -27,13 +29,14 @@ const doneButtonStyle: CSSProperties = {
   background: "#0F6E56", color: "#fff", border: "none",
   borderRadius: 999, padding: "8px 16px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
 };
-function badgeLabel(type: CashFlowType, cls: string) {
+function badgeLabel(type: CashFlowType, cls: string, lang: Language) {
+  const t = <K extends { th: string; en: string }>(entry: K) => entry[lang];
   if (type === "Expense") {
-    if (cls === "Fixed") return "🔒 ตรวจพบว่าเป็นรายจ่ายประจำ";
-    if (cls === "Invest") return "🌱 ตรวจพบว่าเป็นรายจ่ายออมและลงทุน";
-    return "🎈 ตรวจพบว่าเป็นรายจ่ายทั่วไป";
+    if (cls === "Fixed") return t(TR.cashflow.badgeFixed);
+    if (cls === "Invest") return t(TR.cashflow.badgeInvest);
+    return t(TR.cashflow.badgeGeneral);
   }
-  return cls === "Passive" ? "🌿 ตรวจพบว่าเป็นรายรับ Passive" : "💪 ตรวจพบว่าเป็นรายรับ Active";
+  return cls === "Passive" ? t(TR.cashflow.badgePassive) : t(TR.cashflow.badgeActive);
 }
 // Income classes share the app's original green (Active = deeper, Passive =
 // lighter); expense classes share the original orange (Fixed = deeper,
@@ -70,6 +73,7 @@ export function useCashflowEntry() {
 // Owns the shared income/expense entry modal so it can be opened from the
 // global FAB or from a row's edit tap on any tab, not just the cashflow page.
 export function CashflowEntryProvider({ children }: { children: ReactNode }) {
+  const { lang, t } = useLanguage();
   const allCategories = useLiveQuery(() => db.categories.orderBy("order").toArray(), [], []);
   const paymentMethods = useLiveQuery(() => db.paymentMethods.toArray(), [], []);
   const paymentMethodsSorted = [...(paymentMethods || [])].sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "เงินสด" ? -1 : 1));
@@ -105,10 +109,14 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
     ? (() => {
         const parts: string[] = [];
         const hours = hoursOfWork(amountNum, hourlyWage);
-        if (hours !== null) parts.push(`≈ ${hours.toFixed(1)} ชม.`);
+        if (hours !== null) parts.push(lang === "en" ? `≈ ${hours.toFixed(1)} hrs` : `≈ ${hours.toFixed(1)} ชม.`);
         if (primaryGoal) {
           const daysFaster = daysFasterToGoal(amountNum, primaryGoal, primaryGoalLinked);
-          if (daysFaster !== null) parts.push(`เร็วขึ้น ${daysFaster.toFixed(1)} วัน (${primaryGoal.name})`);
+          if (daysFaster !== null) {
+            parts.push(lang === "en"
+              ? `${daysFaster.toFixed(1)}d faster (${primaryGoal.name})`
+              : `เร็วขึ้น ${daysFaster.toFixed(1)} วัน (${primaryGoal.name})`);
+          }
         }
         return parts.length ? parts.join(" · ") : null;
       })()
@@ -238,11 +246,11 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
     <CashflowEntryCtx.Provider value={{ openNew, openEdit, editingId, closeModal }}>
       {children}
 
-      <Modal open={activeModal !== null} onClose={closeModal} title={activeModal === "Income" ? "💰 รับ" : "🧾 จ่าย"}>
+      <Modal open={activeModal !== null} onClose={closeModal} title={activeModal === "Income" ? t(TR.cashflow.income$) : t(TR.cashflow.expense$)}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-          <Field label="วันที่"><input type="date" style={inputStyle} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
+          <Field label={t(TR.cashflow.date)}><input type="date" style={inputStyle} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
 
-          <Field label="หมวดหมู่" wide>
+          <Field label={t(TR.cashflow.category)} wide>
             <div
               style={{ display: "flex", flexWrap: "wrap", gap: 10, maxWidth: 480 }}
               onPointerMove={onCatsPointerMove}
@@ -270,24 +278,24 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     onClick={() => handleChipClick(c.label)}
                     style={chipStyle(!customMode && !editing && form.category === c.label)}
                   >
-                    <span style={{ marginRight: 5 }}>{c.icon}</span>{c.label}
+                    <span style={{ marginRight: 5 }}>{c.icon}</span>{translateLabel(c.label, lang, CATEGORY_LABEL_EN)}
                   </button>
                   {editing && (
-                    <button type="button" onClick={() => removeCat(c.id, c.label)} title="ลบปุ่มนี้" style={chipDeleteBadge}>×</button>
+                    <button type="button" onClick={() => removeCat(c.id, c.label)} title={t(TR.cashflow.removeShortcut)} style={chipDeleteBadge}>×</button>
                   )}
                 </div>
               ))}
               {!editing && (
                 <button type="button" onClick={() => { setCustomMode(true); setForm({ ...form, category: "" }); setSaveShortcut(true); }} style={chipStyle(customMode)}>
-                  ✍️ พิมพ์เอง
+                  {t(TR.cashflow.typeOwn)}
                 </button>
               )}
               {editing && (
-                <button type="button" onClick={() => setEditing(false)} style={doneButtonStyle}>✓ เสร็จสิ้น</button>
+                <button type="button" onClick={() => setEditing(false)} style={doneButtonStyle}>{t(TR.cashflow.done)}</button>
               )}
             </div>
             <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
-              {editing ? "ลากเพื่อจัดเรียงใหม่ · แตะ × เพื่อลบปุ่ม" : "กดค้างที่ปุ่มเพื่อจัดเรียงหรือลบ"}
+              {editing ? t(TR.cashflow.dragToReorder) : t(TR.cashflow.holdToReorder)}
             </div>
             {customMode && (
               <div style={{ marginTop: 8 }}>
@@ -296,22 +304,22 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                   style={{ ...inputStyle, width: "100%" }}
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  placeholder="พิมพ์หมวดหมู่ของคุณเอง"
+                  placeholder={t(TR.cashflow.typeCustomCategory)}
                 />
                 <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--ink-soft)", marginTop: 6, cursor: "pointer" }}>
                   <input type="checkbox" checked={saveShortcut} onChange={(e) => setSaveShortcut(e.target.checked)} />
-                  บันทึกเป็นปุ่มลัดไว้ใช้ครั้งหน้า
+                  {t(TR.cashflow.saveAsShortcut)}
                 </label>
               </div>
             )}
           </Field>
 
-          <Field label="จำนวน"><CalcInput value={form.amount} onChange={(v) => setForm({ ...form, amount: v })} placeholder="0" /></Field>
+          <Field label={t(TR.common.amount)}><CalcInput value={form.amount} onChange={(v) => setForm({ ...form, amount: v })} placeholder="0" /></Field>
 
           {form.type === "Expense" && (
             <>
               <div style={{ flexBasis: "100%", height: 0 }} />
-              <Field label="จ่ายด้วย" wide>
+              <Field label={t(TR.cashflow.paidWith)} wide>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10, maxWidth: 480 }}>
                 {paymentMethodsSorted.map((m) => (
                   <button
@@ -320,11 +328,11 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     onClick={() => setForm({ ...form, payment_method_id: m.id })}
                     style={chipStyle(effectivePaymentMethodId === m.id)}
                   >
-                    <span style={{ marginRight: 5 }}>{m.kind === "เงินสด" ? "💵" : "💳"}</span>{m.name}
+                    <span style={{ marginRight: 5 }}>{m.kind === "เงินสด" ? "💵" : "💳"}</span>{translateLabel(m.name, lang, PAYMENT_METHOD_LABEL_EN)}
                   </button>
                 ))}
                 <button type="button" onClick={() => setAddingCard(true)} style={chipStyle(addingCard)}>
-                  ➕ เพิ่มบัตร
+                  {t(TR.cashflow.addCard)}
                 </button>
               </div>
               {addingCard && (
@@ -334,10 +342,10 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     style={{ ...inputStyle, flex: 1 }}
                     value={newCardName}
                     onChange={(e) => setNewCardName(e.target.value)}
-                    placeholder="ชื่อบัตร เช่น KTC, SCB"
+                    placeholder={t(TR.cashflow.cardNamePlaceholder)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCard(); } }}
                   />
-                  <button type="button" onClick={addCard} style={doneButtonStyle}>เพิ่ม</button>
+                  <button type="button" onClick={addCard} style={doneButtonStyle}>{t(TR.common.add)}</button>
                 </div>
               )}
               </Field>
@@ -345,7 +353,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
           )}
 
           {form.category && (
-            <span style={badgeStyle(form.type, preview)}>{badgeLabel(form.type, preview)}</span>
+            <span style={badgeStyle(form.type, preview)}>{badgeLabel(form.type, preview, lang)}</span>
           )}
           {spendCompare && (
             <span style={{ fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20, background: "#F5EFFF", color: "#7A5C9E" }}>
@@ -353,8 +361,8 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
             </span>
           )}
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-            <button type="button" onClick={closeModal} style={cancelButtonStyle}>ยกเลิก</button>
-            <AddButton onClick={submit} label={editingId ? "บันทึกการแก้ไข" : "เพิ่ม"} />
+            <button type="button" onClick={closeModal} style={cancelButtonStyle}>{t(TR.common.cancel)}</button>
+            <AddButton onClick={submit} label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)} />
           </div>
         </div>
       </Modal>

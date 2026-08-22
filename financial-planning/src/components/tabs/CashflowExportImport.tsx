@@ -3,6 +3,8 @@
 import { useState, type ChangeEvent, type CSSProperties } from "react";
 import { db } from "@/lib/db";
 import { isoToday, uid } from "@/lib/calc";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 import { Field, AddButton, Modal, inputStyle } from "@/components/ui";
 import type { CashFlowEntry } from "@/lib/types";
 
@@ -38,6 +40,7 @@ function downloadJson(filename: string, data: unknown) {
 // to each device, since the family-sharing use case this serves ("what did
 // we spend as a family") only concerns income/expense totals.
 function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { lang, t } = useLanguage();
   const today = isoToday();
   const [start, setStart] = useState(today.slice(0, 8) + "01");
   const [end, setEnd] = useState(today);
@@ -53,19 +56,19 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       rangeEnd: end,
       entries,
     };
-    downloadJson(`รายรับจ่าย_${start}_ถึง_${end}.json`, file);
+    downloadJson(`${lang === "en" ? `cashflow_${start}_to_${end}` : `รายรับจ่าย_${start}_ถึง_${end}`}.json`, file);
     onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="📤 ส่งออกรายรับ-จ่าย">
+    <Modal open={open} onClose={onClose} title={t(TR.exportImport.exportCashflowTitle)}>
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-        <Field label="ตั้งแต่วันที่"><input type="date" style={inputStyle} value={start} onChange={(e) => setStart(e.target.value)} /></Field>
-        <Field label="ถึงวันที่"><input type="date" style={inputStyle} value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
-        <AddButton onClick={doExport} label="ดาวน์โหลดไฟล์" />
+        <Field label={t(TR.exportImport.fromDate)}><input type="date" style={inputStyle} value={start} onChange={(e) => setStart(e.target.value)} /></Field>
+        <Field label={t(TR.exportImport.toDate)}><input type="date" style={inputStyle} value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
+        <AddButton onClick={doExport} label={t(TR.common.downloadFile)} />
       </div>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 10 }}>
-        จะดึงเฉพาะรายการรายรับ-จ่ายในช่วงวันที่ที่เลือกเท่านั้น
+        {t(TR.exportImport.exportRangeNote)}
       </div>
     </Modal>
   );
@@ -75,6 +78,7 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
 // still show who spent what) and always assigns fresh local ids, so
 // importing never collides with or overwrites the receiver's own rows.
 function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useLanguage();
   const [fileData, setFileData] = useState<ExportFile | null>(null);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
@@ -100,7 +104,7 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       setStart(dates[0] || parsed.rangeStart || "");
       setEnd(dates[dates.length - 1] || parsed.rangeEnd || "");
     } catch {
-      setError("ไฟล์ไม่ถูกต้อง หรือไม่ใช่ไฟล์ที่ส่งออกจากแอปนี้");
+      setError(t(TR.common.invalidFile));
     }
   };
 
@@ -123,29 +127,29 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
   };
 
   return (
-    <Modal open={open} onClose={handleClose} title="📥 นำเข้ารายรับ-จ่าย">
+    <Modal open={open} onClose={handleClose} title={t(TR.exportImport.importCashflowTitle)}>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <Field label="เลือกไฟล์">
+        <Field label={t(TR.common.selectFile)}>
           <input type="file" accept="application/json" onChange={onFile} style={{ ...inputStyle, minWidth: 220 }} />
         </Field>
         {error && <div style={{ fontSize: 12, color: "#D07A4E" }}>{error}</div>}
         {fileData && done === null && (
           <>
-            <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>พบ {fileData.entries.length} รายการในไฟล์</div>
+            <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(TR.exportImport.foundEntriesInFile)} {fileData.entries.length} {t(TR.exportImport.entriesInFile)}</div>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-              <Field label="ตั้งแต่วันที่"><input type="date" style={inputStyle} value={start} onChange={(e) => setStart(e.target.value)} /></Field>
-              <Field label="ถึงวันที่"><input type="date" style={inputStyle} value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
+              <Field label={t(TR.exportImport.fromDate)}><input type="date" style={inputStyle} value={start} onChange={(e) => setStart(e.target.value)} /></Field>
+              <Field label={t(TR.exportImport.toDate)}><input type="date" style={inputStyle} value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
             </div>
-            <Field label="ชื่อเจ้าของรายการ">
-              <input style={inputStyle} value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="เช่น แม่, พ่อ, น้องเบล" />
+            <Field label={t(TR.exportImport.ownerName)}>
+              <input style={inputStyle} value={owner} onChange={(e) => setOwner(e.target.value)} placeholder={t(TR.exportImport.ownerPlaceholder)} />
             </Field>
             <div>
-              <AddButton onClick={doImport} label="นำเข้า" />
+              <AddButton onClick={doImport} label={t(TR.common.importAction)} />
             </div>
           </>
         )}
         {done !== null && (
-          <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}>✓ นำเข้าแล้ว {done} รายการ ของ {owner}</div>
+          <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}>{t(TR.exportImport.importedCount)} {done} {t(TR.exportImport.itemsWord)} {t(TR.exportImport.importedOf)} {owner}</div>
         )}
       </div>
     </Modal>
@@ -153,13 +157,14 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
 }
 
 export function CashflowExportImport() {
+  const { t } = useLanguage();
   const [exportOpen, setExportOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   return (
     <>
       <div style={{ display: "flex", gap: 10 }}>
-        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>📤 ส่งออกข้อมูล</button>
-        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 นำเข้าข้อมูล</button>
+        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>📤 {t(TR.common.exportData)}</button>
+        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 {t(TR.common.importData)}</button>
       </div>
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} />

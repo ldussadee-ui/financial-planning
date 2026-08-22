@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 import { SectionHeader, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
@@ -12,6 +14,7 @@ import type { Liability, LiabilityTerm } from "@/lib/types";
 const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", rate: "", monthly: "" };
 
 export function LiabilityTab() {
+  const { t } = useLanguage();
   const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
   const [form, setForm] = useState(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
@@ -41,32 +44,32 @@ export function LiabilityTab() {
 
   return (
     <div>
-      <SectionHeader title="หนี้สิน 💳" sub="แยกหนี้สินระยะสั้น (≤ 1 ปี) และระยะยาว (> 1 ปี)" />
+      <SectionHeader title={t(TR.assets.liabilityTitle)} sub={t(TR.assets.liabilitySub)} />
 
-      <Modal open={modalOpen} onClose={closeModal} title={editingId ? "แก้ไขหนี้สิน" : "เพิ่มหนี้สิน"}>
+      <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.liabilityEditTitle) : t(TR.assets.liabilityAddTitle)}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-          <Field label="ระยะ">
+          <Field label={t(TR.assets.term)}>
             <select value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value as LiabilityTerm })} style={inputStyle}>
-              <option value="ShortTerm">ระยะสั้น</option>
-              <option value="LongTerm">ระยะยาว</option>
+              <option value="ShortTerm">{t(TR.assets.shortTerm)}</option>
+              <option value="LongTerm">{t(TR.assets.longTerm)}</option>
             </select>
           </Field>
-          <Field label="ประเภทหนี้"><input style={inputStyle} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} placeholder="เช่น บัตรเครดิต" /></Field>
-          <Field label="ยอดคงเหลือ"><CalcInput value={form.balance} onChange={(v) => setForm({ ...form, balance: v })} placeholder="0" /></Field>
-          <Field label="ดอกเบี้ย %/ปี"><input type="number" style={inputStyle} value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} placeholder="0" /></Field>
-          <Field label="ค่างวด/เดือน"><CalcInput value={form.monthly} onChange={(v) => setForm({ ...form, monthly: v })} placeholder="0" /></Field>
+          <Field label={t(TR.assets.debtType)}><input style={inputStyle} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} placeholder={t(TR.assets.debtTypePlaceholder)} /></Field>
+          <Field label={t(TR.assets.balance)}><CalcInput value={form.balance} onChange={(v) => setForm({ ...form, balance: v })} placeholder="0" /></Field>
+          <Field label={t(TR.assets.ratePerYear)}><input type="number" style={inputStyle} value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} placeholder="0" /></Field>
+          <Field label={t(TR.assets.monthlyPayment)}><CalcInput value={form.monthly} onChange={(v) => setForm({ ...form, monthly: v })} placeholder="0" /></Field>
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-            <button type="button" onClick={closeModal} style={cancelButtonStyle}>ยกเลิก</button>
-            <AddButton onClick={submit} label={editingId ? "บันทึกการแก้ไข" : "เพิ่ม"} />
+            <button type="button" onClick={closeModal} style={cancelButtonStyle}>{t(TR.common.cancel)}</button>
+            <AddButton onClick={submit} label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)} />
           </div>
         </div>
       </Modal>
 
-      <Group title={`หนี้สินระยะสั้น — ${fmt(short.reduce((s, l) => s + l.balance, 0))}`} tint="#FFEFEA">
-        {short.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%/ปี`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
+      <Group title={`${t(TR.assets.shortTermDebt)} — ${fmt(short.reduce((s, l) => s + l.balance, 0))}`} tint="#FFEFEA">
+        {short.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%${t(TR.assets.perYear)}`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
-      <Group title={`หนี้สินระยะยาว — ${fmt(long.reduce((s, l) => s + l.balance, 0))}`} tint="#EFFBF6">
-        {long.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%/ปี`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
+      <Group title={`${t(TR.assets.longTermDebt)} — ${fmt(long.reduce((s, l) => s + l.balance, 0))}`} tint="#EFFBF6">
+        {long.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%${t(TR.assets.perYear)}`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
 
       <AddFab onClick={openNew} />

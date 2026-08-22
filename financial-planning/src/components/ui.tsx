@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Plus, Trash2, ChevronRight, X } from "lucide-react";
 import { fmt } from "@/lib/calc";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 
 export function SectionHeader({ title, sub, chip }: { title: string; sub?: string; chip?: string }) {
   return (
@@ -28,6 +30,7 @@ export function Modal({
   title: string;
   children: ReactNode;
 }) {
+  const { t } = useLanguage();
   const [dragY, setDragY] = useState(0);
   const [dragging, setDragging] = useState(false);
   // Refs (not the state above) drive the dismiss decision so it never
@@ -92,7 +95,7 @@ export function Modal({
             <button
               type="button"
               onClick={onClose}
-              aria-label="ปิด"
+              aria-label={t(TR.common.close)}
               style={{ border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-soft)", padding: 4 }}
             >
               <X size={20} />
@@ -119,6 +122,7 @@ export function StatRow({ label, value, big }: { label: string; value: string; b
 // nothing when no budget is set for the category, so callers can render it
 // unconditionally.
 export function BudgetBar({ spent, budget }: { spent: number; budget: number }) {
+  const { t } = useLanguage();
   if (!budget) return null;
   const pct = Math.min((spent / budget) * 100, 100);
   const over = spent > budget;
@@ -129,7 +133,7 @@ export function BudgetBar({ spent, budget }: { spent: number; budget: number }) 
         <div style={{ width: pct + "%", height: "100%", background: color, borderRadius: 999 }} />
       </div>
       <div className="fp-num" style={{ fontSize: 12, color: over ? "#FF8C7A" : "var(--ink-soft)", marginTop: 2 }}>
-        {fmt(spent)} / {fmt(budget)}{over ? " · เกินงบ" : ""}
+        {fmt(spent)} / {fmt(budget)}{over ? t(TR.common.overBudget) : ""}
       </div>
     </div>
   );
@@ -200,7 +204,8 @@ export function SegmentedControl<T extends string>({
   );
 }
 
-export function AddButton({ onClick, label = "เพิ่ม" }: { onClick: () => void; label?: string }) {
+export function AddButton({ onClick, label }: { onClick: () => void; label?: string }) {
+  const { t } = useLanguage();
   return (
     <button
       type="button"
@@ -210,18 +215,19 @@ export function AddButton({ onClick, label = "เพิ่ม" }: { onClick: () 
         border: "none", borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
       }}
     >
-      <Plus size={14} /> {label}
+      <Plus size={14} /> {label ?? t(TR.common.add)}
     </button>
   );
 }
 
 export function Group({ title, tint, children }: { title: string; tint: string; children: ReactNode[] }) {
+  const { t } = useLanguage();
   const items = children.filter(Boolean);
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ fontSize: 12.5, color: "#8B7FA0", marginBottom: 7, fontWeight: 600 }}>{title}</div>
       <div className="fp-card" style={{ padding: 8, background: items.length ? tint : "#FAF6F1" }}>
-        {items.length ? items : <EmptyState text="ยังไม่มีรายการ" />}
+        {items.length ? items : <EmptyState text={t(TR.common.noItems)} />}
       </div>
     </div>
   );
@@ -239,6 +245,7 @@ export function NestedGroup({
   tint: string;
   subGroups: { label: string; amount: string; items: ReactNode[]; dot?: string }[];
 }) {
+  const { t } = useLanguage();
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
@@ -261,7 +268,7 @@ export function NestedGroup({
                 {sg.amount}
               </span>
             </div>
-            {sg.items.length ? sg.items : <EmptyState text="ยังไม่มีรายการ" />}
+            {sg.items.length ? sg.items : <EmptyState text={t(TR.common.noItems)} />}
           </div>
         ))}
       </div>
@@ -274,6 +281,7 @@ export function Row({
 }: {
   left: ReactNode; right: string; date?: string; icon?: ReactNode; onDelete: () => void; onClick?: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div
       className="fp-row"
@@ -293,10 +301,10 @@ export function Row({
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          if (window.confirm("ลบรายการนี้ใช่หรือไม่?")) onDelete();
+          if (window.confirm(t(TR.common.deleteItemConfirm))) onDelete();
         }}
         style={{ ...deleteBtn, marginLeft: 6 }}
-        aria-label="ลบรายการ"
+        aria-label={t(TR.common.deleteItemAria)}
       >
         <Trash2 size={13} />
       </button>
@@ -330,6 +338,7 @@ export function DayPicker({
   shiftWeekend: boolean;
   onShiftWeekendChange: (shift: boolean) => void;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -342,11 +351,11 @@ export function DayPicker({
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
       <button type="button" onClick={() => setOpen((v) => !v)} style={dayPickerButtonStyle}>
-        🗓️ เริ่มวันที่ {value}
+        {t(TR.common.startDay)} {value}
       </button>
       {open && (
         <div style={dayPickerPopoverStyle}>
-          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 8, fontWeight: 600 }}>เลือกวันเริ่มรอบบัญชี</div>
+          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 8, fontWeight: 600 }}>{t(TR.common.chooseCycleStartDay)}</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 5 }}>
             {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
               <button key={d} type="button" onClick={() => { onChange(d); setOpen(false); }} style={dayCellStyle(d === value)}>
@@ -356,7 +365,7 @@ export function DayPicker({
           </div>
           <label style={{ display: "flex", alignItems: "flex-start", gap: 6, fontSize: 12, color: "var(--ink-soft)", marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--line)", cursor: "pointer" }}>
             <input type="checkbox" checked={shiftWeekend} onChange={(e) => onShiftWeekendChange(e.target.checked)} style={{ marginTop: 1 }} />
-            ถ้าวันเริ่มตรงเสาร์-อาทิตย์ เลื่อนเป็นวันศุกร์ก่อนหน้า
+            {t(TR.common.weekendShiftNote)}
           </label>
         </div>
       )}

@@ -10,6 +10,8 @@ import { useSetting } from "@/hooks/useSetting";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { useBudgets } from "@/hooks/useBudgets";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR, CATEGORY_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, NestedGroup, DayPicker, BudgetBar } from "@/components/ui";
 import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
@@ -30,6 +32,7 @@ const navButtonStyle: CSSProperties = {
 const sum = (arr: CashFlowEntry[]) => arr.reduce((s, c) => s + Number(c.amount || 0), 0);
 
 export function CashflowTab() {
+  const { lang, t } = useLanguage();
   const [cycleStartDay, setCycleStartDay] = useSetting<number>("cycleStartDay", 1);
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
   const [cycleOffset, setCycleOffset] = useState(0);
@@ -47,10 +50,14 @@ export function CashflowTab() {
   const expenseExtra = (c: CashFlowEntry) => {
     const parts: string[] = [];
     const hours = hoursOfWork(c.amount, hourlyWage);
-    if (hours !== null) parts.push(`≈ ${hours.toFixed(1)} ชม.`);
+    if (hours !== null) parts.push(lang === "en" ? `≈ ${hours.toFixed(1)} hrs` : `≈ ${hours.toFixed(1)} ชม.`);
     if (primaryGoal) {
       const daysFaster = daysFasterToGoal(c.amount, primaryGoal, primaryGoalLinked);
-      if (daysFaster !== null) parts.push(`เร็วขึ้น ${daysFaster.toFixed(1)} วัน (${primaryGoal.name})`);
+      if (daysFaster !== null) {
+        parts.push(lang === "en"
+          ? `${daysFaster.toFixed(1)}d faster (${primaryGoal.name})`
+          : `เร็วขึ้น ${daysFaster.toFixed(1)} วัน (${primaryGoal.name})`);
+      }
     }
     return parts.length ? parts.join(" · ") : null;
   };
@@ -75,61 +82,61 @@ export function CashflowTab() {
 
   return (
     <div>
-      <SectionHeader title="รายรับ-จ่าย 💸" sub="รายรับแยก Active/Passive และรายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนให้อัตโนมัติ" />
+      <SectionHeader title={t(TR.cashflow.title)} sub={t(TR.cashflow.subtitle)} />
 
       <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <button type="button" onClick={() => setCycleOffset((o) => o - 1)} style={navButtonStyle} aria-label="รอบก่อนหน้า">‹</button>
-          🗓️ {isCurrentCycle ? "รอบบัญชีปัจจุบัน" : "รอบบัญชี"}: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange)}</b>
-          <button type="button" onClick={() => setCycleOffset((o) => o + 1)} style={navButtonStyle} aria-label="รอบถัดไป">›</button>
+          <button type="button" onClick={() => setCycleOffset((o) => o - 1)} style={navButtonStyle} aria-label={t(TR.cashflow.prevCycle)}>‹</button>
+          🗓️ {isCurrentCycle ? t(TR.cashflow.currentCycle) : t(TR.cashflow.cycle)}: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange, lang)}</b>
+          <button type="button" onClick={() => setCycleOffset((o) => o + 1)} style={navButtonStyle} aria-label={t(TR.cashflow.nextCycle)}>›</button>
           {!isCurrentCycle && (
             <button type="button" onClick={() => setCycleOffset(0)} style={{ ...chipStyle(false), padding: "5px 11px", fontSize: 11.5 }}>
-              กลับไปรอบปัจจุบัน
+              {t(TR.cashflow.backToCurrentCycle)}
             </button>
           )}
         </span>
         <DayPicker value={cycleStartDay} onChange={setCycleStartDay} shiftWeekend={shiftWeekend} onShiftWeekendChange={setShiftWeekend} />
         <span style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
           <Link href="/cashflow/reports" style={{ ...chipStyle(false), textDecoration: "none" }}>
-            📊 สรุปรายจ่ายรายเดือน →
+            📊 {t(TR.cashflow.monthlyReport)}
           </Link>
           <Link href="/cashflow/payment-summary" style={{ ...chipStyle(false), textDecoration: "none" }}>
-            💳 สรุปการจ่ายต่อช่องทาง →
+            💳 {t(TR.cashflow.paymentSummary)}
           </Link>
         </span>
       </div>
 
       <NestedGroup
-        label="Income"
+        label={t(TR.cashflow.income)}
         amount={fmt(sum(incomeActive) + sum(incomePassive))}
         accent="#0F6E56"
         tint="#EFFBF6"
         subGroups={[
-          { label: "Active", amount: fmt(sum(incomeActive)), dot: "#0F6E56", items: renderByDay(incomeActive, remove, openEdit) },
-          { label: "Passive", amount: fmt(sum(incomePassive)), dot: "#5FA98A", items: renderByDay(incomePassive, remove, openEdit) },
+          { label: "Active", amount: fmt(sum(incomeActive)), dot: "#0F6E56", items: renderByDay(incomeActive, remove, openEdit, undefined, lang) },
+          { label: "Passive", amount: fmt(sum(incomePassive)), dot: "#5FA98A", items: renderByDay(incomePassive, remove, openEdit, undefined, lang) },
         ]}
       />
       <NestedGroup
-        label="Expense"
+        label={t(TR.cashflow.expense)}
         amount={fmt(sum(fixedExp) + sum(varExp) + sum(investExp))}
         accent="#D07A4E"
         tint="#FFEFE6"
         subGroups={[
-          { label: "Fixed (ประจำ)", amount: fmt(sum(fixedExp)), dot: "#D07A4E", items: renderByDay(fixedExp, remove, openEdit, expenseExtra) },
-          { label: "ทั่วไป", amount: fmt(sum(varExp)), dot: "#E3A874", items: renderByDay(varExp, remove, openEdit, expenseExtra) },
-          { label: "ออมและลงทุน", amount: fmt(sum(investExp)), dot: "#0F6E56", items: renderByDay(investExp, remove, openEdit, expenseExtra) },
+          { label: lang === "en" ? "Fixed" : "Fixed (ประจำ)", amount: fmt(sum(fixedExp)), dot: "#D07A4E", items: renderByDay(fixedExp, remove, openEdit, expenseExtra, lang) },
+          { label: lang === "en" ? "General" : "ทั่วไป", amount: fmt(sum(varExp)), dot: "#E3A874", items: renderByDay(varExp, remove, openEdit, expenseExtra, lang) },
+          { label: lang === "en" ? "Savings & Investing" : "ออมและลงทุน", amount: fmt(sum(investExp)), dot: "#0F6E56", items: renderByDay(investExp, remove, openEdit, expenseExtra, lang) },
         ]}
       />
 
       {budgetStatus.length > 0 && (
         <div className="fp-card" style={{ padding: 20, marginTop: 18 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 12 }}>🎯 งบประมาณรอบนี้</div>
+          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 12 }}>🎯 {t(TR.cashflow.budgetThisCycle)}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {budgetStatus.map((b) => (
               <div key={b.category}>
                 <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13 }}>
                   <span>{ICON_MAP[b.category] || "🏷️"}</span>
-                  <span>{b.category}</span>
+                  <span>{translateLabel(b.category, lang, CATEGORY_LABEL_EN)}</span>
                 </div>
                 <BudgetBar spent={b.spent} budget={b.budget} />
               </div>
@@ -139,7 +146,7 @@ export function CashflowTab() {
       )}
 
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 4 }}>
-        * แสดงเฉพาะรายการในรอบบัญชีที่เลือกด้านบน (เลื่อน ‹ › ดูรอบอื่นได้) · รายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข
+        {t(TR.cashflow.footnote)}
       </div>
     </div>
   );

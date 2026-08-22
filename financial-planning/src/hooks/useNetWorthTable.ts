@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { buildBuckets } from "@/lib/netWorthBuckets";
+import type { Language } from "@/lib/i18n";
 import type { NetWorthSnapshot } from "@/lib/types";
 
 export interface NetWorthTableRow {
@@ -16,10 +17,10 @@ export interface NetWorthTableRow {
 
 // Monthly rows (oldest first while computing deltas, then reversed to
 // newest-first for display), each with the change vs the previous month.
-export function useNetWorthTable(monthCount: number) {
+export function useNetWorthTable(monthCount: number, lang: Language = "th") {
   const snapshots = useLiveQuery(() => db.netWorthHistory.orderBy("date").toArray(), [], [] as NetWorthSnapshot[]);
   const loading = snapshots === undefined;
-  const buckets = buildBuckets("month", monthCount);
+  const buckets = buildBuckets("month", monthCount, new Date(), lang);
 
   const rows: NetWorthTableRow[] = buckets.map((b) => {
     const inRange = snapshots.filter((s) => s.date >= b.startISO && s.date <= b.endISO);

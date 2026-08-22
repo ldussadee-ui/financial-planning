@@ -1,5 +1,6 @@
 import { FIXED_KEYWORDS, INVEST_KEYWORDS, PASSIVE_KEYWORDS } from "./constants";
 import type { CashFlowEntry, ExpenseClass, Goal, IncomeClass } from "./types";
+import type { Language } from "./i18n";
 
 export const classifyExpense = (category: string): ExpenseClass => {
   const t = (category || "").toLowerCase();
@@ -26,9 +27,9 @@ export const isoDaysAgo = (n: number) => {
   d.setDate(d.getDate() - n);
   return isoDate(d);
 };
-export const fmtDateShort = (iso: string) => {
+export const fmtDateShort = (iso: string, lang: Language = "th") => {
   if (!iso) return "";
-  return new Date(iso + "T00:00:00").toLocaleDateString("th-TH", { day: "numeric", month: "short" });
+  return new Date(iso + "T00:00:00").toLocaleDateString(lang === "en" ? "en-US" : "th-TH", { day: "numeric", month: "short" });
 };
 
 function adjustForWeekend(date: Date, shiftWeekend: boolean) {
@@ -75,9 +76,10 @@ export function inRange(iso: string | undefined, range: CycleRange): boolean {
   return d >= range.start && d <= range.end;
 }
 
-export function fmtRange(range: CycleRange): string {
-  const s = range.start.toLocaleDateString("th-TH", { day: "numeric", month: "short" });
-  const e = range.end.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" });
+export function fmtRange(range: CycleRange, lang: Language = "th"): string {
+  const locale = lang === "en" ? "en-US" : "th-TH";
+  const s = range.start.toLocaleDateString(locale, { day: "numeric", month: "short" });
+  const e = range.end.toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric", calendar: "gregory" });
   return `${s} – ${e}`;
 }
 

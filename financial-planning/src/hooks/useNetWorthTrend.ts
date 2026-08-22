@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { buildBuckets, type AssetGranularity } from "@/lib/netWorthBuckets";
+import type { Language } from "@/lib/i18n";
 import type { NetWorthSnapshot } from "@/lib/types";
 
 export interface NetWorthPoint {
@@ -15,10 +16,10 @@ export interface NetWorthPoint {
 // Each bucket's value is the latest snapshot dated within it — not a true
 // period-end close, since the app only records a snapshot when it's open.
 // A bucket with no snapshot at all shows as a gap (null), not a guess.
-export function useNetWorthTrend(granularity: AssetGranularity, count: number) {
+export function useNetWorthTrend(granularity: AssetGranularity, count: number, lang: Language = "th") {
   const snapshots = useLiveQuery(() => db.netWorthHistory.orderBy("date").toArray(), [], [] as NetWorthSnapshot[]);
   const loading = snapshots === undefined;
-  const buckets = buildBuckets(granularity, count);
+  const buckets = buildBuckets(granularity, count, new Date(), lang);
 
   const points: NetWorthPoint[] = buckets.map((b) => {
     const inRange = snapshots.filter((s) => s.date >= b.startISO && s.date <= b.endISO);

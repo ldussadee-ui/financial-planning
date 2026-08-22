@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.7.0] - 2026-08-21
+
+### Added
+- English language support with a TH/EN switch on the Dashboard — translates every tab (Cashflow, Assets, Goals, Settings, Reports, Payment Summary, Financial Ratios), the calculator, and all shared components. Stored data (categories, asset/goal/liability names) always stays in Thai regardless of display language; only known default labels are translated for display, so switching language never touches saved data or breaks the Thai-keyword auto-classification. Custom text the user typed themselves always shows verbatim
+- Dates and month names in charts/tables now switch locale (Thai/English) along with the rest of the UI
+
+### Fixed
+- Calendar year is now always Gregorian (ค.ศ.) everywhere, regardless of language — some date displays previously used the Buddhist Era (พ.ศ.)
+
 ## [0.6.2] - 2026-08-20
 
 ### Fixed

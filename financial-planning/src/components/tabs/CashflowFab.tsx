@@ -2,6 +2,8 @@
 
 import { useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import { useCashflowEntry } from "./CashflowEntryModal";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 import type { CashFlowType } from "@/lib/types";
 
 const DRAG_THRESHOLD = 6;
@@ -73,10 +75,11 @@ function DraggableButton({
 // and expense entries can be opened from any tab, not just the cashflow page.
 export function CashflowFab() {
   const { openNew } = useCashflowEntry();
+  const { t } = useLanguage();
   return (
     <>
-      <DraggableButton type="Income" label="💰 รับ" color="#7FD1C9" defaultRight={20} defaultBottom={150} onOpen={openNew} />
-      <DraggableButton type="Expense" label="🧾 จ่าย" color="#FF9AA2" defaultRight={20} defaultBottom={90} onOpen={openNew} />
+      <DraggableButton type="Income" label={t(TR.cashflow.income$)} color="#7FD1C9" defaultRight={20} defaultBottom={150} onOpen={openNew} />
+      <DraggableButton type="Expense" label={t(TR.cashflow.expense$)} color="#FF9AA2" defaultRight={20} defaultBottom={90} onOpen={openNew} />
     </>
   );
 }

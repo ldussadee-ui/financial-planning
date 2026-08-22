@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { Row } from "@/components/ui";
 import { fmt, fmtDateShort } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
+import { CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import type { CashFlowEntry } from "@/lib/types";
 
 const dateHeaderStyle: CSSProperties = {
@@ -32,7 +33,8 @@ export function renderByDay(
   entries: CashFlowEntry[],
   onDelete: (id: string) => void,
   onEdit?: (entry: CashFlowEntry) => void,
-  extra?: (entry: CashFlowEntry) => ReactNode | null
+  extra?: (entry: CashFlowEntry) => ReactNode | null,
+  lang: Language = "th"
 ): ReactNode[] {
   const sorted = [...entries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   const nodes: ReactNode[] = [];
@@ -41,12 +43,13 @@ export function renderByDay(
     if (c.date !== lastDate) {
       nodes.push(
         <div key={`date-${c.date}`} style={lastDate === null ? firstDateHeaderStyle : dateHeaderStyle}>
-          {fmtDateShort(c.date)}
+          {fmtDateShort(c.date, lang)}
         </div>
       );
       lastDate = c.date;
     }
     const extraNode = extra ? extra(c) : null;
+    const label = translateLabel(c.category, lang, CATEGORY_LABEL_EN);
     nodes.push(
       <Row
         key={c.id}
@@ -54,11 +57,11 @@ export function renderByDay(
         left={
           extraNode ? (
             <div>
-              <div>{c.category}</div>
+              <div>{label}</div>
               <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 1 }}>{extraNode}</div>
             </div>
           ) : (
-            c.category
+            label
           )
         }
         right={fmt(c.amount)}

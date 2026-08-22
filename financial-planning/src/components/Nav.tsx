@@ -3,19 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Wallet, Target, Layers, Settings, type LucideIcon,
+  LayoutDashboard, Wallet, Target, Layers, Settings,
 } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 
-const NAV: { key: string; href: string; label: string; icon: LucideIcon }[] = [
-  { key: "dashboard", href: "/dashboard", label: "ภาพรวม", icon: LayoutDashboard },
-  { key: "cashflow", href: "/cashflow", label: "รายรับ-จ่าย", icon: Wallet },
-  { key: "assets", href: "/assets", label: "สินทรัพย์", icon: Layers },
-  { key: "goals", href: "/goals", label: "เป้าหมาย", icon: Target },
-  { key: "settings", href: "/settings", label: "Settings", icon: Settings },
+const NAV = [
+  { key: "dashboard", href: "/dashboard", label: TR.nav.dashboard, icon: LayoutDashboard },
+  { key: "cashflow", href: "/cashflow", label: TR.nav.cashflow, icon: Wallet },
+  { key: "assets", href: "/assets", label: TR.nav.assets, icon: Layers },
+  { key: "goals", href: "/goals", label: TR.nav.goals, icon: Target },
+  { key: "settings", href: "/settings", label: TR.nav.settings, icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { t } = useLanguage();
   return (
     <div
       className="fp-sidebar"
@@ -24,8 +27,8 @@ export function Sidebar() {
       }}
     >
       <div style={{ padding: "0 8px 24px 8px" }}>
-        <div className="fp-display" style={{ fontSize: 21, fontWeight: 700, color: "#7A5C9E" }}>เงินทองของเรา 🌱</div>
-        <div style={{ fontSize: 12, color: "#8B7FA0", marginTop: 3 }}>เพื่อนช่วยวางแผนการเงิน</div>
+        <div className="fp-display" style={{ fontSize: 21, fontWeight: 700, color: "#7A5C9E" }}>{t(TR.nav.appName)}</div>
+        <div style={{ fontSize: 12, color: "#8B7FA0", marginTop: 3 }}>{t(TR.nav.appTagline)}</div>
       </div>
       <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         {NAV.map((n) => {
@@ -45,7 +48,7 @@ export function Sidebar() {
               }}
             >
               <Icon size={16} strokeWidth={2} />
-              {n.label}
+              {t(n.label)}
             </Link>
           );
         })}
@@ -56,6 +59,7 @@ export function Sidebar() {
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
   return (
     <nav
       className="fp-bottomnav"
@@ -82,7 +86,7 @@ export function BottomNav() {
             }}
           >
             <Icon size={19} strokeWidth={2} fill={active ? "#7A5C9E" : "none"} />
-            {n.label}
+            {t(n.label)}
           </Link>
         );
       })}

@@ -2,6 +2,8 @@
 
 import { useState, type CSSProperties } from "react";
 import { Modal, inputStyle } from "@/components/ui";
+import { useLanguage } from "@/hooks/useLanguage";
+import { TR } from "@/lib/i18n";
 
 type Op = "+" | "-" | "×" | "÷";
 
@@ -35,6 +37,7 @@ const confirmButtonStyle: CSSProperties = {
 // display but leaves the keypad open, so the user can keep computing;
 // "ตกลง" folds any still-pending operation and commits the value.
 function CalcKeypad({ initial, onConfirm }: { initial: string; onConfirm: (value: string) => void }) {
+  const { t } = useLanguage();
   const startDisplay = initial !== "" && !isNaN(Number(initial)) ? initial : "0";
   const [display, setDisplay] = useState(startDisplay);
   const [accumulator, setAccumulator] = useState<number | null>(null);
@@ -105,7 +108,7 @@ function CalcKeypad({ initial, onConfirm }: { initial: string; onConfirm: (value
         <button type="button" onClick={() => pressDigit("0")} style={{ ...keyStyle, gridColumn: "span 3" }}>0</button>
         <button type="button" onClick={() => pressDigit(".")} style={keyStyle}>.</button>
       </div>
-      <button type="button" onClick={confirm} style={confirmButtonStyle}>✓ ตกลง</button>
+      <button type="button" onClick={confirm} style={confirmButtonStyle}>{t(TR.common.ok)}</button>
     </div>
   );
 }
@@ -120,6 +123,7 @@ export function CalcInput({
   onChange: (value: string) => void;
   placeholder?: string;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -130,7 +134,7 @@ export function CalcInput({
         placeholder={placeholder}
         style={{ ...inputStyle, cursor: "pointer" }}
       />
-      <Modal open={open} onClose={() => setOpen(false)} title="คำนวณจำนวนเงิน">
+      <Modal open={open} onClose={() => setOpen(false)} title={t(TR.common.calculatorTitle)}>
         <CalcKeypad initial={value} onConfirm={(v) => { onChange(v); setOpen(false); }} />
       </Modal>
     </>
