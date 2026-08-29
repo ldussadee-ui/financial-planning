@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.8.1] - 2026-08-23
+
+### Fixed
+- Cashflow tab's selected month stayed on whatever cycle was last viewed instead of returning to the current one after the app had been reopened — as a PWA, the tab is usually suspended rather than fully closed, so its in-memory state survives; the app now resets to the current cycle when it's been hidden for more than 10 minutes, while a brief switch to another app leaves the selected month alone
+- Cashflow tab's current-cycle calculation (including the "back to current cycle" button and the ‹ › navigation) could land one full cycle off from the real current one whenever the billing cycle's start day is after the 15th and today has already passed it this month — it anchored on a fixed mid-month reference date instead of today's actual date; cycle navigation now steps from the real current cycle instead
+
 ## [0.8.0] - 2026-08-23
 
 ### Added

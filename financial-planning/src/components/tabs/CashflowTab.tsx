@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -36,10 +36,50 @@ export function CashflowTab() {
   const [cycleStartDay, setCycleStartDay] = useSetting<number>("cycleStartDay", 1);
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
   const [cycleOffset, setCycleOffset] = useState(0);
+  const hiddenAtRef = useRef<number | null>(null);
+  useEffect(() => {
+    // A PWA/mobile browser tab is usually suspended rather than fully
+    // closed when the user "leaves" it, so this component never remounts
+    // (which would otherwise reset cycleOffset via its useState initial
+    // value). Treat a long-enough hide as the user having actually closed
+    // and later reopened the app, and snap back to the current cycle; a
+    // brief switch to another app and back leaves the selected month alone.
+    const RESET_AFTER_HIDDEN_MS = 10 * 60 * 1000;
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        hiddenAtRef.current = Date.now();
+      } else if (hiddenAtRef.current !== null) {
+        if (Date.now() - hiddenAtRef.current > RESET_AFTER_HIDDEN_MS) setCycleOffset(0);
+        hiddenAtRef.current = null;
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, []);
   const cycleRange = useMemo(() => {
-    const today = new Date();
-    const ref = new Date(today.getFullYear(), today.getMonth() + cycleOffset, 15);
-    return getCycleRange(cycleStartDay, shiftWeekend, ref);
+    // Step cycle-by-cycle from the real current cycle rather than adding
+    // `cycleOffset` months to today's date at a fixed day-of-month: a fixed
+    // anchor day breaks once cycleStartDay is past it (e.g. day 15 reads as
+    // "before" a cycle that starts on the 25th even after today has crossed
+    // it, understating the current cycle by one) and adding months to a
+    // day-of-month like 31 can overflow into the wrong month. One day past
+    // the end of the current cycle is always inside the next one, and vice
+    // versa, so this works for any cycleStartDay.
+    let range = getCycleRange(cycleStartDay, shiftWeekend);
+    if (cycleOffset > 0) {
+      for (let i = 0; i < cycleOffset; i++) {
+        const nextRef = new Date(range.end);
+        nextRef.setDate(nextRef.getDate() + 1);
+        range = getCycleRange(cycleStartDay, shiftWeekend, nextRef);
+      }
+    } else if (cycleOffset < 0) {
+      for (let i = 0; i < -cycleOffset; i++) {
+        const prevRef = new Date(range.start);
+        prevRef.setDate(prevRef.getDate() - 1);
+        range = getCycleRange(cycleStartDay, shiftWeekend, prevRef);
+      }
+    }
+    return range;
   }, [cycleStartDay, shiftWeekend, cycleOffset]);
   const { hourlyWage } = useHourlyWage();
   const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
