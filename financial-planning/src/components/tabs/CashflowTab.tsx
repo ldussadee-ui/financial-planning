@@ -6,6 +6,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { categoryBudgetStatus, daysFasterToGoal, fmt, fmtRange, getCycleRange, hoursOfWork } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
+import type { GeneratedEntryInfo } from "@/lib/recurring";
 import { useSetting } from "@/hooks/useSetting";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
@@ -35,6 +36,7 @@ export function CashflowTab() {
   const { lang, t } = useLanguage();
   const [cycleStartDay, setCycleStartDay] = useSetting<number>("cycleStartDay", 1);
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
+  const [recurringNotice, setRecurringNotice] = useSetting<GeneratedEntryInfo[]>("recurringGeneratedNotice", []);
   const [cycleOffset, setCycleOffset] = useState(0);
   const hiddenAtRef = useRef<number | null>(null);
   useEffect(() => {
@@ -143,8 +145,28 @@ export function CashflowTab() {
           <Link href="/cashflow/payment-summary" style={{ ...chipStyle(false), textDecoration: "none" }}>
             💳 {t(TR.cashflow.paymentSummary)}
           </Link>
+          <Link href="/cashflow/recurring" style={{ ...chipStyle(false), textDecoration: "none" }}>
+            {t(TR.recurring.manageLink)}
+          </Link>
         </span>
       </div>
+
+      {recurringNotice.length > 0 && (
+        <div className="fp-card" style={{ padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 12.5, background: "#F5EFFF" }}>
+          <div style={{ flex: 1 }}>
+            <b>{t(TR.recurring.noticePrefix)}</b>{" "}
+            {recurringNotice.map((n) => `${translateLabel(n.category, lang, CATEGORY_LABEL_EN)} ${fmt(n.amount)}`).join(", ")}
+          </div>
+          <button
+            type="button"
+            onClick={() => setRecurringNotice([])}
+            aria-label={t(TR.common.close)}
+            style={{ border: "none", background: "transparent", color: "var(--ink-soft)", cursor: "pointer", fontSize: 15, lineHeight: 1, padding: 0 }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <NestedGroup
         label={t(TR.cashflow.income)}

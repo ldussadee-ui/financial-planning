@@ -276,10 +276,31 @@ export function NestedGroup({
   );
 }
 
+export function Switch({ checked, onChange, ariaLabel }: { checked: boolean; onChange: (v: boolean) => void; ariaLabel?: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={ariaLabel}
+      onClick={(e) => { e.stopPropagation(); onChange(!checked); }}
+      style={{
+        width: 40, height: 24, borderRadius: 999, border: "none", padding: 2, flexShrink: 0,
+        background: checked ? "#0F6E56" : "#E4DFEA", cursor: "pointer",
+        display: "flex", alignItems: "center", justifyContent: checked ? "flex-end" : "flex-start",
+      }}
+    >
+      <span style={{ width: 20, height: 20, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+    </button>
+  );
+}
+
 export function Row({
-  left, right, date, icon, onDelete, onClick,
+  left, right, date, icon, onDelete, onClick, toggle, deleteConfirmText, deleteAriaLabel,
 }: {
   left: ReactNode; right: string; date?: string; icon?: ReactNode; onDelete: () => void; onClick?: () => void;
+  toggle?: { checked: boolean; onChange: (v: boolean) => void; ariaLabel?: string };
+  deleteConfirmText?: string; deleteAriaLabel?: string;
 }) {
   const { t } = useLanguage();
   return (
@@ -297,14 +318,15 @@ export function Row({
           <ChevronRight size={16} />
         </span>
       )}
+      {toggle && <Switch checked={toggle.checked} onChange={toggle.onChange} ariaLabel={toggle.ariaLabel} />}
       <button
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          if (window.confirm(t(TR.common.deleteItemConfirm))) onDelete();
+          if (window.confirm(deleteConfirmText ?? t(TR.common.deleteItemConfirm))) onDelete();
         }}
         style={{ ...deleteBtn, marginLeft: 6 }}
-        aria-label={t(TR.common.deleteItemAria)}
+        aria-label={deleteAriaLabel ?? t(TR.common.deleteItemAria)}
       >
         <Trash2 size={13} />
       </button>
@@ -331,12 +353,15 @@ function dayCellStyle(active: boolean): CSSProperties {
 }
 
 export function DayPicker({
-  value, onChange, shiftWeekend, onShiftWeekendChange,
+  value, onChange, shiftWeekend, onShiftWeekendChange, buttonLabel, popoverTitle, maxDay = 28,
 }: {
   value: number;
   onChange: (day: number) => void;
   shiftWeekend: boolean;
   onShiftWeekendChange: (shift: boolean) => void;
+  buttonLabel?: string;
+  popoverTitle?: string;
+  maxDay?: number;
 }) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -351,13 +376,13 @@ export function DayPicker({
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
       <button type="button" onClick={() => setOpen((v) => !v)} style={dayPickerButtonStyle}>
-        {t(TR.common.startDay)} {value}
+        {buttonLabel ?? t(TR.common.startDay)} {value}
       </button>
       {open && (
         <div style={dayPickerPopoverStyle}>
-          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 8, fontWeight: 600 }}>{t(TR.common.chooseCycleStartDay)}</div>
+          <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 8, fontWeight: 600 }}>{popoverTitle ?? t(TR.common.chooseCycleStartDay)}</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 5 }}>
-            {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
+            {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
               <button key={d} type="button" onClick={() => { onChange(d); setOpen(false); }} style={dayCellStyle(d === value)}>
                 {d}
               </button>

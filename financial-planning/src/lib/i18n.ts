@@ -340,6 +340,30 @@ export const TR = {
     } as Text,
     recommendedAtLeast: { th: "ควรมีอย่างน้อย", en: "Should have at least" } as Text,
   },
+  recurring: {
+    pageTitle: { th: "รายการประจำ 🔁", en: "Recurring Entries 🔁" } as Text,
+    pageSubtitle: {
+      th: "ตั้งรายการรับ-จ่ายที่เกิดซ้ำทุกเดือนไว้ล่วงหน้า ระบบจะสร้างรายการให้อัตโนมัติทุกเดือน",
+      en: "Set up income/expense entries that repeat every month — the app creates them for you automatically",
+    } as Text,
+    manageLink: { th: "🔁 รายการประจำ", en: "🔁 Recurring Entries" } as Text,
+    toggleLabel: { th: "🔁 ทำรายการนี้ซ้ำทุกเดือน", en: "🔁 Repeat this entry every month" } as Text,
+    dayButtonLabel: { th: "🔁 ทุกวันที่", en: "🔁 Every day" } as Text,
+    chooseDay: { th: "เลือกวันที่ทำรายการซ้ำ", en: "Choose the day it repeats on" } as Text,
+    fromRecurringBadge: { th: "🔁 จากรายการประจำ", en: "🔁 From a recurring entry" } as Text,
+    editSourceLink: { th: "แก้ไขรายการประจำต้นทาง →", en: "Edit the source recurring entry →" } as Text,
+    empty: { th: "ยังไม่มีรายการประจำ", en: "No recurring entries yet" } as Text,
+    editTitle: { th: "แก้ไขรายการประจำ", en: "Edit Recurring Entry" } as Text,
+    everyDayOf: { th: "ทุกวันที่", en: "every day" } as Text,
+    activeAria: { th: "เปิด/ปิดใช้งานรายการประจำนี้", en: "Toggle this recurring entry on/off" } as Text,
+    deleteConfirm: {
+      th: "ลบรายการประจำนี้ใช่หรือไม่? รายการที่เคยสร้างไว้แล้วจะไม่หายไป",
+      en: "Delete this recurring entry? Entries already created from it will stay.",
+    } as Text,
+    deleteAria: { th: "ลบรายการประจำ", en: "Delete recurring entry" } as Text,
+    noticePrefix: { th: "🔁 เพิ่มรายการประจำให้อัตโนมัติ:", en: "🔁 Automatically added:" } as Text,
+    perMonth: { th: "/เดือน", en: "/mo" } as Text,
+  },
 } as const;
 
 // Default category/goal-type labels are stored in Thai regardless of UI

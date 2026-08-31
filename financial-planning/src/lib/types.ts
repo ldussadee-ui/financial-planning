@@ -77,6 +77,25 @@ export interface CashFlowEntry {
   expense_class?: ExpenseClass;
   payment_method_id?: string | null;
   owner?: string | null;
+  recurringId?: string;
+}
+
+// A template for a recurring income/expense — the actual dated CashFlowEntry
+// rows are generated from it (see lib/recurring.ts), not stored here.
+export interface RecurringEntry {
+  id: string;
+  type: CashFlowType;
+  category: string;
+  amount: number;
+  dayOfMonth: number;
+  shiftWeekend: boolean;
+  payment_method_id?: string | null;
+  active: boolean;
+  // "YYYY-MM" of the most recent month this rule has already accounted for
+  // (an entry was generated for it, or it was deliberately skipped because
+  // the day had already passed when the rule was created) — generation
+  // resumes from the month after this one.
+  lastGeneratedYearMonth: string;
 }
 
 export interface CategoryChip {

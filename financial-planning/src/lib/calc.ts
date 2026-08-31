@@ -32,7 +32,7 @@ export const fmtDateShort = (iso: string, lang: Language = "th") => {
   return new Date(iso + "T00:00:00").toLocaleDateString(lang === "en" ? "en-US" : "th-TH", { day: "numeric", month: "short" });
 };
 
-function adjustForWeekend(date: Date, shiftWeekend: boolean) {
+export function adjustForWeekend(date: Date, shiftWeekend: boolean) {
   if (!shiftWeekend) return date;
   const day = date.getDay(); // 0 = Sun, 6 = Sat
   if (day === 6) {
@@ -47,8 +47,15 @@ function adjustForWeekend(date: Date, shiftWeekend: boolean) {
   }
   return date;
 }
+export function daysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+// Clamps cycleStartDay to the month's last day (e.g. 31 in a 30-day month)
+// before applying the weekend shift, so a short month never silently
+// overflows into the next one via native Date's day-overflow behavior.
 function computeAdjustedStart(year: number, month: number, cycleStartDay: number, shiftWeekend: boolean) {
-  return adjustForWeekend(new Date(year, month, cycleStartDay), shiftWeekend);
+  const clampedDay = Math.min(cycleStartDay, daysInMonth(year, month));
+  return adjustForWeekend(new Date(year, month, clampedDay), shiftWeekend);
 }
 
 export interface CycleRange {
@@ -57,13 +64,22 @@ export interface CycleRange {
 }
 
 export function getCycleRange(cycleStartDay: number, shiftWeekend: boolean, ref: Date = new Date()): CycleRange {
-  const candidateStart = computeAdjustedStart(ref.getFullYear(), ref.getMonth(), cycleStartDay, shiftWeekend);
-  let start = candidateStart;
-  if (ref < candidateStart) {
-    const prevMonth = new Date(ref.getFullYear(), ref.getMonth() - 1, 1);
-    start = computeAdjustedStart(prevMonth.getFullYear(), prevMonth.getMonth(), cycleStartDay, shiftWeekend);
+  // anchorYear/anchorMonth track which calendar month this cycle's start
+  // conceptually belongs to, kept separate from `start` itself: the weekend
+  // shift can push `start` backward into the previous month (e.g. day 1
+  // falling on a Saturday shifts to the 31st), and the next cycle's start
+  // must still be computed one month after the real anchor, not one month
+  // after wherever the shift happened to land.
+  let anchorYear = ref.getFullYear();
+  let anchorMonth = ref.getMonth();
+  let start = computeAdjustedStart(anchorYear, anchorMonth, cycleStartDay, shiftWeekend);
+  if (ref < start) {
+    const prevMonth = new Date(anchorYear, anchorMonth - 1, 1);
+    anchorYear = prevMonth.getFullYear();
+    anchorMonth = prevMonth.getMonth();
+    start = computeAdjustedStart(anchorYear, anchorMonth, cycleStartDay, shiftWeekend);
   }
-  const nextMonth = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+  const nextMonth = new Date(anchorYear, anchorMonth + 1, 1);
   const nextStart = computeAdjustedStart(nextMonth.getFullYear(), nextMonth.getMonth(), cycleStartDay, shiftWeekend);
   const end = new Date(nextStart);
   end.setDate(end.getDate() - 1);

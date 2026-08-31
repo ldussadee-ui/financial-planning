@@ -14,6 +14,7 @@ import type {
   Budget,
   NetWorthSnapshot,
   InsurancePolicy,
+  RecurringEntry,
 } from "./types";
 
 export const CASH_METHOD_NAME = "เงินสด";
@@ -31,6 +32,7 @@ class FinancialPlanningDB extends Dexie {
   budgets!: EntityTable<Budget, "category">;
   netWorthHistory!: EntityTable<NetWorthSnapshot, "date">;
   insurancePolicies!: EntityTable<InsurancePolicy, "id">;
+  recurringEntries!: EntityTable<RecurringEntry, "id">;
 
   constructor() {
     super("financial-planning-db");
@@ -226,6 +228,24 @@ class FinancialPlanningDB extends Dexie {
       budgets: "category",
       netWorthHistory: "date",
       insurancePolicies: "id, policyType",
+    });
+
+    // Recurring income/expense templates (e.g. salary, rent) that
+    // auto-generate a real cashflow entry each month — see lib/recurring.ts.
+    this.version(107).stores({
+      liquidAssets: "id, goal_id",
+      investmentAssets: "id, goal_id, category",
+      personalAssets: "id, liability_id",
+      liabilities: "id, term",
+      goals: "id",
+      cashflow: "id, date, type",
+      categories: "id, entryType, order",
+      settings: "key",
+      paymentMethods: "id, kind",
+      budgets: "category",
+      netWorthHistory: "date",
+      insurancePolicies: "id, policyType",
+      recurringEntries: "id, type",
     });
   }
 }

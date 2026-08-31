@@ -1,14 +1,16 @@
 "use client";
 
 import { createContext, useContext, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { classifyExpense, classifyIncome, daysFasterToGoal, hoursOfWork, isoToday, uid } from "@/lib/calc";
+import { createRecurringRule } from "@/lib/recurring";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, PAYMENT_METHOD_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
-import { Field, AddButton, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { Field, AddButton, DayPicker, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
 
@@ -88,6 +90,10 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const [addingCard, setAddingCard] = useState(false);
   const [newCardName, setNewCardName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingRecurringId, setEditingRecurringId] = useState<string | null>(null);
+  const [recurring, setRecurring] = useState(false);
+  const [dayOfMonth, setDayOfMonth] = useState(new Date().getDate());
+  const [dayShiftWeekend, setDayShiftWeekend] = useState(false);
   const [activeModal, setActiveModal] = useState<CashFlowType | null>(null);
   const effectivePaymentMethodId = form.payment_method_id || defaultCashId || "";
 
@@ -179,23 +185,36 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
 
   const closeModal = () => {
     setEditingId(null);
+    setEditingRecurringId(null);
     setForm({ type: "Income", category: "", amount: "", date: isoToday(), payment_method_id: "" });
     setCustomMode(false);
     setAddingCard(false);
     setActiveModal(null);
+    setRecurring(false);
+    setDayOfMonth(new Date().getDate());
+    setDayShiftWeekend(false);
   };
 
   const submit = () => {
     if (!form.category || !form.amount) return;
-    const id = editingId || uid();
-    if (form.type === "Income") {
-      void db.cashflow.put({ id, type: "Income", category: form.category, amount: Number(form.amount), date: form.date || isoToday(), incomeClass: classifyIncome(form.category) });
-    } else {
-      void db.cashflow.put({
-        id, type: "Expense", category: form.category, amount: Number(form.amount), date: form.date || isoToday(),
-        expense_class: classifyExpense(form.category),
-        payment_method_id: effectivePaymentMethodId || null,
+    if (recurring && !editingId) {
+      void createRecurringRule({
+        type: form.type, category: form.category, amount: Number(form.amount),
+        dayOfMonth, shiftWeekend: dayShiftWeekend,
+        payment_method_id: form.type === "Expense" ? (effectivePaymentMethodId || null) : null,
       });
+      closeModal();
+      return;
+    }
+    const id = editingId || uid();
+    // Preserve recurringId when editing an entry that came from a recurring
+    // rule — put() replaces the whole row, so omitting it here would
+    // silently detach the entry from its source rule.
+    const base = { id, category: form.category, amount: Number(form.amount), date: form.date || isoToday(), recurringId: editingRecurringId ?? undefined };
+    if (form.type === "Income") {
+      void db.cashflow.put({ ...base, type: "Income", incomeClass: classifyIncome(form.category) });
+    } else {
+      void db.cashflow.put({ ...base, type: "Expense", expense_class: classifyExpense(form.category), payment_method_id: effectivePaymentMethodId || null });
     }
     if (customMode && saveShortcut) {
       const exists = cats.some((c) => c.label === form.category);
@@ -209,11 +228,15 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
 
   const openNew = (type: CashFlowType) => {
     setEditingId(null);
+    setEditingRecurringId(null);
     setForm({ type, category: "", amount: "", date: isoToday(), payment_method_id: "" });
     setCustomMode(false);
     setEditing(false);
     setAddingCard(false);
     setActiveModal(type);
+    setRecurring(false);
+    setDayOfMonth(new Date().getDate());
+    setDayShiftWeekend(false);
   };
   const openEdit = (entry: CashFlowEntry) => {
     const catsForType = (allCategories || []).filter((c) => c.entryType === entry.type);
@@ -227,6 +250,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
     });
     setCustomMode(isCustom);
     setEditingId(entry.id);
+    setEditingRecurringId(entry.recurringId ?? null);
     setEditing(false);
     setAddingCard(false);
     setActiveModal(entry.type);
@@ -248,7 +272,35 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
 
       <Modal open={activeModal !== null} onClose={closeModal} title={activeModal === "Income" ? t(TR.cashflow.income$) : t(TR.cashflow.expense$)}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-          <Field label={t(TR.cashflow.date)}><input type="date" style={inputStyle} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
+          <Field label={t(TR.cashflow.date)}>
+            {recurring && !editingId ? (
+              <DayPicker
+                value={dayOfMonth}
+                onChange={setDayOfMonth}
+                shiftWeekend={dayShiftWeekend}
+                onShiftWeekendChange={setDayShiftWeekend}
+                buttonLabel={t(TR.recurring.dayButtonLabel)}
+                popoverTitle={t(TR.recurring.chooseDay)}
+                maxDay={31}
+              />
+            ) : (
+              <input type="date" style={inputStyle} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+            )}
+          </Field>
+
+          {!editingId && (
+            <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, color: "var(--ink-soft)", cursor: "pointer" }}>
+              <input type="checkbox" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} />
+              {t(TR.recurring.toggleLabel)}
+            </label>
+          )}
+
+          {editingId && editingRecurringId && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, flexBasis: "100%" }}>
+              <span style={{ color: "#7A5C9E", fontWeight: 600 }}>{t(TR.recurring.fromRecurringBadge)}</span>
+              <Link href="/cashflow/recurring" style={{ color: "#7A5C9E", textDecoration: "none", fontWeight: 600 }}>{t(TR.recurring.editSourceLink)}</Link>
+            </div>
+          )}
 
           <Field label={t(TR.cashflow.category)} wide>
             <div

@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.9.0] - 2026-08-31
+
+### Added
+- Recurring income/expense entries: toggle "Repeat this entry every month" when adding a new entry, pick the day of the month (with the same weekend-shift option as the cycle start day) — the app generates a real cashflow entry automatically each month from then on, catching up on any months missed while the app was closed. A new "Recurring Entries" page (linked from the Cashflow tab) lists all of them with pause/resume, edit, and delete; editing or deleting a recurring entry never changes months already generated. Entries created this way show a "From a recurring entry" badge linking back to their source
+- A one-time dismissible notice on the Cashflow tab lists whatever recurring entries were just auto-generated, so new entries never appear silently
+
+### Fixed
+- `getCycleRange()` (used for the current cycle everywhere in the app) produced an invalid, inverted date range when the cycle start day was 1 or 2 with weekend-shifting on and the shift crossed into the previous month, and was off by one day for cycle start days of 29–31 in short months (day 30/31 in a 30-day month, day 29–31 in February) — both were edge cases in how the day was clamped and which month the *next* cycle boundary was computed from; cycle start days from 3–28 were never affected
+
 ## [0.8.1] - 2026-08-23
 
 ### Fixed

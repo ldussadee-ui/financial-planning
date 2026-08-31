@@ -3,6 +3,7 @@ import { Prompt, Sarabun } from "next/font/google";
 import { DbInit } from "@/components/DbInit";
 import { PwaRegister } from "@/components/PwaRegister";
 import { NetWorthSnapshotter } from "@/components/NetWorthSnapshotter";
+import { RecurringGenerator } from "@/components/RecurringGenerator";
 import "./globals.css";
 
 const prompt = Prompt({
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <DbInit />
         <PwaRegister />
         <NetWorthSnapshotter />
+        <RecurringGenerator />
         {children}
       </body>
     </html>
