@@ -44,7 +44,7 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
 
   return (
     <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-      <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>{trendTitle}</div>
+      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>{trendTitle}</div>
       {categories.length ? (
         <>
           <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
@@ -119,7 +119,7 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.overview)}</div>
+        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.overview)}</div>
         <StatRow label={t(TR.reports.total)} value={fmt(total)} big />
         <StatRow label={t(TR.reports.fixedLabel)} value={fmt(fixedTotal)} />
         <StatRow label={t(TR.reports.generalLabel)} value={fmt(variableTotal)} />
@@ -127,7 +127,7 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.byCategory)}</div>
+        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.byCategory)}</div>
         {byCategory.length ? (
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
             <ResponsiveContainer width={180} height={180}>

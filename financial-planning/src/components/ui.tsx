@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Plus, Trash2, ChevronRight, X } from "lucide-react";
 import { fmt } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -10,7 +10,7 @@ export function SectionHeader({ title, sub, chip }: { title: string; sub?: strin
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 26, flexWrap: "wrap", gap: 10 }}>
       <div>
-        <div className="fp-display" style={{ fontSize: 26, fontWeight: 700, color: "#6B5490" }}>{title}</div>
+        <h1 className="fp-display" style={{ fontSize: 26, fontWeight: 700, color: "#6B5490" }}>{title}</h1>
         {sub && <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 5 }}>{sub}</div>}
       </div>
       {chip && (
@@ -21,6 +21,14 @@ export function SectionHeader({ title, sub, chip }: { title: string; sub?: strin
     </div>
   );
 }
+
+// Tracks which open Modal is topmost, so a nested modal (e.g. the amount
+// field's calculator popup opened from inside another modal) is the only
+// one whose Tab handler acts — otherwise both handlers would compute a
+// focus trap over the same DOM (the inner modal is a React/DOM descendant
+// of the outer one, not a portal) and fight over where Tab should land.
+const modalStack: object[] = [];
+const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 export function Modal({
   open, onClose, title, children,
@@ -38,6 +46,47 @@ export function Modal({
   // translateY visual, which can lag a frame without breaking anything.
   const startYRef = useRef<number | null>(null);
   const dragYRef = useRef(0);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const tokenRef = useRef({});
+  const titleId = useId();
+  // Consumers pass onClose as a fresh closure every render (none memoize
+  // it), so it can't be a dependency below without the effect re-running on
+  // every parent re-render — each re-run would re-capture
+  // previouslyFocused as whatever the sheet's own programmatic focus had
+  // just landed on, losing the real pre-open target by the time the modal
+  // actually closes. A ref keeps the latest callback reachable without
+  // that.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
+  useEffect(() => {
+    if (!open) return;
+    const token = tokenRef.current;
+    modalStack.push(token);
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const sheet = sheetRef.current;
+    sheet?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (modalStack[modalStack.length - 1] !== token) return;
+      if (e.key === "Escape") { onCloseRef.current(); return; }
+      if (e.key !== "Tab" || !sheet) return;
+      const items = Array.from(sheet.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+      if (!items.length) return;
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      const i = modalStack.indexOf(token);
+      if (i !== -1) modalStack.splice(i, 1);
+      previouslyFocused?.focus();
+    };
+  }, [open]);
 
   if (!open) return null;
 
@@ -70,7 +119,12 @@ export function Modal({
       onClick={onClose}
     >
       <div
+        ref={sheetRef}
         className="fp-card fp-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         style={{
           width: "100%", maxWidth: 480, overflowY: "auto",
           padding: "14px 22px 22px", borderRadius: "22px 22px 0 0", marginBottom: 0,
@@ -91,7 +145,7 @@ export function Modal({
         <div onPointerDown={onHandlePointerDown} style={{ cursor: "grab", touchAction: "none", marginBottom: 8 }}>
           <div style={{ width: 36, height: 5, background: "#e3d9ce", borderRadius: 999, margin: "0 auto 14px" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div className="fp-display" style={{ fontSize: 18, fontWeight: 600, color: "#6B5490" }}>{title}</div>
+            <h2 id={titleId} className="fp-display" style={{ fontSize: 18, fontWeight: 600, color: "#6B5490" }}>{title}</h2>
             <button
               type="button"
               onClick={onClose}
@@ -153,12 +207,17 @@ export const cancelButtonStyle: CSSProperties = {
   borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
 };
 
+// A native <label> wrapping its control(s), not a <div> with a nearby
+// unassociated label — this is what previously read as a blank, unlabeled
+// field to screen readers. Wrapping works for any child (input, select, the
+// calculator's own trigger button, a picker built from several buttons)
+// without having to thread a matching id/htmlFor through every call site.
 export function Field({ label, wide, children }: { label: string; wide?: boolean; children: ReactNode }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: wide ? 480 : undefined }}>
-      <label style={{ fontSize: 12, color: "var(--ink-soft)", fontWeight: 600 }}>{label}</label>
+    <label style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: wide ? 480 : undefined }}>
+      <span style={{ fontSize: 12, color: "var(--ink-soft)", fontWeight: 600 }}>{label}</span>
       {children}
-    </div>
+    </label>
   );
 }
 
@@ -192,7 +251,7 @@ export function SegmentedControl<T extends string>({
           onClick={() => onChange(o.value)}
           style={{
             position: "relative", zIndex: 1, flex: 1, textAlign: "center", border: "none", background: "transparent",
-            cursor: "pointer", padding: small ? "5px 2px" : "7px 4px",
+            cursor: "pointer", padding: small ? "9px 4px" : "7px 4px",
             fontSize: small ? 11 : 12.5, fontWeight: 600,
             color: o.value === value ? "var(--ink)" : "var(--ink-soft)",
           }}
@@ -225,7 +284,7 @@ export function Group({ title, tint, children }: { title: string; tint: string; 
   const items = children.filter(Boolean);
   return (
     <div style={{ marginBottom: 18 }}>
-      <div style={{ fontSize: 12.5, color: "#8B7FA0", marginBottom: 7, fontWeight: 600 }}>{title}</div>
+      <h2 style={{ fontSize: 12.5, color: "#645878", marginBottom: 7, fontWeight: 600 }}>{title}</h2>
       <div className="fp-card" style={{ padding: 8, background: items.length ? tint : "#FAF6F1" }}>
         {items.length ? items : <EmptyState text={t(TR.common.noItems)} />}
       </div>
@@ -249,7 +308,7 @@ export function NestedGroup({
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
-        <span style={{ fontSize: 20, color: accent, fontWeight: 700 }}>{label}</span>
+        <h2 style={{ display: "inline", fontSize: 20, color: accent, fontWeight: 700 }}>{label}</h2>
         <span className="fp-num" style={{ fontSize: 20, fontWeight: 700, color: accent }}>{amount}</span>
       </div>
       <div className="fp-card" style={{ padding: 8, background: tint }}>
@@ -263,8 +322,8 @@ export function NestedGroup({
               }}
             >
               {sg.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: sg.dot, flexShrink: 0 }} />}
-              <span style={{ fontSize: 13, fontWeight: 600, color: sg.dot || "#8B7FA0" }}>{sg.label}</span>
-              <span className="fp-num" style={{ marginLeft: "auto", fontSize: 13, fontWeight: 700, color: sg.dot || "#8B7FA0" }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: sg.dot || "#645878" }}>{sg.label}</span>
+              <span className="fp-num" style={{ marginLeft: "auto", fontSize: 13, fontWeight: 700, color: sg.dot || "#645878" }}>
                 {sg.amount}
               </span>
             </div>

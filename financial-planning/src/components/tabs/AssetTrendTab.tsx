@@ -69,7 +69,7 @@ export function AssetTrendTab() {
 
       <div className="fp-card" style={{ padding: 20, marginTop: 4 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>{t(TR.assets.comparisonTable)}</div>
+          <div style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>{t(TR.assets.comparisonTable)}</div>
           <div style={{ width: 200 }}>
             <SegmentedControl small options={TABLE_COUNT_OPTIONS} value={String(tableCount)} onChange={(v) => setTableCount(Number(v))} />
           </div>

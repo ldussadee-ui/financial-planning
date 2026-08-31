@@ -14,6 +14,8 @@ export const TR = {
     assets: { th: "สินทรัพย์", en: "Assets" } as Text,
     goals: { th: "เป้าหมาย", en: "Goals" } as Text,
     settings: { th: "Settings", en: "Settings" } as Text,
+    mainNavAria: { th: "เมนูหลัก", en: "Main menu" } as Text,
+    quickNavAria: { th: "เมนูด่วน", en: "Quick menu" } as Text,
   },
   dashboard: {
     title: { th: "ภาพรวมการเงิน ☺️", en: "Financial Overview ☺️" } as Text,

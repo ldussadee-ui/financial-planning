@@ -192,7 +192,7 @@ export function CashflowTab() {
 
       {budgetStatus.length > 0 && (
         <div className="fp-card" style={{ padding: 20, marginTop: 18 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 12 }}>🎯 {t(TR.cashflow.budgetThisCycle)}</div>
+          <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 12 }}>🎯 {t(TR.cashflow.budgetThisCycle)}</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {budgetStatus.map((b) => (
               <div key={b.category}>

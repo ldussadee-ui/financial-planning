@@ -28,9 +28,9 @@ export function Sidebar() {
     >
       <div style={{ padding: "0 8px 24px 8px" }}>
         <div className="fp-display" style={{ fontSize: 21, fontWeight: 700, color: "#7A5C9E" }}>{t(TR.nav.appName)}</div>
-        <div style={{ fontSize: 12, color: "#8B7FA0", marginTop: 3 }}>{t(TR.nav.appTagline)}</div>
+        <div style={{ fontSize: 12, color: "#645878", marginTop: 3 }}>{t(TR.nav.appTagline)}</div>
       </div>
-      <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <nav aria-label={t(TR.nav.mainNavAria)} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         {NAV.map((n) => {
           const Icon = n.icon;
           const active = pathname === n.href;
@@ -40,10 +40,10 @@ export function Sidebar() {
               href={n.href}
               className="fp-navbtn"
               style={{
-                display: "flex", alignItems: "center", gap: 10, padding: "10px 12px",
+                display: "flex", alignItems: "center", gap: 10, padding: "13px 12px",
                 cursor: "pointer", textAlign: "left",
                 background: active ? "#FFFFFF" : "transparent",
-                color: active ? "#7A5C9E" : "#8B7FA0", fontSize: 14, fontWeight: active ? 600 : 400,
+                color: active ? "#7A5C9E" : "#645878", fontSize: 14, fontWeight: active ? 600 : 400,
                 boxShadow: "none",
               }}
             >
@@ -63,6 +63,7 @@ export function BottomNav() {
   return (
     <nav
       className="fp-bottomnav"
+      aria-label={t(TR.nav.quickNavAria)}
       style={{
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20,
         background: "rgba(255,255,255,0.72)",
@@ -81,7 +82,7 @@ export function BottomNav() {
             href={n.href}
             style={{
               flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-              padding: "8px 2px 6px", color: active ? "#7A5C9E" : "#B0A6C2", fontSize: 11,
+              padding: "8px 2px 6px", color: active ? "#7A5C9E" : "#645878", fontSize: 11,
               fontWeight: active ? 600 : 400,
             }}
           >

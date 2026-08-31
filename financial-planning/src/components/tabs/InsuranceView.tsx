@@ -126,7 +126,7 @@ export function InsuranceView() {
         </div>
       </Modal>
 
-      <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.checksTitle)}</div>
+      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.checksTitle)}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 18 }}>
         {checks.map((c) => <CheckCard key={c.key} check={c} t={t} />)}
       </div>
@@ -147,7 +147,7 @@ export function InsuranceView() {
         </div>
       )}
 
-      <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.policiesTitle)}</div>
+      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.policiesTitle)}</div>
       <div className="fp-card" style={{ padding: 10 }}>
         {policies.length ? policies.map((p) => (
           <Row

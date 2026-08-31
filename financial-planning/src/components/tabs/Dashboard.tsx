@@ -14,7 +14,7 @@ import { useFinancialRatios } from "@/hooks/useFinancialRatios";
 import { useInsuranceAnalysis } from "@/hooks/useInsuranceAnalysis";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, GOAL_TYPE_LABEL_EN, INVESTMENT_CAT_LABEL_EN, translateLabel } from "@/lib/i18n";
-import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl } from "@/components/ui";
+import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
 
 const BUDGET_ALERT_THRESHOLD = 80;
 
@@ -58,7 +58,7 @@ function ExpandableStatRow({
 }
 
 export function Dashboard() {
-  const { lang, setLang, t } = useLanguage();
+  const { lang, t } = useLanguage();
   const { metrics, cycleRange, loading } = useMetrics();
   const goals = useLiveQuery(() => db.goals.toArray(), [], []);
   const investment = useLiveQuery(() => db.investmentAssets.toArray(), [], []);
@@ -95,21 +95,10 @@ export function Dashboard() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
-        <div style={{ width: 108 }}>
-          <SegmentedControl
-            small
-            options={[{ value: "th", label: "TH" }, { value: "en", label: "EN" }]}
-            value={lang}
-            onChange={setLang}
-          />
-        </div>
-      </div>
-
       <SectionHeader title={t(TR.dashboard.title)} sub={`${t(TR.dashboard.subtitle)} ${fmtRange(cycleRange, lang)}`} chip={t(TR.dashboard.trialChip)} />
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 8 }}>💗 {t(TR.dashboard.netWorthSection)}</div>
+        <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>💗 {t(TR.dashboard.netWorthSection)}</h2>
         <ExpandableStatRow
           label={t(TR.dashboard.liquidAssets)}
           value={fmt(metrics.totalLiquid)}
@@ -153,7 +142,7 @@ export function Dashboard() {
 
       {budgetAlerts.length > 0 && (
         <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-          <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 16 }}>🎯 {t(TR.dashboard.budgetAlert)}</div>
+          <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 16 }}>🎯 {t(TR.dashboard.budgetAlert)}</h2>
           {budgetAlerts.map((b) => (
             <div key={b.category} style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, marginBottom: 6 }}>
@@ -171,7 +160,7 @@ export function Dashboard() {
           onClick={() => toggle("allocation")}
           style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
         >
-          <span style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🥧 {t(TR.dashboard.allocation)}</span>
+          <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>🥧 {t(TR.dashboard.allocation)}</h2>
           {expanded.has("allocation") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
         </div>
         {metrics.byCat.length ? (
@@ -223,7 +212,7 @@ export function Dashboard() {
           style={{ padding: 26, marginTop: 18, display: "block", textDecoration: "none", color: "inherit" }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>📐 {t(TR.dashboard.financialRatios)}</div>
+            <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>📐 {t(TR.dashboard.financialRatios)}</h2>
             <span style={{ fontSize: 12, color: "#7A5C9E", fontWeight: 600 }}>{t(TR.dashboard.viewDetails)}</span>
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
@@ -231,7 +220,7 @@ export function Dashboard() {
             <span style={{ fontSize: 14, color: "var(--ink-soft)" }}>{t(TR.dashboard.ratiosOutOf)} {ratioTotal} {t(TR.dashboard.ratiosPassed)}</span>
           </div>
           <div style={{ display: "flex", gap: 3, marginTop: 10 }}>
-            <div style={{ flex: ratioPassCount, height: 6, borderRadius: 999, background: "#0F6E56" }} />
+            <div style={{ flex: ratioPassCount, height: 6, borderRadius: 999, background: "#0F6E56", borderRight: ratioPassCount && ratioTotal > ratioPassCount ? "2px solid var(--panel)" : undefined }} />
             <div style={{ flex: ratioTotal - ratioPassCount, height: 6, borderRadius: 999, background: "#FF8C7A" }} />
           </div>
         </Link>
@@ -244,7 +233,7 @@ export function Dashboard() {
           style={{ padding: 26, marginTop: 18, display: "block", textDecoration: "none", color: "inherit" }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🛡️ {t(TR.dashboard.riskProtection)}</div>
+            <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>🛡️ {t(TR.dashboard.riskProtection)}</h2>
             <span style={{ fontSize: 12, color: "#7A5C9E", fontWeight: 600 }}>{t(TR.dashboard.viewDetails)}</span>
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
@@ -252,7 +241,7 @@ export function Dashboard() {
             <span style={{ fontSize: 14, color: "var(--ink-soft)" }}>{t(TR.dashboard.ratiosOutOf)} {insuranceTotal} {t(TR.dashboard.ratiosPassed)}</span>
           </div>
           <div style={{ display: "flex", gap: 3, marginTop: 10 }}>
-            <div style={{ flex: insurancePassCount, height: 6, borderRadius: 999, background: "#0F6E56" }} />
+            <div style={{ flex: insurancePassCount, height: 6, borderRadius: 999, background: "#0F6E56", borderRight: insurancePassCount && insuranceTotal > insurancePassCount ? "2px solid var(--panel)" : undefined }} />
             <div style={{ flex: insuranceTotal - insurancePassCount, height: 6, borderRadius: 999, background: "#FF8C7A" }} />
           </div>
         </Link>
@@ -264,7 +253,7 @@ export function Dashboard() {
             onClick={() => toggle("passive")}
             style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
           >
-            <span style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🌿 {t(TR.dashboard.passiveIncome)}</span>
+            <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>🌿 {t(TR.dashboard.passiveIncome)}</h2>
             {expanded.has("passive") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
           </div>
           <div className="fp-display" style={{ fontSize: 32, fontWeight: 700, color: "#0F6E56", marginTop: 8 }}>
@@ -289,7 +278,7 @@ export function Dashboard() {
           onClick={() => toggle("goals")}
           style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
         >
-          <span style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600 }}>🎯 {t(TR.dashboard.goalProgress)}</span>
+          <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>🎯 {t(TR.dashboard.goalProgress)}</h2>
           {expanded.has("goals") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
         </div>
         {goalProgress.length ? (

@@ -7,7 +7,7 @@ import type { CashFlowEntry } from "@/lib/types";
 
 const dateHeaderStyle: CSSProperties = {
   fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
-  fontSize: 13, fontWeight: 600, color: "#8B7FA0",
+  fontSize: 13, fontWeight: 600, color: "#645878",
   padding: "14px 14px 6px", marginTop: 6, borderTop: "1px solid var(--line)",
 };
 const firstDateHeaderStyle: CSSProperties = { ...dateHeaderStyle, borderTop: "none", marginTop: 0 };

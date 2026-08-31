@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.9.1] - 2026-08-31
+
+### Fixed
+- Addressed all 16 findings from an accessibility audit (WCAG 2.1/2.2):
+  - **Contrast**: the app-wide secondary-text color and two other hardcoded grays (used for the sidebar, language toggle, section headers, ratio card text, and inactive tabs) were below the 4.5:1 minimum — unified to a single darker color (5.3–6.5:1 against every background it appears on)
+  - **Touch targets**: sidebar rows, the language toggle, and the floating add buttons were smaller than the recommended 44×44px on mobile — enlarged
+  - **Keyboard focus**: no element had a visible focus indicator anywhere in the app — added one globally; the language toggle's DOM position put it after the sidebar in tab order despite sitting visually above it — moved it out of the Dashboard page into the shared layout (now also reachable from every tab, not just the Dashboard); the sidebar and bottom nav landmarks had no distinguishing label for screen readers — added one to each
+  - **Semantic structure**: no heading elements existed anywhere, so screen reader users couldn't jump between sections — added a page `<h1>` and card-level `<h2>`s; form fields (asset/goal/etc. modals) had visible label text with no programmatic association — `Field` now renders a native `<label>` wrapping its control; modals weren't announced as dialogs and keyboard focus could tab out into the page behind them — added `role="dialog"`, `aria-modal`, `aria-labelledby`, and a real focus trap (correctly scoped for a modal opened from inside another modal, e.g. the amount field's calculator)
+  - **Color-only indicators**: the pass/fail progress bars on the Dashboard relied on color alone to separate the two segments — added a visible divider
+
 ## [0.9.0] - 2026-08-31
 
 ### Added

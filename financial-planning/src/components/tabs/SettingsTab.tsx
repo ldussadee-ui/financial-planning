@@ -28,7 +28,7 @@ function SpendCompareSettings() {
 
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-      <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.spendCompare)}</div>
+      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.spendCompare)}</div>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
         {t(TR.settings.spendCompareNote)}
       </div>
@@ -83,7 +83,7 @@ function BudgetSettings() {
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
       <div onClick={() => setOpen((v) => !v)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           {t(TR.settings.budgetTitle)}
         </div>
@@ -121,7 +121,7 @@ export function SettingsTab() {
       <BudgetSettings />
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.cashflowSection)}</div>
+        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.cashflowSection)}</div>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.cashflowExportNote)}
         </div>
@@ -129,7 +129,7 @@ export function SettingsTab() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <div style={{ fontSize: 13, color: "#8B7FA0", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.assetsSection)}</div>
+        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.assetsSection)}</div>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.assetsExportNote)}
         </div>
