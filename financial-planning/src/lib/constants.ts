@@ -37,7 +37,7 @@ export const DEFAULT_EXPENSE_LABELS = ["ผ่อนบ้าน", "ผ่อน
 export const FIXED_KEYWORDS = ["ผ่อน", "ค่าเช่า", "โทรศัพท์", "อินเทอร์เน็ต", "เน็ตบ้าน", "เบี้ยประกัน", "ประกัน", "ค่าเทอม", "สมาชิก", "งวด", "หนี้"];
 
 // keywords used to auto-detect saving/investment expenses — checked before FIXED_KEYWORDS
-export const INVEST_KEYWORDS = ["ออม", "ลงทุน", "กองทุนรวม", "DCA", "RMF", "SSF", "ประกันสะสมทรัพย์", "บำนาญ"];
+export const INVEST_KEYWORDS = ["ออม", "ลงทุน", "กองทุนรวม", "DCA", "RMF", "SSF", "ประกันสะสมทรัพย์", "บำนาญ", "PVD", "กองทุนสำรองเลี้ยงชีพ", "Reinvestment", "Reinvest"];
 
 // keywords used to auto-detect passive income — everything else defaults to active
 export const PASSIVE_KEYWORDS = ["ปันผล", "ดอกเบี้ย", "ค่าเช่า", "เช่า", "ลิขสิทธิ์", "royalty", "dividend", "แบ่งปันกำไร", "กำไรจากการขาย", "ค่าตอบแทนกองทุน"];

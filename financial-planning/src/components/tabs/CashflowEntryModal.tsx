@@ -40,21 +40,20 @@ function badgeLabel(type: CashFlowType, cls: string, lang: Language) {
   }
   return cls === "Passive" ? t(TR.cashflow.badgePassive) : t(TR.cashflow.badgeActive);
 }
-// Income classes share the app's original green (Active = deeper, Passive =
-// lighter); expense classes share the original orange (Fixed = deeper,
-// ทั่วไป = lighter) — matches the Income/Expense group colors elsewhere, so
-// the hue itself signals income vs expense while the shade signals which
-// class. Invest keeps the same deep green as Active — they're never shown
-// side by side, so the reuse isn't ambiguous in practice.
+// Each class gets its own hue rather than just a lighter/darker shade of one
+// family — shade alone wasn't enough contrast against the class's own tinted
+// background once each class got its own colored block in the cashflow list
+// (see NestedGroup), and it also stopped Invest from looking identical to
+// Active income when both are visible on screen at once.
 function badgeStyle(type: CashFlowType, cls: string): CSSProperties {
   const base = { fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20 };
   if (type === "Expense") {
-    if (cls === "Invest") return { ...base, background: "#E1F5EE", color: "#0F6E56" };
-    if (cls === "Fixed") return { ...base, background: "#FFE3D6", color: "#D07A4E" };
-    return { ...base, background: "#FFF1E6", color: "#E3A874" };
+    if (cls === "Invest") return { ...base, background: "#DEF2F3", color: "#146B78" };
+    if (cls === "Fixed") return { ...base, background: "#FFE3D6", color: "#9C4E28" };
+    return { ...base, background: "#FFF1E6", color: "#856025" };
   }
   return cls === "Passive"
-    ? { ...base, background: "#EEF9F2", color: "#5FA98A" }
+    ? { ...base, background: "#EEF9F2", color: "#4A7A4F" }
     : { ...base, background: "#DFF3EA", color: "#0F6E56" };
 }
 

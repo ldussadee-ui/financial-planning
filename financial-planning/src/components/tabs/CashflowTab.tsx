@@ -172,21 +172,19 @@ export function CashflowTab() {
         label={t(TR.cashflow.income)}
         amount={fmt(sum(incomeActive) + sum(incomePassive))}
         accent="#0F6E56"
-        tint="#EFFBF6"
         subGroups={[
-          { label: "Active", amount: fmt(sum(incomeActive)), dot: "#0F6E56", items: renderByDay(incomeActive, remove, openEdit, undefined, lang) },
-          { label: "Passive", amount: fmt(sum(incomePassive)), dot: "#5FA98A", items: renderByDay(incomePassive, remove, openEdit, undefined, lang) },
+          { label: "Active", amount: fmt(sum(incomeActive)), dot: "#0F6E56", tint: "#E1F5EE", items: renderByDay(incomeActive, remove, openEdit, undefined, lang) },
+          { label: "Passive", amount: fmt(sum(incomePassive)), dot: "#4A7A4F", tint: "#F0F6EC", items: renderByDay(incomePassive, remove, openEdit, undefined, lang) },
         ]}
       />
       <NestedGroup
         label={t(TR.cashflow.expense)}
         amount={fmt(sum(fixedExp) + sum(varExp) + sum(investExp))}
-        accent="#D07A4E"
-        tint="#FFEFE6"
+        accent="#9C4E28"
         subGroups={[
-          { label: lang === "en" ? "Fixed" : "Fixed (ประจำ)", amount: fmt(sum(fixedExp)), dot: "#D07A4E", items: renderByDay(fixedExp, remove, openEdit, expenseExtra, lang) },
-          { label: lang === "en" ? "General" : "ทั่วไป", amount: fmt(sum(varExp)), dot: "#E3A874", items: renderByDay(varExp, remove, openEdit, expenseExtra, lang) },
-          { label: lang === "en" ? "Savings & Investing" : "ออมและลงทุน", amount: fmt(sum(investExp)), dot: "#0F6E56", items: renderByDay(investExp, remove, openEdit, expenseExtra, lang) },
+          { label: lang === "en" ? "Fixed" : "Fixed (ประจำ)", amount: fmt(sum(fixedExp)), dot: "#9C4E28", tint: "#FBE4D8", items: renderByDay(fixedExp, remove, openEdit, expenseExtra, lang) },
+          { label: lang === "en" ? "General" : "ทั่วไป", amount: fmt(sum(varExp)), dot: "#856025", tint: "#F7ECD3", items: renderByDay(varExp, remove, openEdit, expenseExtra, lang) },
+          { label: lang === "en" ? "Savings & Investing" : "ออมและลงทุน", amount: fmt(sum(investExp)), dot: "#146B78", tint: "#DEF2F3", items: renderByDay(investExp, remove, openEdit, expenseExtra, lang) },
         ]}
       />
 

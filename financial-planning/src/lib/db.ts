@@ -247,6 +247,36 @@ class FinancialPlanningDB extends Dexie {
       insurancePolicies: "id, policyType",
       recurringEntries: "id, type",
     });
+
+    // INVEST_KEYWORDS gained "PVD"/"กองทุนสำรองเลี้ยงชีพ"/"Reinvestment" —
+    // existing expense entries typed under those names were classified
+    // before the rule existed, so re-derive expense_class for all of them
+    // rather than leaving old rows stuck as "ทั่วไป" (General).
+    this.version(108)
+      .stores({
+        liquidAssets: "id, goal_id",
+        investmentAssets: "id, goal_id, category",
+        personalAssets: "id, liability_id",
+        liabilities: "id, term",
+        goals: "id",
+        cashflow: "id, date, type",
+        categories: "id, entryType, order",
+        settings: "key",
+        paymentMethods: "id, kind",
+        budgets: "category",
+        netWorthHistory: "date",
+        insurancePolicies: "id, policyType",
+        recurringEntries: "id, type",
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table<CashFlowEntry, string>("cashflow")
+          .where("type")
+          .equals("Expense")
+          .modify((entry) => {
+            entry.expense_class = classifyExpense(entry.category);
+          });
+      });
   }
 }
 

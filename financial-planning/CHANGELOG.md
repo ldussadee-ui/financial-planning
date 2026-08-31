@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.9.2] - 2026-09-01
+
+### Fixed
+- Cashflow category colors (Active/Passive/Fixed/General/Savings & Investing) were hard to read against their own group's background tint, and Savings & Investing was visually identical to Active income (same green) even though they're unrelated categories — each class now gets its own distinct hue, verified at 4.5:1+ contrast against its background
+- Each cashflow subgroup (Active, Passive, Fixed, General, Savings & Investing) now renders on its own tinted background block instead of all subgroups within a section sharing one uniform card background, making them easier to tell apart at a glance
+- Expense entries categorized as "PVD" or "Reinvestment" (or the Thai "กองทุนสำรองเลี้ยงชีพ") were auto-classified as General instead of Savings & Investing, since those weren't in the keyword list the auto-classifier checks — added them, and existing entries are reclassified retroactively on upgrade
+
 ## [0.9.1] - 2026-08-31
 
 ### Fixed

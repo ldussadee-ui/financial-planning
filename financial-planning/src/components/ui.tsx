@@ -296,13 +296,12 @@ export function Group({ title, tint, children }: { title: string; tint: string; 
 // sub-sections (e.g. "Active", "Passive") — each keeps its own empty state
 // rather than the whole card collapsing when a sub-section has no items.
 export function NestedGroup({
-  label, amount, accent, tint, subGroups,
+  label, amount, accent, subGroups,
 }: {
   label: string;
   amount: string;
   accent: string;
-  tint: string;
-  subGroups: { label: string; amount: string; items: ReactNode[]; dot?: string }[];
+  subGroups: { label: string; amount: string; tint: string; items: ReactNode[]; dot?: string }[];
 }) {
   const { t } = useLanguage();
   return (
@@ -311,14 +310,14 @@ export function NestedGroup({
         <h2 style={{ display: "inline", fontSize: 20, color: accent, fontWeight: 700 }}>{label}</h2>
         <span className="fp-num" style={{ fontSize: 20, fontWeight: 700, color: accent }}>{amount}</span>
       </div>
-      <div className="fp-card" style={{ padding: 8, background: tint }}>
-        {subGroups.map((sg, i) => (
-          <div key={sg.label}>
+      <div className="fp-card" style={{ padding: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+        {subGroups.map((sg) => (
+          <div key={sg.label} style={{ background: sg.tint, borderRadius: 12, padding: "2px 0 4px" }}>
             <div
               style={{
                 display: "flex", alignItems: "center", gap: 7,
                 fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
-                padding: "10px 14px 4px", marginTop: i > 0 ? 6 : 0, borderTop: i > 0 ? "1px solid var(--line)" : "none",
+                padding: "8px 14px 4px",
               }}
             >
               {sg.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: sg.dot, flexShrink: 0 }} />}
