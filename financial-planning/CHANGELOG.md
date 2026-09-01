@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.9.3] - 2026-09-01
+
+### Fixed
+- Could not enter cashflow amounts or edit asset values on mobile — two compounding issues in the shared amount-entry calculator: the field that opens it was a `readonly` `<input>`, which mobile Safari/Chrome don't always reliably deliver taps to, so tapping it sometimes did nothing (now a real `<button>`); and once the calculator did open, it immediately focused itself for accessibility (screen reader dialog announcement), which on some mobile browsers nudges the page's scroll position right as a tap is landing — the browser then discards the tap as a drag rather than firing a click, silently eating taps on the "X" close and confirm buttons. Confirmed via a screen recording showing a real tap-highlight on the close button followed by nothing happening. The focus now waits a frame for layout to settle and explicitly opts out of scroll-into-view
+
 ## [0.9.2] - 2026-09-01
 
 ### Fixed

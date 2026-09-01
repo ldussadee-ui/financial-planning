@@ -67,7 +67,15 @@ export function Modal({
     modalStack.push(token);
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const sheet = sheetRef.current;
-    sheet?.focus();
+    // Deferred one frame, and with preventScroll: focusing the sheet the
+    // instant it's inserted (before the browser has laid out/painted it)
+    // could still nudge scroll position on some mobile browsers even with
+    // preventScroll, and if that happens between a tap's touchstart and
+    // touchend — the button sliding out from under the finger — the
+    // browser can drop the click entirely instead of firing it, which
+    // silently ate taps on the "X" close button on a real phone. Waiting a
+    // frame lets layout settle first.
+    const focusFrame = requestAnimationFrame(() => sheet?.focus({ preventScroll: true }));
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (modalStack[modalStack.length - 1] !== token) return;
@@ -81,6 +89,7 @@ export function Modal({
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
+      cancelAnimationFrame(focusFrame);
       document.removeEventListener("keydown", onKeyDown);
       const i = modalStack.indexOf(token);
       if (i !== -1) modalStack.splice(i, 1);

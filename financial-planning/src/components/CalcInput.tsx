@@ -113,9 +113,13 @@ function CalcKeypad({ initial, onConfirm }: { initial: string; onConfirm: (value
   );
 }
 
-// A read-only amount field: tapping it opens a calculator popup instead of
-// the native keyboard, so every money field in the app enters values the
-// same way (and supports +, -, ×, ÷ before committing).
+// Tapping opens a calculator popup instead of the native keyboard, so every
+// money field in the app enters values the same way (and supports +, -, ×,
+// ÷ before committing). This is a <button>, not a readonly <input> — mobile
+// Safari/Chrome don't reliably deliver taps to readonly inputs (some
+// versions treat them as non-interactive for touch, sometimes eating the
+// first tap or not firing it at all), while a real button's tap handling is
+// universally reliable.
 export function CalcInput({
   value, onChange, placeholder,
 }: {
@@ -127,13 +131,13 @@ export function CalcInput({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <input
-        readOnly
-        value={value}
+      <button
+        type="button"
         onClick={() => setOpen(true)}
-        placeholder={placeholder}
-        style={{ ...inputStyle, cursor: "pointer" }}
-      />
+        style={{ ...inputStyle, cursor: "pointer", textAlign: "left", color: value ? "var(--ink)" : "#c9c1d6" }}
+      >
+        {value || placeholder}
+      </button>
       <Modal open={open} onClose={() => setOpen(false)} title={t(TR.common.calculatorTitle)}>
         <CalcKeypad initial={value} onConfirm={(v) => { onChange(v); setOpen(false); }} />
       </Modal>
