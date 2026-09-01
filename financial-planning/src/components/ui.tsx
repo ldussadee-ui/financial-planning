@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Plus, Trash2, ChevronRight, X } from "lucide-react";
 import { fmt } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -118,7 +119,21 @@ export function Modal({
     dragYRef.current = 0;
   };
 
-  return (
+  // Rendered via a portal straight onto <body>, rather than wherever this
+  // component sits in the calling tree — the previous nested markup made a
+  // Modal opened from inside another Modal (the amount field's calculator)
+  // a genuine DOM descendant of the outer one. That was already the cause
+  // of one clipping bug (see the `transform` note below); the more likely
+  // explanation for taps on the inner modal's own close/confirm buttons
+  // going nowhere on real phones is the same root problem in the event
+  // pipeline rather than layout: React's synthetic events still bubble
+  // through the *component* tree either way, so this doesn't change any of
+  // the stopPropagation() behavior below — it only stops the DOM nesting
+  // itself from being a variable at all, which is what layered `position:
+  // fixed`, drag-listener, and stacking-context behavior across two
+  // browsers-worth of quirks was resting on.
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <div
       style={{
         position: "fixed", inset: 0, background: "rgba(28,24,34,0.32)",
@@ -167,7 +182,8 @@ export function Modal({
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

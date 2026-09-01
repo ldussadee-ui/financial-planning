@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.9.4] - 2026-09-01
+
+### Fixed
+- The 0.9.3 fix didn't fully resolve the mobile calculator issue — confirmed by a real device recording showing a tap-highlight on the close button followed by no response. The underlying issue was structural: a modal opened from inside another modal (the amount-entry calculator) was a genuine DOM descendant of the outer one, not just visually layered — the same class of issue already responsible for one clipping bug this project hit before. Modals now render through a React portal straight onto `<body>` instead of nesting in the DOM at the point they're written in the tree, so a nested modal is no longer a descendant of its parent at all. Re-verified every modal interaction (open, close via X/backdrop/drag/Escape, nested focus-trap isolation, focus restoration, calculator confirm) still works correctly
+
 ## [0.9.3] - 2026-09-01
 
 ### Fixed
