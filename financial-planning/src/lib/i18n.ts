@@ -191,7 +191,57 @@ export const TR = {
     targetAmount: { th: "เป้าหมาย (บาท)", en: "Target (THB)" } as Text,
     targetDate: { th: "วันที่เป้าหมาย", en: "Target Date" } as Text,
     priority: { th: "ความสำคัญ", en: "Priority" } as Text,
-    expectedReturn: { th: "ผลตอบแทนคาดหวัง (%/ปี)", en: "Expected Return (%/yr)" } as Text,
+    // Named for the phase it applies to, so it reads as a pair with
+    // retirePostReturn below — they are different rates for different
+    // stretches of time and were easy to confuse when both said "expected".
+    expectedReturn: { th: "ผลตอบแทนช่วงเก็บเงิน (%/ปี)", en: "Return while saving (%/yr)" } as Text,
+    retireHelperTitle: { th: "🧮 วิธีกำหนดเงินเป้าหมาย", en: "🧮 How to set the target" } as Text,
+    retireModeAuto: { th: "คำนวณให้", en: "Calculate it" } as Text,
+    retireModeManual: { th: "ใส่เอง", en: "Enter it" } as Text,
+    retireMonthlySpend: { th: "ใช้เดือนละ (ค่าเงินวันนี้)", en: "Monthly spend (today's money)" } as Text,
+    retireYearsField: { th: "ใช้เงินกี่ปี", en: "Years of spending" } as Text,
+    retireInflation: { th: "เงินเฟ้อ %/ปี", en: "Inflation %/yr" } as Text,
+    retirePostReturn: { th: "ผลตอบแทนหลังเกษียณ %/ปี", en: "Return after retiring %/yr" } as Text,
+    retireFirstMonth: { th: "ค่าใช้จ่ายเดือนแรกหลังเกษียณ", en: "First month's spending after retiring" } as Text,
+    retirePerMonth: { th: "/เดือน", en: "/mo" } as Text,
+    retireFirstMonthFrom: {
+      th: "{spend} ของวันนี้ บวกเงินเฟ้อ {inflation}% อีก {years} ปี",
+      en: "{spend} in today's money, plus {inflation}% inflation over {years} years",
+    } as Text,
+    retireTotalNeeded: { th: "ใช้ {years} ปี รวมต้องมี", en: "Over {years} years, you need" } as Text,
+    retireWhyNoReturn: {
+      th: "คิดแบบเงินไม่งอกเลยหลังเกษียณ ปลอดภัยที่สุด",
+      en: "Assumes the money stops growing once you retire — the safest read",
+    } as Text,
+    retireWhyMatchesInflation: {
+      th: "ผลตอบแทนหักลบเงินเฟ้อพอดี = เก็บให้พอใช้ {years} ปีตรงๆ",
+      en: "The return exactly cancels inflation — simply {years} years of spending",
+    } as Text,
+    retireWhyBeatsInflation: {
+      th: "หักผลตอบแทนระหว่างใช้เงิน {rate}%/ปี ที่ชนะเงินเฟ้อแล้ว",
+      en: "Discounted by the {rate}%/yr return, which outpaces inflation",
+    } as Text,
+    retireWhyLosesToInflation: {
+      th: "ผลตอบแทน {rate}%/ปี ยังแพ้เงินเฟ้อ จึงต้องมีมากกว่าค่าใช้จ่ายรวม",
+      en: "A {rate}%/yr return still trails inflation, so you need more than the raw total",
+    } as Text,
+    retireCompare: { th: "เทียบสมมติฐานอื่น", en: "Compare other assumptions" } as Text,
+    retireCompareTeaser: {
+      th: "ผลตอบแทนหลังเกษียณ {lo}–{hi}% → ต้องมี {range}",
+      en: "A {lo}–{hi}% return after retiring → you need {range}",
+    } as Text,
+    retireCompareNote: {
+      th: "แตะเพื่อใช้ค่านั้น · คอลัมน์เก็บ/เดือน คิดจากเงินที่ผูกไว้ {linked}",
+      en: "Tap to use that value · the monthly column assumes {linked} already linked",
+    } as Text,
+    retireCompareReturn: { th: "ผลตอบแทน", en: "Return" } as Text,
+    retireCompareNeed: { th: "ต้องมี", en: "Need" } as Text,
+    retireComparePerMonth: { th: "เก็บ/เดือน", en: "Save/mo" } as Text,
+    retireMillionSuffix: { th: " ล้าน", en: "M" } as Text,
+    retireSavedNote: {
+      th: "ค่าจริงที่จะบันทึก · อยากพิมพ์เลขเอง สลับไปที่ \"ใส่เอง\" ด้านบน",
+      en: "The value that gets saved · to type your own, switch to \"Enter it\" above",
+    } as Text,
     priorityWord: { th: "ความสำคัญ", en: "priority: " } as Text,
     dueDate: { th: "· ครบกำหนด", en: "· due" } as Text,
     empty: { th: "ยังไม่มีเป้าหมาย", en: "No goals yet" } as Text,
@@ -427,4 +477,13 @@ export const PAYMENT_METHOD_LABEL_EN: Record<string, string> = {
 export function translateLabel(label: string, lang: Language, map: Record<string, string>): string {
   if (lang !== "en") return label;
   return map[label] ?? label;
+}
+
+// Fills {name} placeholders in a translated string. Most strings here put
+// their values at the end and are assembled by concatenation at the call
+// site, but a value sitting mid-sentence can't be: Thai and English order
+// the surrounding words differently, and splitting into prefix/suffix
+// fragments would force one language's word order onto the other.
+export function fillText(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ""));
 }

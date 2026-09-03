@@ -277,6 +277,28 @@ class FinancialPlanningDB extends Dexie {
             entry.expense_class = classifyExpense(entry.category);
           });
       });
+
+    // Retirement goals gained stored planning assumptions (monthly spend,
+    // years of spending, inflation, post-retirement return) plus a flag for
+    // whether the target was typed in by hand. All optional and none of them
+    // indexed, so existing rows need no migration — this bump only registers
+    // the new shape. Goals saved before this read as manually-entered, which
+    // is what they were.
+    this.version(109).stores({
+      liquidAssets: "id, goal_id",
+      investmentAssets: "id, goal_id, category",
+      personalAssets: "id, liability_id",
+      liabilities: "id, term",
+      goals: "id",
+      cashflow: "id, date, type",
+      categories: "id, entryType, order",
+      settings: "key",
+      paymentMethods: "id, kind",
+      budgets: "category",
+      netWorthHistory: "date",
+      insurancePolicies: "id, policyType",
+      recurringEntries: "id, type",
+    });
   }
 }
 

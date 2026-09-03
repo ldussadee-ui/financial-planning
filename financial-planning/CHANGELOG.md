@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.10.0] - 2026-09-04
+
+### Added
+- A retirement planning helper on goals of type "เกษียณ": enter what you expect to spend per month in today's money, how many years the money has to last, an inflation rate, and an assumed return during retirement, and the goal's target amount is worked out for you — inflating the spending to your retirement date, then either summing the still-inflating years or discounting them at the return net of inflation. Everything downstream already worked from the target, so the existing "recommended monthly savings", progress bar, and linked-asset tracking need no change to benefit
+- The assumptions are stored on the goal rather than only the number they produce, so reopening it later shows where the target came from and lets you adjust one input without re-entering the rest
+- A collapsible comparison of what the target and the required monthly saving become across post-retirement returns from 0–5%, since that single assumption moves the answer by around 40%. Its closed state shows the resulting range, and tapping any row adopts that assumption
+- A "คำนวณให้ / ใส่เอง" switch for goals where you already have a target figure from elsewhere. Without an explicit mode, touching any assumption would silently overwrite a hand-typed number; goals created before this release open in "ใส่เอง", which is what they always were
+
+### Changed
+- The goal form is reordered by role: the two classification dropdowns pair on one row, the accumulation return moves above the target date (which for a retirement goal is the helper's first input, so nothing sits between them), and the form now ends on the target amount rather than burying it
+- "ผลตอบแทนคาดหวัง" is now "ผลตอบแทนช่วงเก็บเงิน", reading as a pair with the new "ผลตอบแทนหลังเกษียณ" — two different rates for two different stretches of time that were easy to confuse under one name
+
 ## [0.9.5] - 2026-09-03
 
 ### Fixed

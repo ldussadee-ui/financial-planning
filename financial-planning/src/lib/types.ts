@@ -60,7 +60,21 @@ export interface Goal {
   target: number;
   date: string;
   priority: Priority;
+  /** Assumed annual return while still saving toward the goal. */
   expectedReturn?: number;
+  // Retirement planning assumptions, kept alongside the `target` they
+  // produce so it can be re-derived and adjusted later rather than being a
+  // number with no record of where it came from. Only retirement goals set
+  // them; a goal with none was either created before this existed or has
+  // its target typed in by hand.
+  retireMonthlySpend?: number;
+  retireYears?: number;
+  retireInflation?: number;
+  /** Assumed annual return during retirement — a different phase, and
+   *  usually a different rate, from `expectedReturn` above. */
+  retirePostReturn?: number;
+  /** True when the user typed the target in instead of having it derived. */
+  targetIsManual?: boolean;
 }
 
 export type CashFlowType = "Income" | "Expense";
