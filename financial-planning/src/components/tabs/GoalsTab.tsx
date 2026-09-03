@@ -56,7 +56,10 @@ const compareBarStyle: CSSProperties = {
   background: "#fff", border: "1px solid #D9C4EF", borderRadius: 12, padding: "9px 12px",
   display: "flex", flexDirection: "column", gap: 2, cursor: "pointer", width: "100%", textAlign: "left",
 };
-const compareGrid: CSSProperties = { display: "grid", gridTemplateColumns: "3.4rem 1fr 1fr", gap: 6, alignItems: "center" };
+// The first column names the assumption in full ("ผลตอบแทนหลังเกษียณ"),
+// which is too long for one line at phone width — it wraps to two, so the
+// header row bottom-aligns to keep all three headings on one baseline.
+const compareGrid: CSSProperties = { display: "grid", gridTemplateColumns: "4.6rem 1fr 1fr", gap: 6, alignItems: "center" };
 
 export function GoalsTab() {
   const { lang, t } = useLanguage();
@@ -185,8 +188,11 @@ export function GoalsTab() {
         <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
           {/* Both dropdowns classify the goal rather than measure it, so they
               pair as one row; everything below is a figure. */}
+          {/* 2:1 rather than an even split — the longest goal type
+              ("กองทุนฉุกเฉิน" / "Emergency Fund") needs roughly twice the
+              room of the longest priority ("กลาง" / "Medium"). */}
           <div style={pairRowStyle}>
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ flex: 2, minWidth: 0 }}>
               <Field label={t(TR.goals.goalType)}>
                 <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as GoalType })} style={{ ...inputStyle, minWidth: 0, width: "100%" }}>
                   {GOAL_TYPES.map((gt) => <option key={gt} value={gt}>{translateLabel(gt, lang, GOAL_TYPE_LABEL_EN)}</option>)}
@@ -323,7 +329,7 @@ export function GoalsTab() {
                       <div style={{ fontSize: 10.5, color: "var(--ink-soft)", marginBottom: 5 }}>
                         {fillText(t(TR.goals.retireCompareNote), { linked: fmt(editingLinked) })}
                       </div>
-                      <div style={{ ...compareGrid, fontSize: 9.5, fontWeight: 600, letterSpacing: ".04em", textTransform: "uppercase", color: "var(--ink-soft)", padding: "0 7px 5px" }}>
+                      <div style={{ ...compareGrid, alignItems: "end", fontSize: 9.5, fontWeight: 600, letterSpacing: ".04em", textTransform: "uppercase", color: "var(--ink-soft)", padding: "0 7px 5px" }}>
                         <span>{t(TR.goals.retireCompareReturn)}</span>
                         <span style={{ textAlign: "right" }}>{t(TR.goals.retireCompareNeed)}</span>
                         <span style={{ textAlign: "right" }}>{t(TR.goals.retireComparePerMonth)}</span>

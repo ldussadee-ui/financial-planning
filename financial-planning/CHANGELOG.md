@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.10.1] - 2026-09-04
+
+### Fixed
+- The comparison table's first column was headed just "ผลตอบแทน", which doesn't say which of the form's two returns it varies — and the teaser line that did say so is hidden once the table is open. It now names the assumption in full
+- The note under the table described the already-saved amount as "เงินที่ผูกไว้", app jargon for what a reader would call the principal they've saved so far, and didn't mention that a value outside the listed rates can be typed into the field above
+- The goal type and priority dropdowns split their row evenly despite the longest goal type ("กองทุนฉุกเฉิน") needing roughly twice the room of the longest priority ("กลาง") — now 2:1
+
 ## [0.10.0] - 2026-09-04
 
 ### Added

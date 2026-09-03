@@ -231,10 +231,12 @@ export const TR = {
       en: "A {lo}–{hi}% return after retiring → you need {range}",
     } as Text,
     retireCompareNote: {
-      th: "แตะเพื่อใช้ค่านั้น · คอลัมน์เก็บ/เดือน คิดจากเงินที่ผูกไว้ {linked}",
-      en: "Tap to use that value · the monthly column assumes {linked} already linked",
+      th: "แตะเพื่อเลือก หรือใส่ค่าอื่นเองในช่องด้านบน · คิดจากเงินต้นที่เก็บได้แล้ว {linked}",
+      en: "Tap one, or enter another value in the field above · assumes {linked} of principal already saved",
     } as Text,
-    retireCompareReturn: { th: "ผลตอบแทน", en: "Return" } as Text,
+    // Named in full: the form carries two returns, and once the table is
+    // open the teaser that said which one this varies is hidden.
+    retireCompareReturn: { th: "ผลตอบแทนหลังเกษียณ", en: "Return after retiring" } as Text,
     retireCompareNeed: { th: "ต้องมี", en: "Need" } as Text,
     retireComparePerMonth: { th: "เก็บ/เดือน", en: "Save/mo" } as Text,
     retireMillionSuffix: { th: " ล้าน", en: "M" } as Text,
