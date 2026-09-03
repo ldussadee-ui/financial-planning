@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.10.2] - 2026-09-04
+
+### Changed
+- The assumption comparison table now reads as a table: its column headings are larger, bolder, and in the primary text color instead of whispering above the figures in small grey caps, with a hairline rule tying them to the rows beneath and more room between rows. The headings are no longer uppercased — it does nothing for Thai and only made the English heading longer and shoutier — and the first column is wider, since the value columns only ever hold figures like "฿217,575"
+
 ## [0.10.1] - 2026-09-04
 
 ### Fixed

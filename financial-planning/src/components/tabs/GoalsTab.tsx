@@ -58,8 +58,17 @@ const compareBarStyle: CSSProperties = {
 };
 // The first column names the assumption in full ("ผลตอบแทนหลังเกษียณ"),
 // which is too long for one line at phone width — it wraps to two, so the
-// header row bottom-aligns to keep all three headings on one baseline.
-const compareGrid: CSSProperties = { display: "grid", gridTemplateColumns: "4.6rem 1fr 1fr", gap: 6, alignItems: "center" };
+// header row bottom-aligns to keep all three headings on one baseline. The
+// value columns only need room for figures like "฿217,575", so the extra
+// width goes to the heading.
+const compareGrid: CSSProperties = { display: "grid", gridTemplateColumns: "5.4rem 1fr 1fr", gap: 6, alignItems: "center" };
+// Sized to lead the columns rather than whisper above them, and ruled off
+// so the figures below read as belonging to it. Not uppercased: it does
+// nothing for Thai and only makes the English heading longer and shoutier.
+const compareHeadStyle: CSSProperties = {
+  ...compareGrid, alignItems: "end", fontSize: 11, fontWeight: 700, letterSpacing: ".02em",
+  color: "var(--ink)", padding: "0 7px 6px", borderBottom: "1px solid #E6D8F4", marginBottom: 3,
+};
 
 export function GoalsTab() {
   const { lang, t } = useLanguage();
@@ -329,7 +338,7 @@ export function GoalsTab() {
                       <div style={{ fontSize: 10.5, color: "var(--ink-soft)", marginBottom: 5 }}>
                         {fillText(t(TR.goals.retireCompareNote), { linked: fmt(editingLinked) })}
                       </div>
-                      <div style={{ ...compareGrid, alignItems: "end", fontSize: 9.5, fontWeight: 600, letterSpacing: ".04em", textTransform: "uppercase", color: "var(--ink-soft)", padding: "0 7px 5px" }}>
+                      <div style={compareHeadStyle}>
                         <span>{t(TR.goals.retireCompareReturn)}</span>
                         <span style={{ textAlign: "right" }}>{t(TR.goals.retireCompareNeed)}</span>
                         <span style={{ textAlign: "right" }}>{t(TR.goals.retireComparePerMonth)}</span>
@@ -343,7 +352,7 @@ export function GoalsTab() {
                             onClick={() => setForm({ ...form, postReturn: String(row.rate) })}
                             aria-current={current}
                             style={{
-                              ...compareGrid, width: "100%", border: "none", padding: "6px 7px", borderRadius: 8,
+                              ...compareGrid, width: "100%", border: "none", padding: "8px 7px", borderRadius: 8,
                               cursor: "pointer", fontSize: 11.5, fontFamily: "inherit", textAlign: "left",
                               background: current ? "#EBDCFA" : "transparent",
                               color: current ? "#6B4A8F" : "var(--ink-soft)",
