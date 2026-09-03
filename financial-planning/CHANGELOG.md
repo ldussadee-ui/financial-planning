@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.10.3] - 2026-09-04
+
+### Fixed
+- The retirement target was computed with two different withdrawal-timing conventions depending on whether a post-retirement return was set. The no-return case correctly took each year's spending at the start of the year; the with-return case discounted as if the first year's money were only needed twelve months after retiring. The two disagreed by a factor of (1 + inflation), so raising the return from 0% to 0.05% made the target jump *up* by around ฿500,000 — earning more can never require saving more. Both branches now take spending at the start of the year, which matches a year-by-year simulation exactly at every rate tested
+- The error was zero when the post-retirement return equalled inflation, so the default figure was always right; it grew as the assumption moved away from the default, overstating by up to 2.5% below it and understating by 1.9% at 5% — understating being the more dangerous direction. Targets already saved are recomputed from their stored assumptions when the goal is reopened
+
 ## [0.10.2] - 2026-09-04
 
 ### Changed

@@ -175,6 +175,19 @@ export interface RetirementPlan {
 // earning. Defaulting the return to match inflation makes the real rate
 // zero, which is simply "enough to cover N years of spending".
 //
+// Both branches take the year's spending out at the START of the year, so
+// the first one is never discounted: you retire and immediately need that
+// year's money. The `(1 + real)` factor is what makes the discounted branch
+// an annuity-due rather than an ordinary annuity. Without it the two
+// branches disagreed by a factor of (1 + inflation), and raising the return
+// off zero made the target jump *up* by ~3% — earning more can never
+// require saving more.
+//
+// Withdrawals are modelled as one lump per year rather than twelve monthly
+// ones, which overstates the pot by 1-4% depending on the return. That is
+// deliberate: it errs toward asking for too much, and it is far smaller
+// than the uncertainty in assumptions reaching decades ahead.
+//
 // Every figure here comes from assumptions the user supplies. It is an
 // arithmetic projection of those assumptions, not a forecast of real
 // returns and not advice about what any of them should be.
@@ -194,7 +207,7 @@ export function retirementTargetAmount(plan: RetirementPlan): {
     const real = (1 + postReturn) / (1 + inflation) - 1;
     total = Math.abs(real) < 1e-9
       ? annual * years
-      : (annual * (1 - Math.pow(1 + real, -years))) / real;
+      : (annual * (1 - Math.pow(1 + real, -years)) * (1 + real)) / real;
   } else {
     total = inflation < 1e-9
       ? annual * years
