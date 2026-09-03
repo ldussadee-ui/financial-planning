@@ -30,6 +30,15 @@ const navButtonStyle: CSSProperties = {
   border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
   borderRadius: 999, width: 26, height: 26, fontSize: 13, cursor: "pointer", lineHeight: "1",
 };
+// Equal-width shortcut links: each of the 3 gets exactly 1/3 of the row so
+// all three stay visible with no horizontal scrolling; a longer label wraps
+// onto a second line on a narrow phone instead of pushing siblings off-screen.
+const shortcutLinkStyle: CSSProperties = {
+  flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center",
+  textAlign: "center", whiteSpace: "normal", lineHeight: 1.25,
+  background: "#F1E7FA", color: "#6B4A8F", border: "none", fontWeight: 600,
+  borderRadius: 999, padding: "8px 6px", fontSize: 12,
+};
 const sum = (arr: CashFlowEntry[]) => arr.reduce((s, c) => s + Number(c.amount || 0), 0);
 
 export function CashflowTab() {
@@ -126,26 +135,28 @@ export function CashflowTab() {
     <div>
       <SectionHeader title={t(TR.cashflow.title)} sub={t(TR.cashflow.subtitle)} />
 
-      <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <button type="button" onClick={() => setCycleOffset((o) => o - 1)} style={navButtonStyle} aria-label={t(TR.cashflow.prevCycle)}>‹</button>
-          🗓️ {isCurrentCycle ? t(TR.cashflow.currentCycle) : t(TR.cashflow.cycle)}: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange, lang)}</b>
-          <button type="button" onClick={() => setCycleOffset((o) => o + 1)} style={navButtonStyle} aria-label={t(TR.cashflow.nextCycle)}>›</button>
-          {!isCurrentCycle && (
-            <button type="button" onClick={() => setCycleOffset(0)} style={{ ...chipStyle(false), padding: "5px 11px", fontSize: 11.5 }}>
-              {t(TR.cashflow.backToCurrentCycle)}
-            </button>
-          )}
+      <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <button type="button" onClick={() => setCycleOffset((o) => o - 1)} style={navButtonStyle} aria-label={t(TR.cashflow.prevCycle)}>‹</button>
+            🗓️ {isCurrentCycle ? t(TR.cashflow.currentCycle) : t(TR.cashflow.cycle)}: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange, lang)}</b>
+            <button type="button" onClick={() => setCycleOffset((o) => o + 1)} style={navButtonStyle} aria-label={t(TR.cashflow.nextCycle)}>›</button>
+            {!isCurrentCycle && (
+              <button type="button" onClick={() => setCycleOffset(0)} style={{ ...chipStyle(false), padding: "5px 11px", fontSize: 11.5 }}>
+                {t(TR.cashflow.backToCurrentCycle)}
+              </button>
+            )}
+          </span>
+          <DayPicker value={cycleStartDay} onChange={setCycleStartDay} shiftWeekend={shiftWeekend} onShiftWeekendChange={setShiftWeekend} />
         </span>
-        <DayPicker value={cycleStartDay} onChange={setCycleStartDay} shiftWeekend={shiftWeekend} onShiftWeekendChange={setShiftWeekend} />
-        <span style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-          <Link href="/cashflow/reports" style={{ ...chipStyle(false), textDecoration: "none" }}>
+        <span style={{ display: "flex", gap: 6 }}>
+          <Link href="/cashflow/reports" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
             📊 {t(TR.cashflow.monthlyReport)}
           </Link>
-          <Link href="/cashflow/payment-summary" style={{ ...chipStyle(false), textDecoration: "none" }}>
+          <Link href="/cashflow/payment-summary" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
             💳 {t(TR.cashflow.paymentSummary)}
           </Link>
-          <Link href="/cashflow/recurring" style={{ ...chipStyle(false), textDecoration: "none" }}>
+          <Link href="/cashflow/recurring" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
             {t(TR.recurring.manageLink)}
           </Link>
         </span>

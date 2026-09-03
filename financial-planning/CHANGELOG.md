@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.9.5] - 2026-09-03
+
+### Fixed
+- The cashflow cycle card (cycle nav, day-start picker, and 3 shortcut links) was a single flex-wrap row with no grouping, so shortcut labels could wrap unpredictably on mobile — even mid-word. Regrouped into two rows: cycle range + day-start together on top, and the 3 shortcuts below as an equal-width row so all three are always visible with no scrolling; also shortened the shortcut labels (dropped a redundant "Summary" prefix and the trailing arrows, now redundant since the shortcuts already read as tappable pills)
+
 ## [0.9.4] - 2026-09-01
 
 ### Fixed
