@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.12.1] - 2026-09-04
+
+### Changed
+- Amount fields and the calculator now group digits in thousands as you type, so a figure like 70,000 can be read at a glance instead of counted. The calculator's pending line already did this while the number being typed did not, which made the two halves of the same display disagree
+- Grouping is applied to the display only — the value in state stays a plain number string, and the part after the decimal point is passed through exactly as typed, so "1234." keeps its point while you are still typing and "1.50" keeps its trailing zero
+
 ## [0.12.0] - 2026-09-04
 
 ### Added

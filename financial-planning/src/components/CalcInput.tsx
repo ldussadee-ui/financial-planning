@@ -20,6 +20,21 @@ function fmtNum(n: number): string {
   return n.toLocaleString("th-TH", { maximumFractionDigits: 2 });
 }
 
+// Groups the integer part in thousands for display only — the raw string
+// stays in state, so Number() keeps parsing it and the committed value is
+// never separator-laden. Deliberately not toLocaleString(): that works on
+// numbers and would discard what the user is midway through typing, turning
+// "1234." back into "1,234" the instant they press the decimal point and
+// dropping the trailing zero from "1.50". Everything after the first "." is
+// passed through exactly as typed.
+function withSeparators(raw: string): string {
+  if (raw === "") return "";
+  const negative = raw.startsWith("-");
+  const [intPart, ...rest] = (negative ? raw.slice(1) : raw).split(".");
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return (negative ? "-" : "") + grouped + (rest.length ? "." + rest.join("") : "");
+}
+
 const keyStyle: CSSProperties = {
   border: "none", borderRadius: 14, padding: "16px 0", fontSize: 18, fontWeight: 600,
   cursor: "pointer", background: "#FFFCFA", color: "var(--ink)",
@@ -82,7 +97,7 @@ function CalcKeypad({ initial, onConfirm }: { initial: string; onConfirm: (value
         <div style={{ fontSize: 12.5, color: "var(--ink-soft)", height: 16 }}>
           {accumulator !== null && operator ? `${fmtNum(accumulator)} ${operator}` : " "}
         </div>
-        <div className="fp-num" style={{ fontSize: 26, fontWeight: 700, color: "var(--ink)" }}>{display}</div>
+        <div className="fp-num" style={{ fontSize: 26, fontWeight: 700, color: "var(--ink)" }}>{withSeparators(display)}</div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
         <button type="button" onClick={pressClear} style={muteKeyStyle}>C</button>
@@ -136,7 +151,7 @@ export function CalcInput({
         onClick={() => setOpen(true)}
         style={{ ...inputStyle, cursor: "pointer", textAlign: "left", color: value ? "var(--ink)" : "#c9c1d6" }}
       >
-        {value || placeholder}
+        {value ? withSeparators(value) : placeholder}
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={t(TR.common.calculatorTitle)}>
         <CalcKeypad initial={value} onConfirm={(v) => { onChange(v); setOpen(false); }} />
