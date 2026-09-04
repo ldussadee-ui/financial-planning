@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, type CSSProperties } from "react";
+import { useEffect, useState, type ChangeEvent, type CSSProperties } from "react";
 import { db } from "@/lib/db";
 import {
   daysSince, exportAll, importAll, isBackupFile, isFromNewerSchema,
@@ -202,6 +202,71 @@ function WipeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   );
 }
 
+// The app asks for persistent storage on every load but never sees the
+// answer, so whether the data can be evicted has been invisible. Browsers
+// grant it on their own heuristics — installed as an app, bookmarked, used
+// often — which means the honest thing is to report the actual state rather
+// than assume the request worked.
+function StoragePersistence() {
+  const { t } = useLanguage();
+  const [state, setState] = useState<"unknown" | "persisted" | "atRisk" | "unsupported">("unknown");
+  const [denied, setDenied] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const check = async () => {
+      if (!("storage" in navigator) || !("persisted" in navigator.storage)) {
+        if (!cancelled) setState("unsupported");
+        return;
+      }
+      const ok = await navigator.storage.persisted();
+      if (!cancelled) setState(ok ? "persisted" : "atRisk");
+    };
+    void check();
+    return () => { cancelled = true; };
+  }, []);
+
+  const request = async () => {
+    if (busy) return;
+    setBusy(true);
+    const granted = await navigator.storage.persist();
+    setState(granted ? "persisted" : "atRisk");
+    setDenied(!granted);
+    setBusy(false);
+  };
+
+  if (state === "unknown") return null;
+  if (state === "persisted") {
+    return (
+      <div style={{ fontSize: 12.5, color: "#0F6E56", marginBottom: 12, lineHeight: 1.5 }}>
+        {t(TR.settings.storagePersisted)}
+      </div>
+    );
+  }
+  if (state === "unsupported") {
+    return (
+      <div style={{ ...warningBoxStyle, marginBottom: 12 }}>{t(TR.settings.storageUnsupported)}</div>
+    );
+  }
+  return (
+    <div style={{ ...warningBoxStyle, marginBottom: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+      <span style={{ fontWeight: 600 }}>{t(TR.settings.storageAtRisk)}</span>
+      <span style={{ color: "var(--ink)" }}>{t(TR.settings.storageAtRiskWhy)}</span>
+      <button
+        type="button"
+        onClick={() => void request()}
+        disabled={busy}
+        style={{ ...actionButtonStyle, alignSelf: "flex-start", padding: "8px 16px", fontSize: 12.5 }}
+      >
+        {t(TR.settings.storageRequest)}
+      </button>
+      {denied && <span style={{ color: "var(--ink)" }}>{t(TR.settings.storageDenied)}</span>}
+      <span style={{ color: "var(--ink)" }}>{t(TR.settings.storageInstallHint)}</span>
+    </div>
+  );
+}
+
 export function FullBackup() {
   const { lang, t } = useLanguage();
   const [lastBackup] = useSetting<string | null>(LAST_BACKUP_KEY, null);
@@ -217,6 +282,9 @@ export function FullBackup() {
 
   return (
     <>
+      {/* Whether the data can survive at all comes before when it was last
+          written out — the second only matters given the first. */}
+      <StoragePersistence />
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
         <span style={{ fontSize: 12.5, fontWeight: 600, color: stale ? "#A32D2D" : "#0F6E56" }}>{statusText}</span>
         {stale && <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(TR.settings.backupStale)}</span>}

@@ -288,6 +288,32 @@ export const TR = {
     assetsSection: { th: "🏦 สินทรัพย์", en: "🏦 Assets" } as Text,
     assetsExportNote: { th: "ส่งออก/นำเข้าสินทรัพย์และหนี้สินทั้งหมดจากคนอื่น — รายการที่นำเข้าจะไม่ผูกกับเป้าหมายหรือหนี้สินเดิมของผู้ส่ง", en: "Export/import someone else's assets and liabilities — imported rows arrive unlinked from the sender's goals and debts" } as Text,
 
+    storagePersisted: {
+      th: "🔒 เบราว์เซอร์ป้องกันข้อมูลนี้ไว้แล้ว จะไม่ถูกลบอัตโนมัติ",
+      en: "🔒 This browser has marked your data persistent — it will not be evicted automatically",
+    } as Text,
+    storageAtRisk: {
+      th: "⚠️ ข้อมูลยังไม่ได้รับการป้องกัน เบราว์เซอร์ลบทิ้งเองได้",
+      en: "⚠️ Your data is not protected — the browser is allowed to delete it on its own",
+    } as Text,
+    storageAtRiskWhy: {
+      th: "บน iPhone/iPad ข้อมูลจะถูกลบถ้าไม่ได้เปิดแอปนานประมาณ 7 วัน · บนเครื่องอื่นจะถูกลบเมื่อพื้นที่เก็บข้อมูลใกล้เต็ม",
+      en: "On iPhone/iPad it is deleted after roughly 7 days without opening the app · elsewhere it goes when the device runs low on storage",
+    } as Text,
+    storageRequest: { th: "ขอให้เบราว์เซอร์ป้องกันข้อมูล", en: "Ask the browser to protect it" } as Text,
+    storageInstallHint: {
+      th: "วิธีที่ได้ผลที่สุดคือติดตั้งเป็นแอป — กดเมนูแชร์ในเบราว์เซอร์แล้วเลือก \"เพิ่มไปยังหน้าจอโฮม\" จะทำให้ข้ามกฎ 7 วันของ iOS ไปเลย และเบราว์เซอร์อื่นก็จะยอมป้องกันข้อมูลให้ง่ายขึ้น",
+      en: "The most effective fix is installing it as an app — open your browser's share menu and choose \"Add to Home Screen\". That exempts it from the iOS 7-day rule and makes other browsers far more willing to protect it",
+    } as Text,
+    storageDenied: {
+      th: "เบราว์เซอร์ยังไม่อนุมัติ — ส่วนใหญ่จะอนุมัติหลังติดตั้งเป็นแอปหรือใช้งานบ่อยขึ้น",
+      en: "The browser declined for now — most grant it once the app is installed or used more often",
+    } as Text,
+    storageUnsupported: {
+      th: "เบราว์เซอร์นี้ไม่รองรับการป้องกันข้อมูล ควรสำรองข้อมูลบ่อยขึ้น",
+      en: "This browser cannot protect stored data — back up more often",
+    } as Text,
+
     backupSection: { th: "💾 สำรองและกู้คืนข้อมูล", en: "💾 Backup & restore" } as Text,
     backupNote: {
       th: "สำรองข้อมูลทั้งหมดทุกตารางไว้ในไฟล์เดียว สำหรับย้ายเครื่องหรือกันข้อมูลหาย — การกู้คืนจะแทนที่ข้อมูลในเครื่องนี้ทั้งหมด",

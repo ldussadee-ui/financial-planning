@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.12.0] - 2026-09-04
+
+### Added
+- Settings now reports whether the browser has actually agreed to keep this data. The app has always asked for persistent storage on load but never looked at the answer, and browsers decide on their own heuristics — so whether the data could be deleted underneath you was invisible. When it is unprotected the page says so, explains what would delete it (roughly 7 days without opening the app on iPhone and iPad, low device storage elsewhere), offers a button to ask again, and points at installing to the Home Screen, which is what exempts it from the iOS rule and makes other browsers far likelier to agree
+
 ## [0.11.0] - 2026-09-04
 
 ### Added
