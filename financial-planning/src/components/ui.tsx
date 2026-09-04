@@ -304,12 +304,26 @@ export function AddButton({ onClick, label }: { onClick: () => void; label?: str
   );
 }
 
-export function Group({ title, tint, children }: { title: string; tint: string; children: ReactNode[] }) {
+// `amount` is a separate prop rather than part of `title` so the total can
+// carry its own weight and tabular figures, the way NestedGroup's does on
+// the cashflow tab. Concatenated into the heading it rendered smaller than
+// the item rows it summed, which put the hierarchy upside down. Sized
+// between NestedGroup's section total (20) and its subgroup totals (13):
+// these categories sit one level shallower than a cashflow subgroup but
+// have no parent total above them, and a tab can hold several at once.
+export function Group({ title, amount, tint, children }: { title: string; amount?: string; tint: string; children: ReactNode[] }) {
   const { t } = useLanguage();
   const items = children.filter(Boolean);
   return (
     <div style={{ marginBottom: 18 }}>
-      <h2 style={{ fontSize: 12.5, color: "#645878", marginBottom: 7, fontWeight: 600 }}>{title}</h2>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
+        <h2 style={{ fontSize: 14, color: "#645878", fontWeight: 600 }}>{title}</h2>
+        {amount && (
+          <span className="fp-num" style={{ marginLeft: "auto", fontSize: 17, fontWeight: 700, color: "var(--ink)" }}>
+            {amount}
+          </span>
+        )}
+      </div>
       <div className="fp-card" style={{ padding: 8, background: items.length ? tint : "#FAF6F1" }}>
         {items.length ? items : <EmptyState text={t(TR.common.noItems)} />}
       </div>

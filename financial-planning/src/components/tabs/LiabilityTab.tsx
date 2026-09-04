@@ -65,10 +65,10 @@ export function LiabilityTab() {
         </div>
       </Modal>
 
-      <Group title={`${t(TR.assets.shortTermDebt)} — ${fmt(short.reduce((s, l) => s + l.balance, 0))}`} tint="#FFEFEA">
+      <Group title={t(TR.assets.shortTermDebt)} amount={fmt(short.reduce((s, l) => s + l.balance, 0))} tint="#FFEFEA">
         {short.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%${t(TR.assets.perYear)}`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
-      <Group title={`${t(TR.assets.longTermDebt)} — ${fmt(long.reduce((s, l) => s + l.balance, 0))}`} tint="#EFFBF6">
+      <Group title={t(TR.assets.longTermDebt)} amount={fmt(long.reduce((s, l) => s + l.balance, 0))} tint="#EFFBF6">
         {long.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%${t(TR.assets.perYear)}`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
 

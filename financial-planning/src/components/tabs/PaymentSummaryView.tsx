@@ -41,7 +41,8 @@ export function PaymentSummaryView() {
         paymentGroups.map(({ method, items }) => (
           <Group
             key={method.id}
-            title={`${method.kind === "เงินสด" ? "💵" : "💳"} ${translateLabel(method.name, lang, PAYMENT_METHOD_LABEL_EN)} — ${fmt(items.reduce((s, c) => s + c.amount, 0))}`}
+            title={`${method.kind === "เงินสด" ? "💵" : "💳"} ${translateLabel(method.name, lang, PAYMENT_METHOD_LABEL_EN)}`}
+            amount={fmt(items.reduce((s, c) => s + c.amount, 0))}
             tint="#F5F0FF"
           >
             {renderByDay(items, remove, undefined, undefined, lang)}

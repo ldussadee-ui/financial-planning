@@ -72,7 +72,7 @@ export function LiquidTab() {
       </Modal>
 
       {grouped.length ? grouped.map((g) => (
-        <Group key={g.type} title={`${translateLabel(g.type, lang, LIQUID_TYPE_LABEL_EN)} — ${fmt(g.items.reduce((s, a) => s + a.current_value, 0))}`} tint="#FBF7F2">
+        <Group key={g.type} title={translateLabel(g.type, lang, LIQUID_TYPE_LABEL_EN)} amount={fmt(g.items.reduce((s, a) => s + a.current_value, 0))} tint="#FBF7F2">
           {g.items.map((a) => (
             <Row
               key={a.id}

@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.10.4] - 2026-09-04
+
+### Fixed
+- Category totals on the asset, liability, and payment-summary pages were rendered smaller than the item amounts they sum, which put the hierarchy upside down. They were built by concatenating the figure into the heading string ("เงินฝาก — ฿5,000"), so the total had no styling of its own at all. The amount is now its own element — right-aligned, bold, in tabular figures like the cashflow tab's totals — and sized between the cashflow section and subgroup totals, since these categories have no parent total above them but several can share a tab
+
 ## [0.10.3] - 2026-09-04
 
 ### Fixed
