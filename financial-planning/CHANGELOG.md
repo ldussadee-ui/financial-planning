@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.13.0] - 2026-09-04
+
+### Added
+- Budgets can now be set from the cashflow tab, beside the bars they control, instead of only from Settings. It is the same editor either way — opened inline in Settings where it has always lived, or as a sheet from an "แก้ไขงบ" button on the budget card — so the two cannot drift apart
+- With no budgets set, the cashflow tab now offers to set some rather than showing nothing. The card only rendered when at least one budget existed, which left the whole feature invisible to anyone who had not already found it under a collapsed heading in Settings — a loop that could only be opened from the inside
+
+### Changed
+- The budget editor moved out of SettingsTab into its own component so both entry points share one implementation
+
 ## [0.12.1] - 2026-09-04
 
 ### Changed

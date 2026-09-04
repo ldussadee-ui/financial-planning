@@ -14,6 +14,7 @@ import { useBudgets } from "@/hooks/useBudgets";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, NestedGroup, DayPicker, BudgetBar } from "@/components/ui";
+import { BudgetEditorModal } from "@/components/BudgetEditor";
 import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
 import type { CashFlowEntry } from "@/lib/types";
@@ -39,6 +40,17 @@ const shortcutLinkStyle: CSSProperties = {
   background: "#F1E7FA", color: "#6B4A8F", border: "none", fontWeight: 600,
   borderRadius: 999, padding: "8px 6px", fontSize: 12,
 };
+const editChipStyle: CSSProperties = {
+  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
+  borderRadius: 999, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", flexShrink: 0,
+};
+// Dashed and tinted rather than a solid card: it is an offer to set
+// something up, not a report of anything that exists yet.
+const budgetInviteStyle: CSSProperties = {
+  width: "100%", textAlign: "left", border: "1px dashed #DED0EF", background: "#FAF6FF",
+  borderRadius: 14, padding: "15px 17px", marginTop: 18, cursor: "pointer",
+  display: "flex", alignItems: "center", gap: 11, fontFamily: "inherit",
+};
 const sum = (arr: CashFlowEntry[]) => arr.reduce((s, c) => s + Number(c.amount || 0), 0);
 
 export function CashflowTab() {
@@ -47,6 +59,7 @@ export function CashflowTab() {
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
   const [recurringNotice, setRecurringNotice] = useSetting<GeneratedEntryInfo[]>("recurringGeneratedNotice", []);
   const [cycleOffset, setCycleOffset] = useState(0);
+  const [budgetOpen, setBudgetOpen] = useState(false);
   const hiddenAtRef = useRef<number | null>(null);
   useEffect(() => {
     // A PWA/mobile browser tab is usually suspended rather than fully
@@ -199,9 +212,18 @@ export function CashflowTab() {
         ]}
       />
 
-      {budgetStatus.length > 0 && (
+      {/* With no budgets set this card used to render nothing at all, which
+          left the whole feature invisible to anyone who had not already
+          found it in Settings — a loop that only opens from the inside.
+          Either way there is now a way in from the screen the bars live on. */}
+      {budgetStatus.length > 0 ? (
         <div className="fp-card" style={{ padding: 20, marginTop: 18 }}>
-          <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 12 }}>🎯 {t(TR.cashflow.budgetThisCycle)}</h2>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 12 }}>
+            <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>🎯 {t(TR.cashflow.budgetThisCycle)}</h2>
+            <button type="button" onClick={() => setBudgetOpen(true)} style={editChipStyle}>
+              {t(TR.cashflow.budgetEdit)}
+            </button>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {budgetStatus.map((b) => (
               <div key={b.category}>
@@ -214,7 +236,21 @@ export function CashflowTab() {
             ))}
           </div>
         </div>
+      ) : (
+        <button type="button" onClick={() => setBudgetOpen(true)} style={budgetInviteStyle}>
+          <span style={{ fontSize: 19, flexShrink: 0 }}>🎯</span>
+          <span style={{ minWidth: 0 }}>
+            <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#6B4A8F" }}>
+              {t(TR.cashflow.budgetInviteTitle)}
+            </span>
+            <span style={{ display: "block", fontSize: 11.5, color: "var(--ink-soft)", lineHeight: 1.45, marginTop: 1 }}>
+              {t(TR.cashflow.budgetInviteSub)}
+            </span>
+          </span>
+        </button>
       )}
+
+      <BudgetEditorModal open={budgetOpen} onClose={() => setBudgetOpen(false)} />
 
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 4 }}>
         {t(TR.cashflow.footnote)}

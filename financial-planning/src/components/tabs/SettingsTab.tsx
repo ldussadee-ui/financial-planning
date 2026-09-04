@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "@/lib/db";
 import { fmt } from "@/lib/calc";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR, CATEGORY_LABEL_EN, translateLabel } from "@/lib/i18n";
+import { TR } from "@/lib/i18n";
 import { SectionHeader, Field, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
+import { BudgetFields } from "@/components/BudgetEditor";
 import { CashflowExportImport } from "./CashflowExportImport";
 import { AssetExportImport } from "./AssetExportImport";
 import { FullBackup } from "./FullBackup";
@@ -74,10 +73,11 @@ function SpendCompareSettings() {
   );
 }
 
+// The fields themselves live in BudgetEditor so the cashflow tab can open
+// the same editor beside the bars it controls.
 function BudgetSettings() {
-  const { lang, t } = useLanguage();
-  const categories = useLiveQuery(() => db.categories.where("entryType").equals("Expense").sortBy("order"), [], []);
-  const { map, setBudget } = useBudgets();
+  const { t } = useLanguage();
+  const { map } = useBudgets();
   const [open, setOpen] = useState(false);
   const summary = map.size > 0 ? `${t(TR.settings.budgetSetPrefix)} ${map.size} ${t(TR.settings.budgetSetCount)}` : t(TR.settings.budgetNotSet);
 
@@ -95,17 +95,7 @@ function BudgetSettings() {
           <div style={{ fontSize: 12, color: "var(--ink-soft)", margin: "10px 0 14px" }}>
             {t(TR.settings.budgetNote)}
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {(categories || []).map((c) => (
-              <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ width: 22, textAlign: "center" }}>{c.icon}</span>
-                <span style={{ flex: 1, fontSize: 13 }}>{translateLabel(c.label, lang, CATEGORY_LABEL_EN)}</span>
-                <div style={{ width: 130 }}>
-                  <CalcInput value={String(map.get(c.label) || "")} onChange={(v) => setBudget(c.label, Number(v) || 0)} placeholder={t(TR.settings.budgetPlaceholder)} />
-                </div>
-              </div>
-            ))}
-          </div>
+          <BudgetFields />
         </>
       )}
     </div>

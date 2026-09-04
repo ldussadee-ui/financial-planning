@@ -85,6 +85,7 @@ export const TR = {
     weekendShiftNote: { th: "ถ้าวันเริ่มตรงเสาร์-อาทิตย์ เลื่อนเป็นวันศุกร์ก่อนหน้า", en: "If the start day falls on a weekend, shift it to the preceding Friday" } as Text,
     calculatorTitle: { th: "คำนวณจำนวนเงิน", en: "Calculate Amount" } as Text,
     ok: { th: "✓ ตกลง", en: "✓ OK" } as Text,
+    done: { th: "เสร็จสิ้น", en: "Done" } as Text,
   },
   cashflow: {
     title: { th: "รายรับ-จ่าย 💸", en: "Cashflow 💸" } as Text,
@@ -99,6 +100,12 @@ export const TR = {
     income: { th: "รายรับ", en: "Income" } as Text,
     expense: { th: "รายจ่าย", en: "Expense" } as Text,
     budgetThisCycle: { th: "งบประมาณรอบนี้", en: "This Cycle's Budget" } as Text,
+    budgetEdit: { th: "แก้ไขงบ", en: "Edit budgets" } as Text,
+    budgetInviteTitle: { th: "ตั้งงบประมาณรายจ่าย", en: "Set expense budgets" } as Text,
+    budgetInviteSub: {
+      th: "กำหนดวงเงินต่อเดือนในแต่ละหมวด แล้วดูความคืบหน้าได้ที่นี่ทุกรอบ",
+      en: "Set a monthly limit per category and watch the progress here each cycle",
+    } as Text,
     footnote: {
       th: "* แสดงเฉพาะรายการในรอบบัญชีที่เลือกด้านบน (เลื่อน ‹ › ดูรอบอื่นได้) · รายจ่ายแยกประจำ/ทั่วไป/ออมและลงทุนจากคำในหมวดหมู่ รายรับแยก Active/Passive อัตโนมัติเช่นกัน · แตะรายการเพื่อแก้ไข",
       en: "* Shows only entries in the cycle selected above (use ‹ › to browse other cycles) · Expenses are auto-split into Fixed/General/Savings & Investing and income into Active/Passive from the category text · Tap an entry to edit",
@@ -277,6 +284,7 @@ export const TR = {
     budgetSetPrefix: { th: "ตั้งไว้แล้ว", en: "Set:" } as Text,
     budgetNotSet: { th: "ยังไม่ได้ตั้งงบ", en: "No budgets set" } as Text,
     budgetNote: { th: "ตั้งวงเงินต่อเดือนต่อหมวดหมู่ ปล่อยว่างไว้ = ไม่ตั้งงบหมวดนั้น", en: "Set a monthly limit per category — leave blank to skip a category" } as Text,
+    budgetModalTitle: { th: "ตั้งงบประมาณรายจ่าย", en: "Set expense budgets" } as Text,
     budgetPlaceholder: { th: "ไม่ตั้งงบ", en: "No budget" } as Text,
     mergeHeading: { th: "รวมข้อมูลจากคนอื่น", en: "Combine data from someone else" } as Text,
     mergeHeadingNote: {
