@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.11.0] - 2026-09-04
+
+### Added
+- Full backup and restore, in Settings: one file holding every table, for moving to a new device or guarding against losing the lot. Rows are written back under their original ids, which is what keeps cross-table links intact — cashflow entries keep their payment method and recurring source, assets keep their goal, personal assets keep their debt — and makes restoring the same file twice a no-op rather than a duplication. The file records the schema version it was written under, and a backup from a newer version of the app is refused rather than restored into a shape this version cannot read
+- "Erase all data", with a typed confirmation and a back-up-first button offered in the same dialog, since that moment is the last chance to keep anything
+- A backup age indicator in Settings, turning red past a month. Data lives only in this browser with no copy on a server, so the app now says so plainly and says when it was last written out
+
+### Changed
+- The existing cashflow and assets export/import moved under a "รวมข้อมูลจากคนอื่น" heading that says what they actually do: append someone else's records to yours, with fresh ids and their original links dropped. The assets section previously described itself as being for moving data between devices, which it never could — it nulls every `goal_id` and `liability_id` on the way in
+
+### Fixed
+- Erasing everything cleared the settings table along with the rest, taking the flag that tells the seeder this database is already set up. The app would have quietly refilled itself with sample data on the next load; the flag is now preserved through both erase and restore
+
 ## [0.10.4] - 2026-09-04
 
 ### Fixed

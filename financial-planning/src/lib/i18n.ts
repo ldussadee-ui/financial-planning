@@ -278,10 +278,60 @@ export const TR = {
     budgetNotSet: { th: "ยังไม่ได้ตั้งงบ", en: "No budgets set" } as Text,
     budgetNote: { th: "ตั้งวงเงินต่อเดือนต่อหมวดหมู่ ปล่อยว่างไว้ = ไม่ตั้งงบหมวดนั้น", en: "Set a monthly limit per category — leave blank to skip a category" } as Text,
     budgetPlaceholder: { th: "ไม่ตั้งงบ", en: "No budget" } as Text,
+    mergeHeading: { th: "รวมข้อมูลจากคนอื่น", en: "Combine data from someone else" } as Text,
+    mergeHeadingNote: {
+      th: "เพิ่มข้อมูลของคนอื่นเข้ามาต่อท้ายของเรา · สร้างรหัสใหม่ให้ทุกแถวและตัดการเชื่อมโยงเดิมออก จึงใช้ย้ายเครื่องไม่ได้ ให้ใช้ \"สำรองและกู้คืน\" ด้านบนแทน",
+      en: "Appends someone else's records to yours · every row gets a new id and its original links are dropped, so this cannot move your own data between devices — use Backup & restore above for that",
+    } as Text,
     cashflowSection: { th: "💸 รายรับ-จ่าย", en: "💸 Cashflow" } as Text,
     cashflowExportNote: { th: "ส่งออก/นำเข้ารายการรายรับ-จ่ายตามช่วงวันที่ — ใช้รวมข้อมูลจากหลายคนในครอบครัว", en: "Export/import cashflow entries by date range — for combining data from multiple family members" } as Text,
     assetsSection: { th: "🏦 สินทรัพย์", en: "🏦 Assets" } as Text,
-    assetsExportNote: { th: "ส่งออก/นำเข้าสินทรัพย์สภาพคล่อง เพื่อการลงทุน ส่วนตัว และหนี้สินทั้งหมด — ใช้ย้ายข้อมูลข้ามเบราว์เซอร์/เครื่อง", en: "Export/import all liquid, investment, and personal assets and liabilities — for moving data across browsers/devices" } as Text,
+    assetsExportNote: { th: "ส่งออก/นำเข้าสินทรัพย์และหนี้สินทั้งหมดจากคนอื่น — รายการที่นำเข้าจะไม่ผูกกับเป้าหมายหรือหนี้สินเดิมของผู้ส่ง", en: "Export/import someone else's assets and liabilities — imported rows arrive unlinked from the sender's goals and debts" } as Text,
+
+    backupSection: { th: "💾 สำรองและกู้คืนข้อมูล", en: "💾 Backup & restore" } as Text,
+    backupNote: {
+      th: "สำรองข้อมูลทั้งหมดทุกตารางไว้ในไฟล์เดียว สำหรับย้ายเครื่องหรือกันข้อมูลหาย — การกู้คืนจะแทนที่ข้อมูลในเครื่องนี้ทั้งหมด",
+      en: "Backs up every table into one file, for moving devices or guarding against data loss — restoring replaces everything on this device",
+    } as Text,
+    backupWhyNote: {
+      th: "ข้อมูลเก็บอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่มีสำเนาบนเซิร์ฟเวอร์ — ถ้าล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่อง ข้อมูลจะหายถาวรถ้าไม่ได้สำรองไว้",
+      en: "Your data lives only in this browser, with no copy on any server — clearing browser data or switching devices loses it permanently unless you have a backup",
+    } as Text,
+    backupDownload: { th: "สำรองข้อมูลทั้งหมด", en: "Back up everything" } as Text,
+    backupRestore: { th: "กู้คืนจากไฟล์", en: "Restore from file" } as Text,
+    backupWipe: { th: "ล้างข้อมูลทั้งหมด", en: "Erase all data" } as Text,
+    backupNever: { th: "ยังไม่เคยสำรองข้อมูล", en: "Never backed up" } as Text,
+    backupToday: { th: "สำรองข้อมูลล่าสุดวันนี้", en: "Backed up today" } as Text,
+    backupDaysAgo: { th: "สำรองข้อมูลล่าสุด {days} วันที่แล้ว", en: "Last backed up {days} days ago" } as Text,
+    backupStale: { th: "นานแล้ว ควรสำรองอีกครั้ง", en: "It has been a while — worth backing up again" } as Text,
+
+    restoreTitle: { th: "กู้คืนจากไฟล์สำรอง", en: "Restore from backup" } as Text,
+    restoreWarning: {
+      th: "การกู้คืนจะลบข้อมูลทั้งหมดในเครื่องนี้ แล้วแทนที่ด้วยข้อมูลจากไฟล์ — ทำแล้วย้อนกลับไม่ได้",
+      en: "Restoring erases everything on this device and replaces it with the file's contents — this cannot be undone",
+    } as Text,
+    restoreFileInfo: { th: "ไฟล์สำรองจาก {date} · {rows} แถว", en: "Backup from {date} · {rows} rows" } as Text,
+    restoreConfirm: { th: "กู้คืนและแทนที่ข้อมูลทั้งหมด", en: "Restore and replace everything" } as Text,
+    restoreDone: { th: "กู้คืนข้อมูลแล้ว {rows} แถว", en: "Restored {rows} rows" } as Text,
+    restoreNewerSchema: {
+      th: "ไฟล์นี้สำรองจากแอปเวอร์ชันใหม่กว่าที่ติดตั้งอยู่ (schema {file} เทียบกับ {app}) — กรุณาอัปเดตแอปก่อนกู้คืน",
+      en: "This backup came from a newer version of the app (schema {file} vs {app}) — please update the app before restoring",
+    } as Text,
+    restoreWrongFile: {
+      th: "ไฟล์นี้ไม่ใช่ไฟล์สำรองทั้งหมด — ถ้าเป็นไฟล์รายรับ-จ่ายหรือสินทรัพย์ ให้ใช้หัวข้อ \"รวมข้อมูลจากคนอื่น\" ด้านล่างแทน",
+      en: "This is not a full backup file — if it is a cashflow or assets file, use \"Combine data from someone else\" below instead",
+    } as Text,
+
+    wipeTitle: { th: "ล้างข้อมูลทั้งหมด", en: "Erase all data" } as Text,
+    wipeWarning: {
+      th: "จะลบข้อมูลทุกอย่างในเครื่องนี้ ทั้งรายรับ-จ่าย สินทรัพย์ หนี้สิน เป้าหมาย ประกัน และประวัติมูลค่าสุทธิ — ย้อนกลับไม่ได้",
+      en: "Erases everything on this device — cashflow, assets, debts, goals, insurance, and net worth history. This cannot be undone",
+    } as Text,
+    wipeBackupFirst: { th: "สำรองข้อมูลเก็บไว้ก่อน", en: "Back up first" } as Text,
+    wipeTypeToConfirm: { th: "พิมพ์ {word} เพื่อยืนยัน", en: "Type {word} to confirm" } as Text,
+    wipeConfirmWord: { th: "ล้างข้อมูล", en: "ERASE" } as Text,
+    wipeConfirm: { th: "ล้างข้อมูลทั้งหมด", en: "Erase everything" } as Text,
+    wipeDone: { th: "ล้างข้อมูลเรียบร้อยแล้ว", en: "All data erased" } as Text,
     version: { th: "เวอร์ชัน", en: "Version" } as Text,
   },
   exportImport: {
