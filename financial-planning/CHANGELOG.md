@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.14.2] - 2026-09-12
+
+### Fixed
+- The rest of the entry sheet followed the confirm button: a selected category or payment chip, and the drop indicator while reordering chips, were all still teal inside the expense sheet. The whole sheet now takes the colour of the direction being entered, from a single value rather than hex literals scattered through the file
+
 ## [0.14.1] - 2026-09-12
 
 ### Fixed

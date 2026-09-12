@@ -15,10 +15,13 @@ import { Field, AddButton, DayPicker, Modal, cancelButtonStyle, inputStyle } fro
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
 
-function chipStyle(active: boolean): CSSProperties {
+// `accent` is the colour of the direction being entered, so a selected chip
+// in the expense sheet doesn't sit there wearing the colour this screen uses
+// for income.
+function chipStyle(active: boolean, accent: string): CSSProperties {
   return {
     border: active ? "none" : "1px solid var(--line)",
-    background: active ? "#7FD1C9" : "#FFFCFA",
+    background: active ? accent : "#FFFCFA",
     color: active ? "#fff" : "var(--ink-soft)",
     borderRadius: 999, padding: "7px 13px", fontSize: 12.5, fontWeight: 500, cursor: "pointer",
   };
@@ -107,6 +110,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const draggingIdxRef = useRef<number | null>(null);
   const dragOverIdxRef = useRef<number | null>(null);
 
+  const accent = form.type === "Expense" ? EXPENSE_COLOR : INCOME_COLOR;
   const preview = form.type === "Expense" ? classifyExpense(form.category) : classifyIncome(form.category);
   const cats = (allCategories || []).filter((c) => c.entryType === form.type);
 
@@ -318,7 +322,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     position: "relative", display: "inline-block",
                     touchAction: editing ? "none" : undefined,
                     opacity: draggingIdx === idx ? 0.4 : 1,
-                    outline: dragOverIdx === idx && draggingIdx !== null && draggingIdx !== idx ? "2px dashed #7FD1C9" : "none",
+                    outline: dragOverIdx === idx && draggingIdx !== null && draggingIdx !== idx ? `2px dashed ${accent}` : "none",
                     outlineOffset: 3,
                   }}
                   onPointerDown={onChipPointerDown(idx)}
@@ -328,7 +332,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     onMouseDown={startPress} onMouseUp={cancelPress} onMouseLeave={cancelPress}
                     onTouchStart={startPress} onTouchEnd={cancelPress}
                     onClick={() => handleChipClick(c.label)}
-                    style={chipStyle(!customMode && !editing && form.category === c.label)}
+                    style={chipStyle(!customMode && !editing && form.category === c.label, accent)}
                   >
                     <span style={{ marginRight: 5 }}>{c.icon}</span>{translateLabel(c.label, lang, CATEGORY_LABEL_EN)}
                   </button>
@@ -338,7 +342,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                 </div>
               ))}
               {!editing && (
-                <button type="button" onClick={() => { setCustomMode(true); setForm({ ...form, category: "" }); setSaveShortcut(true); }} style={chipStyle(customMode)}>
+                <button type="button" onClick={() => { setCustomMode(true); setForm({ ...form, category: "" }); setSaveShortcut(true); }} style={chipStyle(customMode, accent)}>
                   {t(TR.cashflow.typeOwn)}
                 </button>
               )}
@@ -378,12 +382,12 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     key={m.id}
                     type="button"
                     onClick={() => setForm({ ...form, payment_method_id: m.id })}
-                    style={chipStyle(effectivePaymentMethodId === m.id)}
+                    style={chipStyle(effectivePaymentMethodId === m.id, accent)}
                   >
                     <span style={{ marginRight: 5 }}>{m.kind === "เงินสด" ? "💵" : "💳"}</span>{translateLabel(m.name, lang, PAYMENT_METHOD_LABEL_EN)}
                   </button>
                 ))}
-                <button type="button" onClick={() => setAddingCard(true)} style={chipStyle(addingCard)}>
+                <button type="button" onClick={() => setAddingCard(true)} style={chipStyle(addingCard, accent)}>
                   {t(TR.cashflow.addCard)}
                 </button>
               </div>
@@ -419,7 +423,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
             <AddButton
               onClick={submit}
               label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)}
-              color={form.type === "Expense" ? EXPENSE_COLOR : INCOME_COLOR}
+              color={accent}
             />
           </div>
         </div>
