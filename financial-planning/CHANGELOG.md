@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.14.1] - 2026-09-12
+
+### Fixed
+- The confirm button in the expense entry sheet was teal — the colour this same screen uses to mean income — even though the sheet is reached by tapping the pink "จ่าย" button and is about money going out. Both sheets now confirm in the colour of the button that opened them, and the two cashflow colours live in one place so the floating button and the sheet cannot drift apart
+
 ## [0.14.0] - 2026-09-12
 
 ### Added

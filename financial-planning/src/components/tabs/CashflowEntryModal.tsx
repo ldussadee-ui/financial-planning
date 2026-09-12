@@ -8,6 +8,7 @@ import { classifyExpense, classifyIncome, daysFasterToGoal, hoursOfWork, isoToda
 import { createRecurringRule } from "@/lib/recurring";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
+import { EXPENSE_COLOR, INCOME_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, PAYMENT_METHOD_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import { Field, AddButton, DayPicker, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
@@ -413,7 +414,13 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
           )}
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button type="button" onClick={closeModal} style={cancelButtonStyle}>{t(TR.common.cancel)}</button>
-            <AddButton onClick={submit} label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)} />
+            {/* Matches the floating button this sheet was opened from, so the
+                colour carries through from tap to confirm. */}
+            <AddButton
+              onClick={submit}
+              label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)}
+              color={form.type === "Expense" ? EXPENSE_COLOR : INCOME_COLOR}
+            />
           </div>
         </div>
       </Modal>

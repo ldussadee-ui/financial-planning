@@ -28,6 +28,12 @@ export const LIQUID_COLOR = "#BFE3F0";
 export const PERSONAL_COLOR = "#FFD8A8";
 export const LIABILITY_COLOR = "#DDB3AC";
 
+// The two cashflow directions. Shared so the floating button that opens an
+// entry sheet and the confirm button inside it cannot drift apart — teal
+// means income on this screen, so an expense confirming in teal reads wrong.
+export const INCOME_COLOR = "#7FD1C9";
+export const EXPENSE_COLOR = "#FF9AA2";
+
 export const PERSONAL_TYPES: PersonalItemType[] = ["รถยนต์", "บ้านอยู่เอง", "ของสะสม", "เครื่องประดับ", "เฟอร์นิเจอร์", "อื่นๆ"];
 export const GOAL_TYPES: GoalType[] = ["เกษียณ", "บ้าน", "การศึกษา", "ท่องเที่ยว", "กองทุนฉุกเฉิน", "อื่นๆ"];
 export const POLICY_TYPES: PolicyType[] = ["ชีวิต", "สุขภาพ", "อุบัติเหตุ", "โรคร้ายแรง", "คุ้มครองสินเชื่อ"];

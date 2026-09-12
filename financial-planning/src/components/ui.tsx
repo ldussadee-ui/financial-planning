@@ -302,14 +302,18 @@ export function SegmentedControl<T extends string>({
   );
 }
 
-export function AddButton({ onClick, label }: { onClick: () => void; label?: string }) {
+// `color` defaults to the app's general "add" teal. It is overridden where a
+// form already carries a colour of its own — the expense entry sheet is
+// reached from a pink button and is about spending, so a teal confirm there
+// would wear the exact colour that same screen uses to mean income.
+export function AddButton({ onClick, label, color = "#7FD1C9" }: { onClick: () => void; label?: string; color?: string }) {
   const { t } = useLanguage();
   return (
     <button
       type="button"
       onClick={onClick}
       style={{
-        display: "flex", alignItems: "center", gap: 6, background: "#7FD1C9", color: "#fff",
+        display: "flex", alignItems: "center", gap: 6, background: color, color: "#fff",
         border: "none", borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
       }}
     >
