@@ -148,6 +148,11 @@ export const TR = {
     investAddTitle: { th: "เพิ่มสินทรัพย์เพื่อการลงทุน", en: "Add Investment Asset" } as Text,
     investEmpty: { th: "ยังไม่มีสินทรัพย์เพื่อการลงทุน", en: "No investment assets yet" } as Text,
     assetName: { th: "ชื่อสินทรัพย์", en: "Asset Name" } as Text,
+    // These two were hardcoded English in the JSX, so "e.g." stayed English
+    // in a Thai form. The examples themselves are a ticker and a car model,
+    // which read the same either way.
+    investNamePlaceholder: { th: "เช่น TSLA80X", en: "e.g. TSLA80X" } as Text,
+    personalNamePlaceholder: { th: "เช่น Honda City", en: "e.g. Honda City" } as Text,
     liquidity: { th: "สภาพคล่อง", en: "Liquidity: " } as Text,
     personalTitle: { th: "สินทรัพย์ส่วนตัว 🚗", en: "Personal Assets 🚗" } as Text,
     personalSub: { th: "ทรัพย์สินที่ใช้งาน ไม่ก่อให้เกิดรายได้ — นับใน Total Net Worth เท่านั้น", en: "Assets you use, not ones that earn income — counted only in Total Net Worth" } as Text,

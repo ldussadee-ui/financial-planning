@@ -7,7 +7,7 @@ import { fmt, uid } from "@/lib/calc";
 import { PERSONAL_COLOR, PERSONAL_TYPES } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, PERSONAL_TYPE_LABEL_EN, translateLabel } from "@/lib/i18n";
-import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, formColumnStyle, formActionsStyle, fullInputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { PersonalAsset, PersonalItemType } from "@/lib/types";
@@ -50,21 +50,21 @@ export function PersonalTab() {
       <SectionHeader title={t(TR.assets.personalTitle)} sub={t(TR.assets.personalSub)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.personalEditTitle) : t(TR.assets.personalAddTitle)}>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
+        <div style={formColumnStyle}>
           <Field label={t(TR.common.type)}>
-            <select value={form.item_type} onChange={(e) => setForm({ ...form, item_type: e.target.value as PersonalItemType })} style={inputStyle}>
+            <select value={form.item_type} onChange={(e) => setForm({ ...form, item_type: e.target.value as PersonalItemType })} style={fullInputStyle}>
               {PERSONAL_TYPES.map((pt) => <option key={pt} value={pt}>{translateLabel(pt, lang, PERSONAL_TYPE_LABEL_EN)}</option>)}
             </select>
           </Field>
-          <Field label={t(TR.common.name)}><input style={inputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Honda City" /></Field>
+          <Field label={t(TR.common.name)}><input style={fullInputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t(TR.assets.personalNamePlaceholder)} /></Field>
           <Field label={t(TR.common.currentValue)}><CalcInput value={form.current_value} onChange={(v) => setForm({ ...form, current_value: v })} placeholder="0" /></Field>
           <Field label={t(TR.assets.linkedLiability)}>
-            <select value={form.liability_id} onChange={(e) => setForm({ ...form, liability_id: e.target.value })} style={inputStyle}>
+            <select value={form.liability_id} onChange={(e) => setForm({ ...form, liability_id: e.target.value })} style={fullInputStyle}>
               <option value="">{t(TR.common.none)}</option>
               {(liabilities || []).map((l) => <option key={l.id} value={l.id}>{l.type}</option>)}
             </select>
           </Field>
-          <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+          <div style={formActionsStyle}>
             <button type="button" onClick={closeModal} style={cancelButtonStyle}>{t(TR.common.cancel)}</button>
             <AddButton onClick={submit} label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)} />
           </div>

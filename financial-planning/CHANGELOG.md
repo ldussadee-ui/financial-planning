@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.13.2] - 2026-09-12
+
+### Fixed
+- The add/edit forms on the four asset tabs each came out a different shape despite being written with identical layout code. They were left to wrap, so where a row broke was decided by how long the words in it happened to be — a dropdown is as wide as its longest option — and on the debt form that pushed the last field onto the same line as the Cancel and Add buttons. Rows are now stated explicitly: one field per row, with a single deliberate pair for a debt's rate and monthly payment, and the buttons always on a row of their own
+- Two placeholders were hardcoded English in the JSX, so "e.g. Honda City" stayed English inside a Thai form. Both now go through the translations
+- The liquid assets form called its amount "จำนวนเงิน" while the investment and personal forms called the same `current_value` column "มูลค่าปัจจุบัน" — all three now agree
+
 ## [0.13.1] - 2026-09-12
 
 ### Fixed

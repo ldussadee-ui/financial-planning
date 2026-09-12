@@ -7,7 +7,7 @@ import { fmt, uid } from "@/lib/calc";
 import { LIABILITY_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, fillText } from "@/lib/i18n";
-import { SectionHeader, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { SectionHeader, Field, AddButton, Modal, Group, Row, cancelButtonStyle, formColumnStyle, formActionsStyle, fullInputStyle, formPairStyle, formPairCellStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { Liability, LiabilityTerm } from "@/lib/types";
@@ -64,18 +64,26 @@ export function LiabilityTab() {
       <SectionHeader title={t(TR.assets.liabilityTitle)} sub={t(TR.assets.liabilitySub)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.liabilityEditTitle) : t(TR.assets.liabilityAddTitle)}>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
+        <div style={formColumnStyle}>
           <Field label={t(TR.assets.term)}>
-            <select value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value as LiabilityTerm })} style={inputStyle}>
+            <select value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value as LiabilityTerm })} style={fullInputStyle}>
               <option value="ShortTerm">{t(TR.assets.shortTerm)}</option>
               <option value="LongTerm">{t(TR.assets.longTerm)}</option>
             </select>
           </Field>
-          <Field label={t(TR.assets.debtType)}><input style={inputStyle} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} placeholder={t(TR.assets.debtTypePlaceholder)} /></Field>
+          <Field label={t(TR.assets.debtType)}><input style={fullInputStyle} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} placeholder={t(TR.assets.debtTypePlaceholder)} /></Field>
           <Field label={t(TR.assets.balance)}><CalcInput value={form.balance} onChange={(v) => setForm({ ...form, balance: v })} placeholder="0" /></Field>
-          <Field label={t(TR.assets.ratePerYear)}><input type="number" style={inputStyle} value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} placeholder="0" /></Field>
-          <Field label={t(TR.assets.monthlyPayment)}><CalcInput value={form.monthly} onChange={(v) => setForm({ ...form, monthly: v })} placeholder="0" /></Field>
-          <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+          {/* The only pair in any of these forms: two short numbers about
+              the same debt that are read together. */}
+          <div style={formPairStyle}>
+            <div style={formPairCellStyle}>
+              <Field label={t(TR.assets.ratePerYear)}><input type="number" style={fullInputStyle} value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} placeholder="0" /></Field>
+            </div>
+            <div style={formPairCellStyle}>
+              <Field label={t(TR.assets.monthlyPayment)}><CalcInput value={form.monthly} onChange={(v) => setForm({ ...form, monthly: v })} placeholder="0" /></Field>
+            </div>
+          </div>
+          <div style={formActionsStyle}>
             <button type="button" onClick={closeModal} style={cancelButtonStyle}>{t(TR.common.cancel)}</button>
             <AddButton onClick={submit} label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)} />
           </div>

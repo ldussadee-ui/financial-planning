@@ -227,6 +227,20 @@ export const inputStyle: CSSProperties = {
   fontSize: 13, background: "#FFFCFA", color: "var(--ink)", minWidth: 130,
 };
 export const deleteBtn: CSSProperties = { border: "none", background: "transparent", color: "var(--ink-soft)", cursor: "pointer", padding: 4, borderRadius: 8 };
+
+// Form rows are laid out explicitly instead of being left to flex-wrap.
+// With wrapping, where a row breaks is decided by how long the words in it
+// happen to be — a dropdown is as wide as its longest option — so identical
+// markup produced four different layouts across the asset tabs, and one of
+// them dropped a field onto the same line as the buttons. Fields go full
+// width by default; formPairStyle is for two short, related controls that
+// genuinely belong side by side, and formActionsStyle keeps the buttons on
+// a row of their own where nothing can join them.
+export const formColumnStyle: CSSProperties = { display: "flex", flexDirection: "column", gap: 11 };
+export const formPairStyle: CSSProperties = { display: "flex", gap: 10, alignItems: "flex-end" };
+export const formPairCellStyle: CSSProperties = { flex: 1, minWidth: 0 };
+export const formActionsStyle: CSSProperties = { display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 3 };
+export const fullInputStyle: CSSProperties = { ...inputStyle, width: "100%", minWidth: 0 };
 export const cancelButtonStyle: CSSProperties = {
   border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
   borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,

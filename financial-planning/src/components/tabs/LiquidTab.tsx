@@ -7,7 +7,7 @@ import { fmt, uid } from "@/lib/calc";
 import { LIQUID_TYPES, LIQUID_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, LIQUID_TYPE_LABEL_EN, translateLabel } from "@/lib/i18n";
-import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, formColumnStyle, formActionsStyle, fullInputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { LiquidAsset, LiquidType } from "@/lib/types";
@@ -50,21 +50,23 @@ export function LiquidTab() {
       <SectionHeader title={t(TR.assets.liquidTitle)} sub={t(TR.assets.liquidSub)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.liquidEditTitle) : t(TR.assets.liquidAddTitle)}>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
+        <div style={formColumnStyle}>
           <Field label={t(TR.common.type)}>
-            <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as LiquidType })} style={inputStyle}>
+            <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as LiquidType })} style={fullInputStyle}>
               {LIQUID_TYPES.map((lt) => <option key={lt} value={lt}>{translateLabel(lt, lang, LIQUID_TYPE_LABEL_EN)}</option>)}
             </select>
           </Field>
-          <Field label={t(TR.common.name)}><input style={inputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t(TR.assets.liquidNamePlaceholder)} /></Field>
-          <Field label={t(TR.common.amount)}><CalcInput value={form.current_value} onChange={(v) => setForm({ ...form, current_value: v })} placeholder="0" /></Field>
+          <Field label={t(TR.common.name)}><input style={fullInputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t(TR.assets.liquidNamePlaceholder)} /></Field>
+          {/* Same `current_value` column as the investment and personal tabs,
+              so it gets the same label rather than "จำนวนเงิน". */}
+          <Field label={t(TR.common.currentValue)}><CalcInput value={form.current_value} onChange={(v) => setForm({ ...form, current_value: v })} placeholder="0" /></Field>
           <Field label={t(TR.common.linkedGoal)}>
-            <select value={form.goal_id} onChange={(e) => setForm({ ...form, goal_id: e.target.value })} style={inputStyle}>
+            <select value={form.goal_id} onChange={(e) => setForm({ ...form, goal_id: e.target.value })} style={fullInputStyle}>
               <option value="">{t(TR.common.notSpecified)}</option>
               {(goals || []).map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </Field>
-          <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+          <div style={formActionsStyle}>
             <button type="button" onClick={closeModal} style={cancelButtonStyle}>{t(TR.common.cancel)}</button>
             <AddButton onClick={submit} label={editingId ? t(TR.common.saveEdit) : t(TR.common.add)} />
           </div>
