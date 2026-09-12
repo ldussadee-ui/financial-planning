@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
+import { LIABILITY_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR } from "@/lib/i18n";
+import { TR, fillText } from "@/lib/i18n";
 import { SectionHeader, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
@@ -13,12 +14,28 @@ import type { Liability, LiabilityTerm } from "@/lib/types";
 
 const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", rate: "", monthly: "" };
 
+const debtIcon = <span style={{ width: 30, height: 30, borderRadius: 10, background: LIABILITY_COLOR, flexShrink: 0 }} />;
+
 export function LiabilityTab() {
   const { t } = useLanguage();
   const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
   const [form, setForm] = useState(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // The rate stays on the name line, where it has always been. The monthly
+  // payment goes below it — it was being captured in the form and then shown
+  // nowhere at all.
+  const rowLeft = (l: Liability) => (
+    <div>
+      <div style={{ fontSize: 14 }}>{l.type} · {l.rate}%{t(TR.assets.perYear)}</div>
+      {l.monthly > 0 && (
+        <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
+          {fillText(t(TR.assets.installmentPerMonth), { amount: fmt(l.monthly) })}
+        </div>
+      )}
+    </div>
+  );
 
   const openNew = () => { setForm(emptyForm); setEditingId(null); setModalOpen(true); };
   const openEdit = (l: Liability) => {
@@ -66,10 +83,10 @@ export function LiabilityTab() {
       </Modal>
 
       <Group title={t(TR.assets.shortTermDebt)} amount={fmt(short.reduce((s, l) => s + l.balance, 0))} tint="#FFEFEA">
-        {short.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%${t(TR.assets.perYear)}`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
+        {short.map((l) => <Row key={l.id} icon={debtIcon} left={rowLeft(l)} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
       <Group title={t(TR.assets.longTermDebt)} amount={fmt(long.reduce((s, l) => s + l.balance, 0))} tint="#EFFBF6">
-        {long.map((l) => <Row key={l.id} left={`${l.type} · ${l.rate}%${t(TR.assets.perYear)}`} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
+        {long.map((l) => <Row key={l.id} icon={debtIcon} left={rowLeft(l)} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
 
       <AddFab onClick={openNew} />

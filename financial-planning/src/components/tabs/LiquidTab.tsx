@@ -81,7 +81,9 @@ export function LiquidTab() {
                 <div>
                   <div style={{ fontSize: 14 }}>{a.name}</div>
                   {a.goal_id && (
-                    <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>{(goals || []).find((g2) => g2.id === a.goal_id)?.name || ""}</div>
+                    <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
+                      {t(TR.assets.linkedWith)} {(goals || []).find((g2) => g2.id === a.goal_id)?.name || ""}
+                    </div>
                   )}
                 </div>
               }

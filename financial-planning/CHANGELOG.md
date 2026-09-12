@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.13.1] - 2026-09-12
+
+### Fixed
+- The monthly payment on a debt was being captured in the form and then shown nowhere at all. It now appears under the debt's name, which is the one line in these lists that was empty
+- Rows across the four asset tabs described the same thing four different ways. A linked goal or debt is now written the same everywhere — with the "ผูกกับ" prefix that only the personal assets tab used, since without it a name like "สินเชื่อรถยนต์" reads as the item's own category rather than something it is tied to
+- Two of the four tabs drew a colour block beside each row and two did not. All four do now: liquid, personal and debt each use one colour for the tab, while investments keep a colour per category, because those particular values are what the dashboard's allocation chart and the trend bars are drawn in
+
 ## [0.13.0] - 2026-09-04
 
 ### Added

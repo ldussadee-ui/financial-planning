@@ -18,7 +18,15 @@ export const CATS: CatInfo[] = [
 export const catInfo = (key: InvestmentCategory): CatInfo => CATS.find((c) => c.key === key) || CATS[0];
 
 export const LIQUID_TYPES: LiquidType[] = ["เงินสด", "บัญชีออมทรัพย์", "บัญชีกระแสรายวัน", "กองทุนตลาดเงิน", "อื่นๆ"];
+// One flat colour per tab, the way LIQUID_COLOR already works. Investment
+// is the exception and keeps a colour per category, because those values
+// are the ones the dashboard's allocation chart and the trend bars are
+// drawn in — changing them there would change the charts. Nothing else has
+// per-row categories worth encoding, since every list is already grouped by
+// exactly the thing a per-category colour would repeat.
 export const LIQUID_COLOR = "#BFE3F0";
+export const PERSONAL_COLOR = "#FFD8A8";
+export const LIABILITY_COLOR = "#DDB3AC";
 
 export const PERSONAL_TYPES: PersonalItemType[] = ["รถยนต์", "บ้านอยู่เอง", "ของสะสม", "เครื่องประดับ", "เฟอร์นิเจอร์", "อื่นๆ"];
 export const GOAL_TYPES: GoalType[] = ["เกษียณ", "บ้าน", "การศึกษา", "ท่องเที่ยว", "กองทุนฉุกเฉิน", "อื่นๆ"];

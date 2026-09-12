@@ -168,6 +168,7 @@ export const TR = {
     balance: { th: "ยอดคงเหลือ", en: "Balance" } as Text,
     ratePerYear: { th: "ดอกเบี้ย %/ปี", en: "Interest %/yr" } as Text,
     monthlyPayment: { th: "ค่างวด/เดือน", en: "Monthly Payment" } as Text,
+    installmentPerMonth: { th: "ผ่อน {amount}/เดือน", en: "Paying {amount}/mo" } as Text,
     shortTermDebt: { th: "หนี้สินระยะสั้น", en: "Short-term Debt" } as Text,
     longTermDebt: { th: "หนี้สินระยะยาว", en: "Long-term Debt" } as Text,
     perYear: { th: "/ปี", en: "/yr" } as Text,

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
-import { PERSONAL_TYPES } from "@/lib/constants";
+import { PERSONAL_COLOR, PERSONAL_TYPES } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, PERSONAL_TYPE_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, inputStyle } from "@/components/ui";
@@ -76,6 +76,7 @@ export function PersonalTab() {
           {g.items.map((a) => (
             <Row
               key={a.id}
+              icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: PERSONAL_COLOR, flexShrink: 0 }} />}
               left={
                 <div>
                   <div style={{ fontSize: 14 }}>{a.name}</div>

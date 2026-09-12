@@ -86,7 +86,8 @@ export function InvestmentTab() {
                 <div>
                   <div style={{ fontSize: 14 }}>{a.name}</div>
                   <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
-                    {t(TR.assets.liquidity)}{translateLabel(a.liquidity, lang, LEVEL_LABEL_EN)} {a.goal_id ? "· " + ((goals || []).find((g2) => g2.id === a.goal_id)?.name || "") : ""}
+                    {t(TR.assets.liquidity)}{translateLabel(a.liquidity, lang, LEVEL_LABEL_EN)}
+                    {a.goal_id ? ` · ${t(TR.assets.linkedWith)} ${(goals || []).find((g2) => g2.id === a.goal_id)?.name || ""}` : ""}
                   </div>
                 </div>
               }
