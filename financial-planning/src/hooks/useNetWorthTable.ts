@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
+import { growthPercent } from "@/lib/calc";
 import { buildBuckets } from "@/lib/netWorthBuckets";
 import type { Language } from "@/lib/i18n";
 import type { NetWorthSnapshot } from "@/lib/types";
@@ -35,7 +36,7 @@ export function useNetWorthTable(monthCount: number, lang: Language = "th") {
     const prev = rows[i - 1];
     if (cur.netWorth !== null && prev.netWorth !== null) {
       cur.delta = cur.netWorth - prev.netWorth;
-      cur.pct = prev.netWorth !== 0 ? (cur.delta / prev.netWorth) * 100 : null;
+      cur.pct = growthPercent(cur.netWorth, prev.netWorth);
     }
   }
 

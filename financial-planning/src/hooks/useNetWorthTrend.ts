@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
+import { growthPercent } from "@/lib/calc";
 import { buildBuckets, type AssetGranularity } from "@/lib/netWorthBuckets";
 import type { Language } from "@/lib/i18n";
 import type { NetWorthSnapshot } from "@/lib/types";
@@ -11,6 +12,8 @@ export interface NetWorthPoint {
   assets: number | null;
   liab: number | null;
   netWorth: number | null;
+  /** Net worth change vs the previous bucket, in percent. */
+  pct: number | null;
 }
 
 // Each bucket's value is the latest snapshot dated within it — not a true
@@ -24,10 +27,17 @@ export function useNetWorthTrend(granularity: AssetGranularity, count: number, l
   const points: NetWorthPoint[] = buckets.map((b) => {
     const inRange = snapshots.filter((s) => s.date >= b.startISO && s.date <= b.endISO);
     const latest = inRange.length ? inRange[inRange.length - 1] : null;
-    if (!latest) return { label: b.label, assets: null, liab: null, netWorth: null };
+    if (!latest) return { label: b.label, assets: null, liab: null, netWorth: null, pct: null };
     const assets = latest.totalLiquid + latest.totalInvestment + latest.totalPersonal;
-    return { label: b.label, assets, liab: latest.totalLiab, netWorth: assets - latest.totalLiab };
+    return { label: b.label, assets, liab: latest.totalLiab, netWorth: assets - latest.totalLiab, pct: null };
   });
+
+  // Growth is only defined against the bucket immediately before it. A gap
+  // leaves the next bucket's percentage null rather than reaching further
+  // back, which would quietly compare across a span the chart shows as empty.
+  for (let i = 1; i < points.length; i++) {
+    points[i].pct = growthPercent(points[i].netWorth, points[i - 1].netWorth);
+  }
 
   return { points, loading };
 }

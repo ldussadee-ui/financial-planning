@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.14.0] - 2026-09-12
+
+### Added
+- The net worth trend chart now carries a growth line: the percentage change against the previous period, read off a second axis on the right. Its label follows the period switcher, so it says quarter, half-year or year rather than always month. A period with no snapshot leaves a gap in the line just as it already does in the bars, instead of drawing a trend across data that isn't there
+- The right-hand axis takes its bounds from the data rather than a fixed range, since real growth sits in single digits most months and a fixed ceiling would press the line flat against the floor. Zero is always in view, so growing and shrinking read from which side of the axis a point sits on, and a minimum span stops a quiet run of 2-3% months being magnified into dramatic swings
+
+### Fixed
+- Percentage change was divided by the previous period's figure rather than its magnitude. Net worth is negative while a mortgage outweighs savings, and dividing by a negative base flips the sign — so paying a debt down from -฿400,000 to -฿250,000 was reported as **-37.5%**, an improvement shown as a loss in red, and the month a balance finally crossed into positive read as -150%. The sign now follows the direction the money actually moved. This corrects the existing "% เทียบเดือนก่อน" column too, which is where the error has been sitting
+- The chart and that table column now compute growth through one shared function, so they cannot drift apart
+
 ## [0.13.2] - 2026-09-12
 
 ### Fixed

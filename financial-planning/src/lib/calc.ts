@@ -157,6 +157,42 @@ export function recommendedMonthlySavings(goal: Goal, linked: number, today: Dat
   return monthlySavingsNeeded(goal.target, linked, monthsUntilDate(goal.date, today), goal.expectedReturn || 0);
 }
 
+/* -------------------------------- growth -------------------------------- */
+
+// Percentage change between two periods. The denominator is the absolute
+// value of the previous figure, not the figure itself: net worth can be
+// negative while a mortgage outweighs savings, and dividing by a negative
+// base flips the sign, so paying debt down from -100k to -50k reported as
+// -50% — an improvement shown as a loss. With |previous| the sign always
+// matches the direction the money actually moved. Returns null where no
+// percentage is meaningful: a missing period either side, or a zero base
+// that every change would divide by.
+export function growthPercent(current: number | null, previous: number | null): number | null {
+  if (current === null || previous === null || previous === 0) return null;
+  return ((current - previous) / Math.abs(previous)) * 100;
+}
+
+// Bounds for an axis showing growth percentages. Always spans zero, so
+// growing and shrinking read from which side of the line a point sits on;
+// pads so points never touch the frame; and holds a minimum span so a quiet
+// run of 2-3% months isn't magnified into dramatic swings by an axis that
+// zoomed into noise. Rounded to 5s to keep the ticks legible.
+export function growthAxisDomain(values: (number | null)[], minSpan = 20): [number, number] {
+  const vals = values.filter((v): v is number => v !== null && Number.isFinite(v));
+  if (!vals.length) return [-minSpan / 2, minSpan / 2];
+  let lo = Math.min(0, ...vals);
+  let hi = Math.max(0, ...vals);
+  const pad = Math.max((hi - lo) * 0.15, 2);
+  lo -= pad;
+  hi += pad;
+  if (hi - lo < minSpan) {
+    const mid = (hi + lo) / 2;
+    lo = mid - minSpan / 2;
+    hi = mid + minSpan / 2;
+  }
+  return [Math.floor(lo / 5) * 5, Math.ceil(hi / 5) * 5];
+}
+
 /* ------------------------------ retirement ------------------------------ */
 
 export interface RetirementPlan {
