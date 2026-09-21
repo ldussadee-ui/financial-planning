@@ -13,14 +13,16 @@ import { AssetTrendTab } from "./AssetTrendTab";
 type AssetCategory = "liquid" | "investment" | "personal" | "liability" | "trend";
 const ORDER: AssetCategory[] = ["liquid", "investment", "personal", "liability", "trend"];
 
-// Swipe tuning. The distances are the middle ("ปกติ") of three settings
-// tried on a phone mockup before this was built.
-const COMMIT_DISTANCE = 70; // px of sideways travel that switches tab on release…
-const FLICK_DISTANCE = 30;  // …or only this much, if the finger is still moving
-const FLICK_SPEED = 0.45;   // at least this fast (px/ms) as it lets go
-const LOCK_DISTANCE = 10;   // travel before the gesture is read as sideways or not
+// Swipe tuning. The distances are the most sensitive ("ไว") of the three
+// settings on the phone mockup.
+const COMMIT_DISTANCE = 45; // px of sideways travel that switches tab on release…
+const FLICK_DISTANCE = 20;  // …or only this much, if the finger is still moving
+const FLICK_SPEED = 0.3;    // at least this fast (px/ms) as it lets go
+// Travel before a drag is read as a swipe or a scroll. Kept short: the
+// verdict has to land before the phone commits to scrolling on its own.
+const LOCK_DISTANCE = 8;
 const EDGE_GUARD = 24;      // px at each screen edge, left to the phone's own back gesture
-const MAX_SLOPE = Math.tan((30 * Math.PI) / 180); // any steeper and it was a scroll
+const SWIPE_SLOPE = Math.tan((30 * Math.PI) / 180); // within 30° of level is a swipe
 const FOLLOW = 0.5;         // the content moves half as far as the finger
 const SLIDE = 0.3;          // share of the width a tab travels as it leaves or arrives
 const LEAVE_MS = 110;
@@ -195,9 +197,10 @@ export function AssetsTab() {
       const adx = Math.abs(g.dx), ady = Math.abs(g.dy);
       if (g.sideways === null) {
         if (adx < LOCK_DISTANCE && ady < LOCK_DISTANCE) return;
-        // The same test the browser applies under touch-action: pan-y to
-        // pick a pan direction, so whatever it declines to scroll is ours.
-        g.sideways = adx > ady;
+        // Within 30° of level it's a swipe, and onTouchMove holds the page
+        // still from here until the finger lifts. Anything steeper is a
+        // scroll and is left to the browser.
+        g.sideways = ady <= adx * SWIPE_SLOPE;
         if (!g.sideways) { stop(); return; }
       }
       g.samples.push({ t: e.timeStamp, x: e.clientX });
@@ -232,7 +235,9 @@ export function AssetsTab() {
       const target = index + dir;
       const speed = releaseSpeed(done.samples, e.timeStamp);
       const flicked = adx >= FLICK_DISTANCE && Math.abs(speed) >= FLICK_SPEED && Math.sign(speed) === Math.sign(done.dx);
-      if (target < 0 || target >= ORDER.length || ady > adx * MAX_SLOPE || (adx < COMMIT_DISTANCE && !flicked)) {
+      // It was judged a swipe at the start, so a drift in angle along the
+      // way doesn't undo that — only a drag that ended up mostly vertical.
+      if (target < 0 || target >= ORDER.length || ady > adx || (adx < COMMIT_DISTANCE && !flicked)) {
         snapBack();
         return;
       }
@@ -274,13 +279,26 @@ export function AssetsTab() {
         e.preventDefault();
       }
     };
+    // touch-action: pan-y leaves vertical panning to the browser, and not
+    // every browser keeps a mostly-sideways drag out of it — a slightly
+    // slanted swipe could scroll the page up or down along the way.
+    // Cancelling the touchmove holds the page still. Each touchmove follows
+    // the pointermove for the same movement, which has already given the
+    // verdict; the few before it go through untouched, since cancelling one
+    // then could stop the page scrolling at all if the drag turns out to be
+    // vertical.
+    const onTouchMove = (e: TouchEvent) => {
+      if (g?.sideways && e.cancelable) e.preventDefault();
+    };
 
     root.addEventListener("pointerdown", onDown);
     root.addEventListener("click", onClickCapture, true);
+    root.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("blur", onBlur);
     return () => {
       root.removeEventListener("pointerdown", onDown);
       root.removeEventListener("click", onClickCapture, true);
+      root.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("blur", onBlur);
       stop();
       timers.forEach((id) => window.clearTimeout(id));

@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.16.1] - 2026-09-22
+
+### Changed
+- Swiping between the asset tabs is more sensitive: 45px of travel switches tab instead of 70px, and a quick flick needs 20px instead of 30px — the "ไว" setting from the phone mockup
+
+### Fixed
+- A slightly slanted swipe could scroll the page up or down as it went. A drag that starts within 30° of level is now taken as a swipe after its first 8px, and the page is held still until the finger lifts; anything steeper is left alone as an ordinary scroll. Before, the line was drawn at 45°, with a separate 30° check only on release, so a drag at 35° moved the content and then sprang back without switching
+
 ## [0.16.0] - 2026-09-22
 
 ### Added
