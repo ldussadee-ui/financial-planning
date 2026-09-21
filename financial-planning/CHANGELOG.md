@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.16.0] - 2026-09-22
+
+### Added
+- The asset tabs can be changed by swiping on a phone: left for the next tab (สภาพคล่อง → ลงทุน → ส่วนตัว → หนี้สิน → แนวโน้ม), right for the one before. The tab bar's thumb follows the finger toward the tab it's heading for and lands on it once letting go would switch, so the gesture shows where it will end up; a short quick flick counts as well as a longer drag. At the first and last tab the content gives a little and springs back instead of wrapping around, and a swipe never leaves the Assets page for another screen. The distances are the middle of three settings tried on a phone mockup first
+- Tapping a tab now slides the new one in from the same side a swipe would, so the two ways of switching read as one. Switching while scrolled far down a long list brings the tab bar back into view, so the new tab opens at its top with its name on screen
+- A swipe only counts when it is clearly sideways, so scrolling with a slightly slanted thumb doesn't flip tabs, and it is ignored within 24px of either screen edge, which phones keep for their own back gesture. Anything that already takes sideways drags keeps them: dragging across the trend chart still moves its tooltip, and the comparison table still scrolls whenever it is wider than the screen. A swipe that ends over a row doesn't also open that row's edit form, and dragging inside an add/edit sheet can't switch the tab behind it, which would have closed the sheet with whatever had been typed so far
+
+### Changed
+- The floating + button is now rendered straight onto the page rather than inside each tab, so it stays put while a tab slides — inside the moving content, it would have ridden along with the list. It appears a moment after the page first loads rather than as part of the initial HTML
+
 ## [0.15.0] - 2026-09-21
 
 ### Added

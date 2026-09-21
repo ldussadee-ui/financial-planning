@@ -260,30 +260,41 @@ export function Field({ label, wide, children }: { label: string; wide?: boolean
   );
 }
 
+// Where to draw the thumb instead of under `value`, for a caller that moves
+// it by some other means — AssetsTab while a swipe is in progress. With
+// `tracking` it follows along with the transition off; without, it glides to
+// `index`, which is how it reaches the destination tab while the old one is
+// still sliding out, before `value` has changed. A whole-number index also
+// darkens that option's label, so the thumb arriving on the next tab reads
+// as "let go now".
+export type SegmentedThumb = { index: number; tracking: boolean };
+
 // Single-track control for choosing one of a small, fixed set of options —
 // e.g. a granularity or sub-tab switch — as an alternative to a row of
 // separate chip buttons, matching iOS's segmented control pattern.
 export function SegmentedControl<T extends string>({
-  options, value, onChange, small,
+  options, value, onChange, small, thumb,
 }: {
   options: { value: T; label: string }[];
   value: T;
   onChange: (v: T) => void;
   small?: boolean;
+  thumb?: SegmentedThumb | null;
 }) {
   const n = options.length;
   const idx = Math.max(0, options.findIndex((o) => o.value === value));
+  const thumbAt = thumb ? thumb.index : idx;
   return (
     <div style={{ position: "relative", display: "flex", background: "var(--track)", borderRadius: small ? 9 : 11, padding: 3 }}>
       <div
         style={{
           position: "absolute", top: 3, bottom: 3,
-          left: `calc(${(idx * 100) / n}% + 3px)`, width: `calc(${100 / n}% - 6px)`,
+          left: `calc(${(thumbAt * 100) / n}% + 3px)`, width: `calc(${100 / n}% - 6px)`,
           background: "#fff", borderRadius: small ? 7 : 8, boxShadow: "0 1px 4px rgba(74,68,88,0.18)",
-          transition: "left 0.2s ease",
+          transition: thumb?.tracking ? "none" : "left 0.2s ease",
         }}
       />
-      {options.map((o) => (
+      {options.map((o, i) => (
         <button
           key={o.value}
           type="button"
@@ -292,7 +303,7 @@ export function SegmentedControl<T extends string>({
             position: "relative", zIndex: 1, flex: 1, textAlign: "center", border: "none", background: "transparent",
             cursor: "pointer", padding: small ? "9px 4px" : "7px 4px",
             fontSize: small ? 11 : 12.5, fontWeight: 600,
-            color: o.value === value ? "var(--ink)" : "var(--ink-soft)",
+            color: o.value === value || thumb?.index === i ? "var(--ink)" : "var(--ink-soft)",
           }}
         >
           {o.label}

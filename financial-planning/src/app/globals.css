@@ -138,6 +138,21 @@ button {
   display: none;
 }
 
+/* Clips the Assets tab's content as it slides between sub-tabs. The
+   negative margins cancel .fp-main's side padding (42px here, 16px on
+   mobile below — keep the two in step), so a tab leaves at the screen edge
+   rather than vanishing short of it. `clip` rather than `hidden` so this
+   isn't a scroll container; touch-action is repeated for browsers that fall
+   back to `hidden`, because a scroll container resets touch-action for
+   everything inside it and sideways drags would stop reaching the swipe. */
+.fp-swipe-clip {
+  margin: 0 -42px;
+  padding: 0 42px;
+  overflow-x: hidden;
+  overflow-x: clip;
+  touch-action: pan-y pinch-zoom;
+}
+
 @media (max-width: 860px) {
   .fp-sidebar {
     display: none;
@@ -148,6 +163,10 @@ button {
   .fp-main {
     padding: 20px 16px 96px !important;
     max-width: 100% !important;
+  }
+  .fp-swipe-clip {
+    margin: 0 -16px;
+    padding: 0 16px;
   }
   .fp-grid-2 {
     grid-template-columns: 1fr !important;

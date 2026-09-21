@@ -55,7 +55,9 @@ export function AssetTrendTab() {
         <SegmentedControl options={GRANULARITY_OPTIONS} value={granularity} onChange={setGranularity} />
       </div>
 
-      <div className="fp-card" style={{ padding: 20, marginBottom: 18 }}>
+      {/* data-no-swipe: a finger dragged across the chart moves its tooltip,
+          so a sideways drag here is for reading values, not changing tab. */}
+      <div className="fp-card" data-no-swipe style={{ padding: 20, marginBottom: 18 }}>
         {points.some((p) => p.assets !== null) ? (
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={points}>
