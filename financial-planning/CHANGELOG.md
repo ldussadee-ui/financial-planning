@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.17.0] - 2026-09-22
+
+### Changed
+- The app has a real logo: a gold baht sign on money green, inside the faint ring of a coin — chosen from four options shown at actual size on phone home screens and browser tabs. It replaces the placeholder lavender square with a pink circle everywhere the app shows an icon: the browser tab (with slightly rounded corners, as tab icons are shown as drawn), the iPhone home screen, and Android's launcher and install prompt. Everything in the design sits inside the circle Android keeps when it crops icons round, so one drawing serves every platform
+- The icon generator now draws the logo itself from a few circles, lines and arcs, still without an image library, so the design can be changed by editing the script and running it again
+- The offline cache was renamed so that installed copies of the app drop the old icons instead of showing them until the next refresh. An iPhone only reads a home-screen icon when the app is added, so a copy already on the home screen keeps the old one until it is removed and added again — export a full backup first, as removing it can take its data with it
+
 ## [0.16.1] - 2026-09-22
 
 ### Changed
