@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.15.0] - 2026-09-21
+
+### Added
+- The payment method summary can step back through earlier cycles with the same ‹ › control the cashflow tab uses, so it now answers "how did I pay for last month" and not only this one. It counts by accounting cycle rather than calendar month, so its totals agree with the cashflow tab it is reached from. The cycle total moved out of the subtitle onto its own line beneath the stepper, next to the control that changes it
+
+### Fixed
+- The cashflow tab's link to the payment summary didn't pass along which cycle was on screen, so stepping back to August and tapping through showed September's payments, with nothing to say the two screens disagreed. The link now carries the cycle, and a hand-edited or malformed value falls back to the current cycle; an absurd one is clamped rather than looped through, which would otherwise have frozen the tab
+- The summary's subtitle said "ในรอบปัจจุบัน" (in the current cycle), which stopped being true the moment the page could show any other
+
+### Changed
+- The cycle stepper and the date arithmetic behind it moved out of the cashflow tab into shared code, so both screens that step through cycles use one implementation. The arithmetic was checked against the old inline version across 720 combinations of start day, weekend shift, offset and date, with no differences
+
 ## [0.14.2] - 2026-09-12
 
 ### Fixed

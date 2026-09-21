@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { categoryBudgetStatus, daysFasterToGoal, fmt, fmtRange, getCycleRange, hoursOfWork } from "@/lib/calc";
+import { categoryBudgetStatus, cycleRangeAtOffset, daysFasterToGoal, fmt, hoursOfWork } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
 import type { GeneratedEntryInfo } from "@/lib/recurring";
 import { useSetting } from "@/hooks/useSetting";
@@ -15,22 +15,11 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, NestedGroup, DayPicker, BudgetBar } from "@/components/ui";
 import { BudgetEditorModal } from "@/components/BudgetEditor";
+import { CycleNav } from "@/components/CycleNav";
 import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
 import type { CashFlowEntry } from "@/lib/types";
 
-function chipStyle(active: boolean): CSSProperties {
-  return {
-    border: active ? "none" : "1px solid var(--line)",
-    background: active ? "#7FD1C9" : "#FFFCFA",
-    color: active ? "#fff" : "var(--ink-soft)",
-    borderRadius: 999, padding: "7px 13px", fontSize: 12.5, fontWeight: 500, cursor: "pointer",
-  };
-}
-const navButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
-  borderRadius: 999, width: 26, height: 26, fontSize: 13, cursor: "pointer", lineHeight: "1",
-};
 // Equal-width shortcut links: each of the 3 gets exactly 1/3 of the row so
 // all three stay visible with no horizontal scrolling; a longer label wraps
 // onto a second line on a narrow phone instead of pushing siblings off-screen.
@@ -80,31 +69,10 @@ export function CashflowTab() {
     document.addEventListener("visibilitychange", onVisibilityChange);
     return () => document.removeEventListener("visibilitychange", onVisibilityChange);
   }, []);
-  const cycleRange = useMemo(() => {
-    // Step cycle-by-cycle from the real current cycle rather than adding
-    // `cycleOffset` months to today's date at a fixed day-of-month: a fixed
-    // anchor day breaks once cycleStartDay is past it (e.g. day 15 reads as
-    // "before" a cycle that starts on the 25th even after today has crossed
-    // it, understating the current cycle by one) and adding months to a
-    // day-of-month like 31 can overflow into the wrong month. One day past
-    // the end of the current cycle is always inside the next one, and vice
-    // versa, so this works for any cycleStartDay.
-    let range = getCycleRange(cycleStartDay, shiftWeekend);
-    if (cycleOffset > 0) {
-      for (let i = 0; i < cycleOffset; i++) {
-        const nextRef = new Date(range.end);
-        nextRef.setDate(nextRef.getDate() + 1);
-        range = getCycleRange(cycleStartDay, shiftWeekend, nextRef);
-      }
-    } else if (cycleOffset < 0) {
-      for (let i = 0; i < -cycleOffset; i++) {
-        const prevRef = new Date(range.start);
-        prevRef.setDate(prevRef.getDate() - 1);
-        range = getCycleRange(cycleStartDay, shiftWeekend, prevRef);
-      }
-    }
-    return range;
-  }, [cycleStartDay, shiftWeekend, cycleOffset]);
+  const cycleRange = useMemo(
+    () => cycleRangeAtOffset(cycleStartDay, shiftWeekend, cycleOffset),
+    [cycleStartDay, shiftWeekend, cycleOffset],
+  );
   const { hourlyWage } = useHourlyWage();
   const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
   const { map: budgetMap } = useBudgets();
@@ -142,7 +110,6 @@ export function CashflowTab() {
   const investExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Invest");
   const varExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class !== "Fixed" && c.expense_class !== "Invest");
   const budgetStatus = categoryBudgetStatus(cycleCF, budgetMap);
-  const isCurrentCycle = cycleOffset === 0;
 
   return (
     <div>
@@ -150,23 +117,20 @@ export function CashflowTab() {
 
       <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 10 }}>
         <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <button type="button" onClick={() => setCycleOffset((o) => o - 1)} style={navButtonStyle} aria-label={t(TR.cashflow.prevCycle)}>‹</button>
-            🗓️ {isCurrentCycle ? t(TR.cashflow.currentCycle) : t(TR.cashflow.cycle)}: <b style={{ color: "var(--ink)" }}>{fmtRange(cycleRange, lang)}</b>
-            <button type="button" onClick={() => setCycleOffset((o) => o + 1)} style={navButtonStyle} aria-label={t(TR.cashflow.nextCycle)}>›</button>
-            {!isCurrentCycle && (
-              <button type="button" onClick={() => setCycleOffset(0)} style={{ ...chipStyle(false), padding: "5px 11px", fontSize: 11.5 }}>
-                {t(TR.cashflow.backToCurrentCycle)}
-              </button>
-            )}
-          </span>
+          <CycleNav offset={cycleOffset} range={cycleRange} onChange={setCycleOffset} />
           <DayPicker value={cycleStartDay} onChange={setCycleStartDay} shiftWeekend={shiftWeekend} onShiftWeekendChange={setShiftWeekend} />
         </span>
         <span style={{ display: "flex", gap: 6 }}>
           <Link href="/cashflow/reports" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
             📊 {t(TR.cashflow.monthlyReport)}
           </Link>
-          <Link href="/cashflow/payment-summary" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
+          {/* Carries the cycle being viewed. Without it the summary always
+              opened on the current cycle, so stepping back to August here
+              and tapping through showed September's payments instead. */}
+          <Link
+            href={cycleOffset === 0 ? "/cashflow/payment-summary" : `/cashflow/payment-summary?cycle=${cycleOffset}`}
+            style={{ ...shortcutLinkStyle, textDecoration: "none" }}
+          >
             💳 {t(TR.cashflow.paymentSummary)}
           </Link>
           <Link href="/cashflow/recurring" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>

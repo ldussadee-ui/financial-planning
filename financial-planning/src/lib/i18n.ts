@@ -420,7 +420,10 @@ export const TR = {
     trendHalfYear: { th: "📈 แนวโน้มรายจ่ายรายเดือน (ครึ่งปีนี้)", en: "📈 Monthly Expense Trend (This Half-Year)" } as Text,
     trendYear: { th: "📈 แนวโน้มรายจ่ายรายเดือน (ปีนี้)", en: "📈 Monthly Expense Trend (This Year)" } as Text,
     paymentSummaryTitle: { th: "สรุปการจ่ายต่อช่องทาง 💳", en: "Payment Method Summary 💳" } as Text,
-    paymentSummarySub: { th: "เงินสดและบัตรเครดิตที่ใช้จ่ายในรอบปัจจุบัน", en: "Cash and cards used in the current cycle" } as Text,
+    // "ในรอบปัจจุบัน" stopped being true once the page could step back to
+    // earlier cycles.
+    paymentSummarySub: { th: "เงินสดและบัตรเครดิตที่ใช้จ่ายในรอบที่เลือก", en: "Cash and cards used in the selected cycle" } as Text,
+    cycleTotal: { th: "รวมทั้งรอบ", en: "Total for the cycle" } as Text,
     totalWord: { th: "รวม", en: "total" } as Text,
     noPaymentEntries: { th: "ยังไม่มีรายจ่ายที่ระบุช่องทางในรอบนี้", en: "No expenses with a payment method in this cycle yet" } as Text,
   },

@@ -157,6 +157,42 @@ export function recommendedMonthlySavings(goal: Goal, linked: number, today: Dat
   return monthlySavingsNeeded(goal.target, linked, monthsUntilDate(goal.date, today), goal.expectedReturn || 0);
 }
 
+// The cycle `offset` steps away from the one containing `today` (negative is
+// earlier). Steps cycle-by-cycle rather than adding months to today's date
+// at a fixed day-of-month: a fixed anchor day breaks once cycleStartDay is
+// past it (day 15 reads as "before" a cycle that starts on the 25th even
+// after today has crossed it, understating the current cycle by one), and
+// adding months to a day like 31 can overflow into the wrong month. One day
+// past the end of a cycle is always inside the next one and vice versa, so
+// this works for any cycleStartDay. Shared by every screen that navigates
+// by cycle, so they cannot disagree about which dates a cycle covers.
+export function cycleRangeAtOffset(
+  cycleStartDay: number, shiftWeekend: boolean, offset: number, today: Date = new Date(),
+): CycleRange {
+  let range = getCycleRange(cycleStartDay, shiftWeekend, today);
+  for (let i = 0; i < offset; i++) {
+    const nextRef = new Date(range.end);
+    nextRef.setDate(nextRef.getDate() + 1);
+    range = getCycleRange(cycleStartDay, shiftWeekend, nextRef);
+  }
+  for (let i = 0; i < -offset; i++) {
+    const prevRef = new Date(range.start);
+    prevRef.setDate(prevRef.getDate() - 1);
+    range = getCycleRange(cycleStartDay, shiftWeekend, prevRef);
+  }
+  return range;
+}
+
+// Reads a cycle offset from a URL value. The value arrives from outside the
+// app — a link, a bookmark, something typed — so anything that isn't a whole
+// number falls back to the current cycle, and it is clamped because each
+// step is a loop iteration: "?cycle=-999999" would otherwise freeze the tab.
+// Ten years back and one ahead is far more history than anyone scrolls.
+export function parseCycleOffset(raw: string | null | undefined): number {
+  if (!raw || !/^-?\d+$/.test(raw.trim())) return 0;
+  return Math.max(-120, Math.min(12, parseInt(raw, 10)));
+}
+
 /* -------------------------------- growth -------------------------------- */
 
 // Percentage change between two periods. The denominator is the absolute

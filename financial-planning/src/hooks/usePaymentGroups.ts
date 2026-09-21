@@ -2,8 +2,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { inRange } from "@/lib/calc";
-import { useCycleRange } from "./useMetrics";
+import { inRange, type CycleRange } from "@/lib/calc";
 import type { CashFlowEntry, PaymentMethod } from "@/lib/types";
 
 export interface PaymentGroup {
@@ -11,11 +10,11 @@ export interface PaymentGroup {
   items: CashFlowEntry[];
 }
 
-// Cycle-scoped expense totals grouped by payment method (cash/cards), for
-// the "สรุปการจ่ายต่อช่องทาง" summary — used by both the cashflow tab's
-// nav button and the dedicated summary page it links to.
-export function usePaymentGroups() {
-  const cycleRange = useCycleRange();
+// Expenses within one cycle, grouped by the payment method they were paid
+// with (cash first, then cards), for the "สรุปการจ่ายต่อช่องทาง" page. The
+// cycle is passed in rather than read here, so the page can step back
+// through earlier cycles with the same stepper the cashflow tab uses.
+export function usePaymentGroups(cycleRange: CycleRange) {
   const cashflow = useLiveQuery(() => db.cashflow.toArray(), [], []);
   const paymentMethods = useLiveQuery(() => db.paymentMethods.toArray(), [], []);
   const loading = cashflow === undefined || paymentMethods === undefined;
@@ -26,5 +25,5 @@ export function usePaymentGroups() {
     .map((m) => ({ method: m, items: cycleExpenses.filter((c) => c.payment_method_id === m.id) }))
     .filter((g) => g.items.length > 0);
 
-  return { paymentGroups, paymentMethodsSorted, cycleRange, loading };
+  return { paymentGroups, paymentMethodsSorted, loading };
 }
