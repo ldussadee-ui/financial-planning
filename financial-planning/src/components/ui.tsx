@@ -317,7 +317,7 @@ export function SegmentedControl<T extends string>({
 // form already carries a colour of its own — the expense entry sheet is
 // reached from a pink button and is about spending, so a teal confirm there
 // would wear the exact colour that same screen uses to mean income.
-export function AddButton({ onClick, label, color = "#7FD1C9" }: { onClick: () => void; label?: string; color?: string }) {
+export function AddButton({ onClick, label, color = "#7FD1C9", icon }: { onClick: () => void; label?: string; color?: string; icon?: ReactNode }) {
   const { t } = useLanguage();
   return (
     <button
@@ -328,7 +328,7 @@ export function AddButton({ onClick, label, color = "#7FD1C9" }: { onClick: () =
         border: "none", borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
       }}
     >
-      <Plus size={14} /> {label ?? t(TR.common.add)}
+      {icon ?? <Plus size={14} />} {label ?? t(TR.common.add)}
     </button>
   );
 }

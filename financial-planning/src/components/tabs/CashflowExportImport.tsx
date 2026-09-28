@@ -6,6 +6,8 @@ import { isoToday, uid } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 import { Field, AddButton, Modal, inputStyle } from "@/components/ui";
+import { Share2 } from "lucide-react";
+import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 import type { CashFlowEntry } from "@/lib/types";
 
 const EXPORT_APP_ID = "financial-planning-cashflow-export";
@@ -24,28 +26,17 @@ const actionButtonStyle: CSSProperties = {
   borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer",
 };
 
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
 // Only cashflow entries are exportable — assets/liabilities/goals stay local
 // to each device, since the family-sharing use case this serves ("what did
 // we spend as a family") only concerns income/expense totals.
 function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { lang, t } = useLanguage();
+  const canShare = useCanShareFiles();
   const today = isoToday();
   const [start, setStart] = useState(today.slice(0, 8) + "01");
   const [end, setEnd] = useState(today);
 
-  const doExport = async () => {
+  const doExport = async (share: boolean) => {
     const all = await db.cashflow.toArray();
     const entries = all.filter((e) => e.date >= start && e.date <= end);
     const file: ExportFile = {
@@ -56,7 +47,12 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       rangeEnd: end,
       entries,
     };
-    downloadJson(`${lang === "en" ? `cashflow_${start}_to_${end}` : `รายรับจ่าย_${start}_ถึง_${end}`}.json`, file);
+    const name = `${lang === "en" ? `cashflow_${start}_to_${end}` : `รายรับจ่าย_${start}_ถึง_${end}`}.json`;
+    if (share) {
+      if ((await shareJson(name, file, true)) === "cancelled") return;
+    } else {
+      downloadJson(name, file, true);
+    }
     onClose();
   };
 
@@ -65,7 +61,14 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
         <Field label={t(TR.exportImport.fromDate)}><input type="date" style={inputStyle} value={start} onChange={(e) => setStart(e.target.value)} /></Field>
         <Field label={t(TR.exportImport.toDate)}><input type="date" style={inputStyle} value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
-        <AddButton onClick={doExport} label={t(TR.common.downloadFile)} />
+        {canShare ? (
+          <>
+            <AddButton onClick={() => void doExport(true)} label={t(TR.common.shareFile)} icon={<Share2 size={14} />} />
+            <button type="button" onClick={() => void doExport(false)} style={actionButtonStyle}>{t(TR.common.download)}</button>
+          </>
+        ) : (
+          <AddButton onClick={() => void doExport(false)} label={t(TR.common.downloadFile)} />
+        )}
       </div>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 10 }}>
         {t(TR.exportImport.exportRangeNote)}

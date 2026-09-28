@@ -6,6 +6,8 @@ import { uid } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 import { AddButton, Field, Modal, inputStyle } from "@/components/ui";
+import { Share2 } from "lucide-react";
+import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 import type { LiquidAsset, InvestmentAsset, PersonalAsset, Liability } from "@/lib/types";
 
 const EXPORT_APP_ID = "financial-planning-asset-export";
@@ -25,23 +27,12 @@ const actionButtonStyle: CSSProperties = {
   borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer",
 };
 
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
 // Assets have no date field to filter by, so export/import is always a full
 // snapshot of everything currently saved — unlike cashflow's date-ranged export.
 function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { lang, t } = useLanguage();
-  const doExport = async () => {
+  const canShare = useCanShareFiles();
+  const doExport = async (share: boolean) => {
     const [liquidAssets, investmentAssets, personalAssets, liabilities] = await Promise.all([
       db.liquidAssets.toArray(),
       db.investmentAssets.toArray(),
@@ -54,7 +45,12 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       exportedAt: new Date().toISOString(),
       liquidAssets, investmentAssets, personalAssets, liabilities,
     };
-    downloadJson(`${lang === "en" ? "assets" : "สินทรัพย์"}_${new Date().toISOString().slice(0, 10)}.json`, file);
+    const name = `${lang === "en" ? "assets" : "สินทรัพย์"}_${new Date().toISOString().slice(0, 10)}.json`;
+    if (share) {
+      if ((await shareJson(name, file, true)) === "cancelled") return;
+    } else {
+      downloadJson(name, file, true);
+    }
     onClose();
   };
 
@@ -63,7 +59,16 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       <div style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 14 }}>
         {t(TR.exportImport.exportAssetsNote)}
       </div>
-      <AddButton onClick={doExport} label={t(TR.common.downloadFile)} />
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {canShare ? (
+          <>
+            <AddButton onClick={() => void doExport(true)} label={t(TR.common.shareFile)} icon={<Share2 size={14} />} />
+            <button type="button" onClick={() => void doExport(false)} style={actionButtonStyle}>{t(TR.common.download)}</button>
+          </>
+        ) : (
+          <AddButton onClick={() => void doExport(false)} label={t(TR.common.downloadFile)} />
+        )}
+      </div>
     </Modal>
   );
 }

@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.18.0] - 2026-09-28
+
+### Added
+- Exports can go straight to the phone's share sheet — LINE, mail, AirDrop, Drive or Files — instead of downloading first and then finding the file to send. The full backup, the cashflow export and the asset export each get a "แชร์" button where the browser can share files, with download kept beside it for anywhere the sheet doesn't reach; browsers that can't share files see the download button exactly as before
+- Closing the share sheet without picking anywhere is not an error and doesn't count as a backup: "last backed up" only moves once the file has actually gone somewhere. If the browser refuses to share, it falls back to downloading so the tap isn't wasted
+- A line under the backup's share button notes that the file holds all your financial data, and that sending it through a chat app leaves a copy on that app's servers
+
+### Changed
+- The three copies of the file-download code are now one shared helper, so the backup and both exports behave the same way
+
 ## [0.17.0] - 2026-09-22
 
 ### Changed

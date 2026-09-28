@@ -10,6 +10,7 @@ import { useSetting } from "@/hooks/useSetting";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, fillText } from "@/lib/i18n";
 import { Field, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
+import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 
 // Anything past this and the reminder starts nudging rather than just
 // reporting. Roughly a month: long enough not to nag, short enough that a
@@ -37,22 +38,17 @@ const warningBoxStyle: CSSProperties = {
   fontSize: 12.5, lineHeight: 1.5,
 };
 
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-async function runBackup(lang: string) {
+// Stamps "last backed up" only once the file has actually left the app —
+// dismissing the share sheet saves nothing, so it mustn't count.
+async function runBackup(lang: string, share: boolean) {
   const file = await exportAll();
   const stamp = new Date().toISOString().slice(0, 10);
-  downloadJson(`${lang === "en" ? "backup" : "สำรองข้อมูล"}_${stamp}.json`, file);
+  const name = `${lang === "en" ? "backup" : "สำรองข้อมูล"}_${stamp}.json`;
+  if (share) {
+    if ((await shareJson(name, file)) === "cancelled") return;
+  } else {
+    downloadJson(name, file);
+  }
   await markBackedUp();
 }
 
@@ -142,6 +138,7 @@ function RestoreModal({ open, onClose }: { open: boolean; onClose: () => void })
 
 function WipeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { lang, t } = useLanguage();
+  const canShare = useCanShareFiles();
   const [typed, setTyped] = useState("");
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -172,7 +169,7 @@ function WipeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             <div style={warningBoxStyle}>{t(TR.settings.wipeWarning)}</div>
             {/* Offered right here rather than left to the user to remember:
                 the moment before erasing is the last chance to keep any of it. */}
-            <button type="button" onClick={() => void runBackup(lang)} style={actionButtonStyle}>
+            <button type="button" onClick={() => void runBackup(lang, canShare)} style={actionButtonStyle}>
               {t(TR.settings.wipeBackupFirst)}
             </button>
             <Field label={fillText(t(TR.settings.wipeTypeToConfirm), { word })}>
@@ -269,6 +266,7 @@ function StoragePersistence() {
 
 export function FullBackup() {
   const { lang, t } = useLanguage();
+  const canShare = useCanShareFiles();
   const [lastBackup] = useSetting<string | null>(LAST_BACKUP_KEY, null);
   const [restoreOpen, setRestoreOpen] = useState(false);
   const [wipeOpen, setWipeOpen] = useState(false);
@@ -291,9 +289,23 @@ export function FullBackup() {
       </div>
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button type="button" onClick={() => void runBackup(lang)} style={primaryButtonStyle}>
-          {t(TR.settings.backupDownload)}
-        </button>
+        {/* Where the phone can share a file, that is the main way out —
+            straight to LINE, mail or Drive. Download stays beside it for
+            destinations the share sheet doesn't offer. */}
+        {canShare ? (
+          <>
+            <button type="button" onClick={() => void runBackup(lang, true)} style={primaryButtonStyle}>
+              {t(TR.settings.backupShare)}
+            </button>
+            <button type="button" onClick={() => void runBackup(lang, false)} style={actionButtonStyle}>
+              {t(TR.common.download)}
+            </button>
+          </>
+        ) : (
+          <button type="button" onClick={() => void runBackup(lang, false)} style={primaryButtonStyle}>
+            {t(TR.settings.backupDownload)}
+          </button>
+        )}
         <button type="button" onClick={() => setRestoreOpen(true)} style={actionButtonStyle}>
           {t(TR.settings.backupRestore)}
         </button>
@@ -305,6 +317,11 @@ export function FullBackup() {
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 12, lineHeight: 1.55 }}>
         {t(TR.settings.backupWhyNote)}
       </div>
+      {canShare && (
+        <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6, lineHeight: 1.55 }}>
+          {t(TR.settings.backupShareNote)}
+        </div>
+      )}
 
       <RestoreModal open={restoreOpen} onClose={() => setRestoreOpen(false)} />
       <WipeModal open={wipeOpen} onClose={() => setWipeOpen(false)} />
