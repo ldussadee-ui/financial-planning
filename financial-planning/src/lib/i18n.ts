@@ -71,6 +71,8 @@ export const TR = {
     linkedGoal: { th: "ผูกเป้าหมาย", en: "Linked Goal" } as Text,
     downloadFile: { th: "ดาวน์โหลดไฟล์", en: "Download File" } as Text,
     shareFile: { th: "แชร์ไฟล์", en: "Share File" } as Text,
+    share: { th: "แชร์", en: "Share" } as Text,
+    shareOrExport: { th: "แชร์ / ส่งออก", en: "Share / Export" } as Text,
     download: { th: "ดาวน์โหลด", en: "Download" } as Text,
     exportData: { th: "ส่งออกข้อมูล", en: "Export Data" } as Text,
     importData: { th: "นำเข้าข้อมูล", en: "Import Data" } as Text,
@@ -386,8 +388,6 @@ export const TR = {
     version: { th: "เวอร์ชัน", en: "Version" } as Text,
   },
   exportImport: {
-    exportAssetsTitle: { th: "📤 ส่งออกสินทรัพย์", en: "📤 Export Assets" } as Text,
-    exportAssetsNote: { th: "จะส่งออกสินทรัพย์สภาพคล่อง เพื่อการลงทุน ส่วนตัว และหนี้สินทั้งหมดที่มีอยู่ตอนนี้", en: "Exports all current liquid, investment, and personal assets, and liabilities" } as Text,
     importAssetsTitle: { th: "📥 นำเข้าสินทรัพย์", en: "📥 Import Assets" } as Text,
     foundItemsInFile: { th: "พบ", en: "Found" } as Text,
     itemsInFile: { th: "รายการในไฟล์", en: "items in file" } as Text,

@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.18.1] - 2026-09-28
+
+### Fixed
+- The share buttons for the cashflow and asset exports were hidden a level down, inside the dialog behind "ส่งออกข้อมูล", so they looked missing next to the backup's share button sitting on its card. The asset export has nothing to choose, so its dialog is gone: "แชร์" and "ดาวน์โหลด" now sit on the card and share in one tap. The cashflow export still needs a date range first, so it keeps its dialog, but the card's button now reads "แชร์ / ส่งออก" so it's clear sharing is inside
+
 ## [0.18.0] - 2026-09-28
 
 ### Added

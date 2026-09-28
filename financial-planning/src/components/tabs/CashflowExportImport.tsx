@@ -161,12 +161,17 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
 
 export function CashflowExportImport() {
   const { t } = useLanguage();
+  const canShare = useCanShareFiles();
   const [exportOpen, setExportOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   return (
     <>
       <div style={{ display: "flex", gap: 10 }}>
-        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>📤 {t(TR.common.exportData)}</button>
+        {/* The date range has to be picked first, so this still opens a dialog —
+            but says up front that sharing is inside it. */}
+        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>
+          📤 {t(canShare ? TR.common.shareOrExport : TR.common.exportData)}
+        </button>
         <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 {t(TR.common.importData)}</button>
       </div>
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />

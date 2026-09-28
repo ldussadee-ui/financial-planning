@@ -6,7 +6,6 @@ import { uid } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 import { AddButton, Field, Modal, inputStyle } from "@/components/ui";
-import { Share2 } from "lucide-react";
 import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 import type { LiquidAsset, InvestmentAsset, PersonalAsset, Liability } from "@/lib/types";
 
@@ -27,50 +26,25 @@ const actionButtonStyle: CSSProperties = {
   borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer",
 };
 
-// Assets have no date field to filter by, so export/import is always a full
-// snapshot of everything currently saved — unlike cashflow's date-ranged export.
-function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { lang, t } = useLanguage();
-  const canShare = useCanShareFiles();
-  const doExport = async (share: boolean) => {
-    const [liquidAssets, investmentAssets, personalAssets, liabilities] = await Promise.all([
-      db.liquidAssets.toArray(),
-      db.investmentAssets.toArray(),
-      db.personalAssets.toArray(),
-      db.liabilities.toArray(),
-    ]);
-    const file: AssetExportFile = {
-      app: EXPORT_APP_ID,
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      liquidAssets, investmentAssets, personalAssets, liabilities,
-    };
-    const name = `${lang === "en" ? "assets" : "สินทรัพย์"}_${new Date().toISOString().slice(0, 10)}.json`;
-    if (share) {
-      if ((await shareJson(name, file, true)) === "cancelled") return;
-    } else {
-      downloadJson(name, file, true);
-    }
-    onClose();
+// Assets have no date field to filter by, so an export is always a full
+// snapshot of everything saved — with nothing to choose there is no dialog,
+// and sharing is a single tap on the card, like the full backup.
+async function exportAssets(lang: string, share: boolean): Promise<void> {
+  const [liquidAssets, investmentAssets, personalAssets, liabilities] = await Promise.all([
+    db.liquidAssets.toArray(),
+    db.investmentAssets.toArray(),
+    db.personalAssets.toArray(),
+    db.liabilities.toArray(),
+  ]);
+  const file: AssetExportFile = {
+    app: EXPORT_APP_ID,
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    liquidAssets, investmentAssets, personalAssets, liabilities,
   };
-
-  return (
-    <Modal open={open} onClose={onClose} title={t(TR.exportImport.exportAssetsTitle)}>
-      <div style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 14 }}>
-        {t(TR.exportImport.exportAssetsNote)}
-      </div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {canShare ? (
-          <>
-            <AddButton onClick={() => void doExport(true)} label={t(TR.common.shareFile)} icon={<Share2 size={14} />} />
-            <button type="button" onClick={() => void doExport(false)} style={actionButtonStyle}>{t(TR.common.download)}</button>
-          </>
-        ) : (
-          <AddButton onClick={() => void doExport(false)} label={t(TR.common.downloadFile)} />
-        )}
-      </div>
-    </Modal>
-  );
+  const name = `${lang === "en" ? "assets" : "สินทรัพย์"}_${new Date().toISOString().slice(0, 10)}.json`;
+  if (share) await shareJson(name, file, true);
+  else downloadJson(name, file, true);
 }
 
 // Always assigns fresh ids on import so it can never collide with or
@@ -154,16 +128,22 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
 }
 
 export function AssetExportImport() {
-  const { t } = useLanguage();
-  const [exportOpen, setExportOpen] = useState(false);
+  const { lang, t } = useLanguage();
+  const canShare = useCanShareFiles();
   const [importOpen, setImportOpen] = useState(false);
   return (
     <>
-      <div style={{ display: "flex", gap: 10 }}>
-        <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>📤 {t(TR.common.exportData)}</button>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        {canShare ? (
+          <>
+            <button type="button" onClick={() => void exportAssets(lang, true)} style={actionButtonStyle}>📤 {t(TR.common.share)}</button>
+            <button type="button" onClick={() => void exportAssets(lang, false)} style={actionButtonStyle}>💾 {t(TR.common.download)}</button>
+          </>
+        ) : (
+          <button type="button" onClick={() => void exportAssets(lang, false)} style={actionButtonStyle}>📤 {t(TR.common.exportData)}</button>
+        )}
         <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 {t(TR.common.importData)}</button>
       </div>
-      <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} />
     </>
   );
