@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.20.1] - 2026-09-29
+
+### Fixed
+- Tapping a bar on the half-year or year chart listed every category, with ฿0 against the ones that month didn't spend on — a long list of zeros burying the real figures. v0.20.0 made this worse by filling in a zero for each missing category, but categories whose only entries were ฿0 (a paused subscription, say) had always shown. A month's breakdown now lists only categories that actually came to something
+
 ## [0.20.0] - 2026-09-29
 
 ### Added

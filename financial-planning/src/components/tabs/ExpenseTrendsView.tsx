@@ -80,11 +80,12 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
   const [selected, setSelected] = useState<string | null>(null);
 
   if (period.granularity === "month" || loading) return null;
-  // Every category is filled in (a month without one gets 0) so the stack
-  // keeps one shape across months.
+  // A category that came to nothing in a month is left out of its row —
+  // whether it had no entries or only ฿0 ones, like a paused subscription —
+  // so the tooltip, which skips missing values, lists only real spending.
   const chartData = data.map((d) => ({
     month: d.month,
-    ...Object.fromEntries(categories.map((cat) => [cat, d.byCategory[cat] || 0])),
+    ...Object.fromEntries(Object.entries(d.byCategory).filter(([, amount]) => amount !== 0)),
     total: Object.values(d.byCategory).reduce((a, b) => a + b, 0),
   }));
   // The month's total is written over the highest segment that has a value.
