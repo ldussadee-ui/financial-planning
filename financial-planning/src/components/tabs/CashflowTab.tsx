@@ -42,11 +42,25 @@ const budgetInviteStyle: CSSProperties = {
 };
 const sum = (arr: CashFlowEntry[]) => arr.reduce((s, c) => s + Number(c.amount || 0), 0);
 
+const COLLAPSED_GROUPS_KEY = "cashflowCollapsedGroups";
+
 export function CashflowTab() {
   const { lang, t } = useLanguage();
   const [cycleStartDay, setCycleStartDay] = useSetting<number>("cycleStartDay", 1);
   const [shiftWeekend, setShiftWeekend] = useSetting<boolean>("shiftWeekend", false);
   const [recurringNotice, setRecurringNotice] = useSetting<GeneratedEntryInfo[]>("recurringGeneratedNotice", []);
+  // Which sub-groups are folded to just their total. Kept in settings so a
+  // group folded away stays folded next time, and across cycles.
+  // Toggled with a read-modify-write inside one transaction rather than from
+  // the rendered list: two quick taps would otherwise both start from the
+  // same stale list, and the second would undo the first.
+  const [collapsedGroups] = useSetting<string[]>(COLLAPSED_GROUPS_KEY, []);
+  const toggleGroup = (id: string) =>
+    void db.transaction("rw", db.settings, async () => {
+      const current = ((await db.settings.get(COLLAPSED_GROUPS_KEY))?.value as string[] | undefined) ?? [];
+      const next = current.includes(id) ? current.filter((g) => g !== id) : [...current, id];
+      await db.settings.put({ key: COLLAPSED_GROUPS_KEY, value: next });
+    });
   const [cycleOffset, setCycleOffset] = useState(0);
   const [budgetOpen, setBudgetOpen] = useState(false);
   const hiddenAtRef = useRef<number | null>(null);
@@ -160,19 +174,23 @@ export function CashflowTab() {
         label={t(TR.cashflow.income)}
         amount={fmt(sum(incomeActive) + sum(incomePassive))}
         accent="#0F6E56"
+        collapsed={collapsedGroups}
+        onToggle={toggleGroup}
         subGroups={[
-          { label: "Active", amount: fmt(sum(incomeActive)), dot: "#0F6E56", tint: "#E1F5EE", items: renderByDay(incomeActive, remove, openEdit, undefined, lang) },
-          { label: "Passive", amount: fmt(sum(incomePassive)), dot: "#4A7A4F", tint: "#F0F6EC", items: renderByDay(incomePassive, remove, openEdit, undefined, lang) },
+          { id: "income-active", label: "Active", amount: fmt(sum(incomeActive)), dot: "#0F6E56", tint: "#E1F5EE", items: renderByDay(incomeActive, remove, openEdit, undefined, lang) },
+          { id: "income-passive", label: "Passive", amount: fmt(sum(incomePassive)), dot: "#4A7A4F", tint: "#F0F6EC", items: renderByDay(incomePassive, remove, openEdit, undefined, lang) },
         ]}
       />
       <NestedGroup
         label={t(TR.cashflow.expense)}
         amount={fmt(sum(fixedExp) + sum(varExp) + sum(investExp))}
         accent="#9C4E28"
+        collapsed={collapsedGroups}
+        onToggle={toggleGroup}
         subGroups={[
-          { label: lang === "en" ? "Fixed" : "Fixed (ประจำ)", amount: fmt(sum(fixedExp)), dot: "#9C4E28", tint: "#FBE4D8", items: renderByDay(fixedExp, remove, openEdit, expenseExtra, lang) },
-          { label: lang === "en" ? "General" : "ทั่วไป", amount: fmt(sum(varExp)), dot: "#856025", tint: "#F7ECD3", items: renderByDay(varExp, remove, openEdit, expenseExtra, lang) },
-          { label: lang === "en" ? "Savings & Investing" : "ออมและลงทุน", amount: fmt(sum(investExp)), dot: "#146B78", tint: "#DEF2F3", items: renderByDay(investExp, remove, openEdit, expenseExtra, lang) },
+          { id: "expense-fixed", label: lang === "en" ? "Fixed" : "Fixed (ประจำ)", amount: fmt(sum(fixedExp)), dot: "#9C4E28", tint: "#FBE4D8", items: renderByDay(fixedExp, remove, openEdit, expenseExtra, lang) },
+          { id: "expense-general", label: lang === "en" ? "General" : "ทั่วไป", amount: fmt(sum(varExp)), dot: "#856025", tint: "#F7ECD3", items: renderByDay(varExp, remove, openEdit, expenseExtra, lang) },
+          { id: "expense-invest", label: lang === "en" ? "Savings & Investing" : "ออมและลงทุน", amount: fmt(sum(investExp)), dot: "#146B78", tint: "#DEF2F3", items: renderByDay(investExp, remove, openEdit, expenseExtra, lang) },
         ]}
       />
 

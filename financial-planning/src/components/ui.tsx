@@ -360,18 +360,29 @@ export function Group({ title, amount, tint, children }: { title: string; amount
   );
 }
 
-// One outer card (e.g. "Income") holding several always-visible labeled
-// sub-sections (e.g. "Active", "Passive") — each keeps its own empty state
-// rather than the whole card collapsing when a sub-section has no items.
+// One outer card (e.g. "Income") holding several labeled sub-sections (e.g.
+// "Active", "Passive") — each keeps its own empty state rather than the
+// whole card collapsing when a sub-section has no items.
+//
+// A sub-section with an `id` can be folded to just its header and total
+// when the caller passes `onToggle`; `collapsed` lists the folded ids. The
+// id is separate from the label because the label changes with language.
 export function NestedGroup({
-  label, amount, accent, subGroups,
+  label, amount, accent, subGroups, collapsed, onToggle,
 }: {
   label: string;
   amount: string;
   accent: string;
-  subGroups: { label: string; amount: string; tint: string; items: ReactNode[]; dot?: string }[];
+  subGroups: { id?: string; label: string; amount: string; tint: string; items: ReactNode[]; dot?: string }[];
+  collapsed?: string[];
+  onToggle?: (id: string) => void;
 }) {
   const { t } = useLanguage();
+  const headerStyle: CSSProperties = {
+    display: "flex", alignItems: "center", gap: 7, width: "100%",
+    fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
+    padding: "8px 14px 4px",
+  };
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
@@ -379,24 +390,44 @@ export function NestedGroup({
         <span className="fp-num" style={{ fontSize: 20, fontWeight: 700, color: accent }}>{amount}</span>
       </div>
       <div className="fp-card" style={{ padding: 8, display: "flex", flexDirection: "column", gap: 8 }}>
-        {subGroups.map((sg) => (
-          <div key={sg.label} style={{ background: sg.tint, borderRadius: 12, padding: "2px 0 4px" }}>
-            <div
-              style={{
-                display: "flex", alignItems: "center", gap: 7,
-                fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
-                padding: "8px 14px 4px",
-              }}
-            >
+        {subGroups.map((sg) => {
+          const color = sg.dot || "#645878";
+          const foldable = !!(sg.id && onToggle);
+          const folded = foldable && !!collapsed?.includes(sg.id!);
+          const headerContent = (
+            <>
+              {foldable && (
+                <ChevronRight
+                  size={14}
+                  aria-hidden
+                  style={{ color, flexShrink: 0, transform: folded ? "none" : "rotate(90deg)", transition: "transform 0.15s ease" }}
+                />
+              )}
               {sg.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: sg.dot, flexShrink: 0 }} />}
-              <span style={{ fontSize: 13, fontWeight: 600, color: sg.dot || "#645878" }}>{sg.label}</span>
-              <span className="fp-num" style={{ marginLeft: "auto", fontSize: 13, fontWeight: 700, color: sg.dot || "#645878" }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color }}>{sg.label}</span>
+              <span className="fp-num" style={{ marginLeft: "auto", fontSize: 13, fontWeight: 700, color }}>
                 {sg.amount}
               </span>
+            </>
+          );
+          return (
+            <div key={sg.id ?? sg.label} style={{ background: sg.tint, borderRadius: 12, padding: folded ? "2px 0 6px" : "2px 0 4px" }}>
+              {foldable ? (
+                <button
+                  type="button"
+                  onClick={() => onToggle!(sg.id!)}
+                  aria-expanded={!folded}
+                  style={{ ...headerStyle, border: "none", background: "transparent", cursor: "pointer", textAlign: "left" }}
+                >
+                  {headerContent}
+                </button>
+              ) : (
+                <div style={headerStyle}>{headerContent}</div>
+              )}
+              {!folded && (sg.items.length ? sg.items : <EmptyState text={t(TR.common.noItems)} />)}
             </div>
-            {sg.items.length ? sg.items : <EmptyState text={t(TR.common.noItems)} />}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

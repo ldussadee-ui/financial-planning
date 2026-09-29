@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.19.0] - 2026-09-29
+
+### Added
+- Each group on the cashflow page — Active, Passive, Fixed, ทั่วไป and ออมและลงทุน — can be folded down to its header and total with a tap, and opened again the same way. A folded group stays folded the next time the app opens and when stepping to another cycle, so a list that has grown long can be kept out of the way
+
 ## [0.18.1] - 2026-09-28
 
 ### Fixed
