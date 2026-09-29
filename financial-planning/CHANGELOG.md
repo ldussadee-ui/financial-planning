@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.20.0] - 2026-09-29
+
+### Added
+- The half-year and year bar charts on the expense summary write each month's amount over its bar, so the figures can be read without tapping every bar. With all categories stacked the figure is the month's total, one per bar rather than one per colour; with a single category picked it is that category's amount. Months with no spending get no label
+- Amounts under ten thousand are written in full (8,450) and larger ones in thousands (12.5k). Where the bars are too narrow for that — a year's twelve bars on a phone — the whole chart shortens together, first to thousands with one decimal and then to whole thousands (9k, 125k), so neighbouring labels never overlap; a half-year, or a year on a wider screen, keeps the full figures
+
 ## [0.19.0] - 2026-09-29
 
 ### Added

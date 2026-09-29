@@ -3,7 +3,7 @@
 import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
 import { fmt } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
 import { defaultPeriod, shiftPeriod, periodLabel, type Granularity, type Period } from "@/lib/period";
@@ -34,12 +34,68 @@ const navButtonStyle: CSSProperties = {
 };
 const compactAmount = (n: number) => (n >= 1000 ? Math.round(n / 1000) + "k" : String(n));
 
+// The figures written over the bars, at three levels of detail:
+//   0 — the agreed rule: exact under ten thousand (8,450), thousands above (12.5k)
+//   1 — thousands from one thousand up (8.5k, 12.5k)
+//   2 — whole thousands (8k, 13k, 125k)
+// A chart uses the most detailed level at which every one of its labels fits
+// over its bar, so a half-year always reads exactly and only a year squeezed
+// onto a phone, twelve bars at ~17px each, gets shortened. The whole chart
+// takes one level so neighbouring bars never mix "9,870" with "13k".
+// An empty month gets no label rather than a "0".
+type LabelDetail = 0 | 1 | 2;
+const LABEL_FONT_SIZE = 10.5;
+
+function formatBarLabel(n: number, detail: LabelDetail): string {
+  if (!n) return "";
+  if (n < (detail === 0 ? 10000 : 1000)) return Math.round(n).toLocaleString("en-US");
+  const k = n / 1000;
+  return (detail === 2 || k >= 100 ? String(Math.round(k)) : String(Math.round(k * 10) / 10)) + "k";
+}
+
+let measureContext: CanvasRenderingContext2D | null = null;
+function labelWidth(text: string): number {
+  measureContext ??= document.createElement("canvas").getContext("2d");
+  if (!measureContext) return text.length * 6;
+  measureContext.font = `${LABEL_FONT_SIZE}px ${getComputedStyle(document.body).fontFamily}`;
+  return measureContext.measureText(text).width;
+}
+
+// Recharts' default category gap leaves each bar 80% of its slot; the
+// label may use the whole slot less a little air on either side.
+function fittingDetail(values: number[], barWidth: number): LabelDetail {
+  const room = barWidth / 0.8 - 3;
+  for (const detail of [0, 1] as const) {
+    if (values.every((v) => labelWidth(formatBarLabel(v, detail)) <= room)) return detail;
+  }
+  return 2;
+}
+
+const barLabelProps = { position: "top" as const, fontSize: LABEL_FONT_SIZE, fill: "#4A4458" };
+// Label entries on a bar chart are cartesian and carry the bar's box.
+const barWidth = (entry: object) => ("width" in entry ? Number(entry.width) : 0);
+
 function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K extends { th: string; en: string }>(entry: K) => string }) {
   const { data, categories, loading } = useMonthlyCategoryTrend(period, lang);
   const [selected, setSelected] = useState<string | null>(null);
 
   if (period.granularity === "month" || loading) return null;
-  const chartData = data.map((d) => ({ month: d.month, ...d.byCategory }));
+  // Every category is filled in (a month without one gets 0) so the stack
+  // keeps one shape across months.
+  const chartData = data.map((d) => ({
+    month: d.month,
+    ...Object.fromEntries(categories.map((cat) => [cat, d.byCategory[cat] || 0])),
+    total: Object.values(d.byCategory).reduce((a, b) => a + b, 0),
+  }));
+  // The month's total is written over the highest segment that has a value.
+  // It can't simply ride on the last category's bar: a month where that
+  // category is zero draws no bar there, and the label would go with it.
+  // Worked out from the month's own row, not its index — a bar with empty
+  // months numbers its labels by position among the months it does draw.
+  type Row = (typeof chartData)[number];
+  const topCategory = (row: Row) => [...categories].reverse().find((cat) => Number(row[cat as keyof Row]) > 0);
+  const labelled = chartData.map((row) => (selected === null ? row.total : Number(row[selected as keyof Row]) || 0));
+  const labelFor = (value: number, barWidth: number) => formatBarLabel(value, fittingDetail(labelled, barWidth));
   const trendTitle = period.granularity === "halfYear" ? t(TR.reports.trendHalfYear) : t(TR.reports.trendYear);
 
   return (
@@ -56,16 +112,29 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
             ))}
           </div>
           <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={chartData}>
+            <BarChart data={chartData} margin={{ top: 18, right: 4, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
               <Tooltip formatter={(v) => fmt(Number(v))} />
               {selected === null
                 ? categories.map((cat, i) => (
-                    <Bar key={cat} dataKey={cat} name={translateLabel(cat, lang, CATEGORY_LABEL_EN)} stackId="a" fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]} />
+                    <Bar key={cat} dataKey={cat} name={translateLabel(cat, lang, CATEGORY_LABEL_EN)} stackId="a" fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]}>
+                      {/* One figure per month, not one per colour. */}
+                      <LabelList
+                        {...barLabelProps}
+                        valueAccessor={(entry) => (topCategory(entry.payload) === cat ? labelFor(entry.payload.total, barWidth(entry)) : "")}
+                      />
+                    </Bar>
                   ))
-                : <Bar dataKey={selected} name={translateLabel(selected, lang, CATEGORY_LABEL_EN)} fill="#7FD1C9" radius={[6, 6, 0, 0]} />}
+                : (
+                  <Bar dataKey={selected} name={translateLabel(selected, lang, CATEGORY_LABEL_EN)} fill="#7FD1C9" radius={[6, 6, 0, 0]}>
+                    <LabelList
+                      {...barLabelProps}
+                      valueAccessor={(entry) => labelFor(Number(entry.payload[selected]) || 0, barWidth(entry))}
+                    />
+                  </Bar>
+                )}
             </BarChart>
           </ResponsiveContainer>
         </>
