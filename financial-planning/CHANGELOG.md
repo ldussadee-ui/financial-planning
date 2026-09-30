@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.20.2] - 2026-09-30
+
+### Changed
+- "ให้แม่" and "ค่าจ้างทำสวน" now count as Fixed (ประจำ) expenses rather than ทั่วไป — they are monthly commitments, not day-to-day spending. Entries already saved under either category move across automatically the first time the app opens after updating, so past cycles and the expense summary reflect it too. As Fixed costs they no longer count toward the overspend alerts on the overview, which only watch day-to-day spending
+
 ## [0.20.1] - 2026-09-29
 
 ### Fixed
