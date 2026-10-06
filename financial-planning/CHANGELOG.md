@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.22.0] - 2026-10-06
+
+### Changed
+- On a phone, Settings has moved out of the bottom bar to a ⚙️ beside the TH/EN toggle at the top of every page, so the bar holds four tabs with more room for each. It is still one tap away from anywhere. The desktop sidebar keeps Settings where it was
+
+### Added
+- Because the backup warning inside Settings is now out of sight, an overdue backup — never made, or more than 30 days old — is flagged in two places that are: a red dot on the ⚙️, and a card at the top of the overview explaining that everything lives only on this device, with a button that makes the backup right there (sharing it where the phone can). Both disappear as soon as a backup is made, and neither flashes up while the app is still opening
+- The overview card, the dot and the Settings page all read "overdue" from one shared check, so they can't disagree
+
 ## [0.21.0] - 2026-10-06
 
 ### Added

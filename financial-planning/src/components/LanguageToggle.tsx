@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/hooks/useLanguage";
 import { SegmentedControl } from "@/components/ui";
+import { SettingsShortcut } from "@/components/Nav";
 
 // Rendered once in the shared tabs layout (not per-page) so it's reachable
 // from every tab, not just the Dashboard, and so it lands in DOM/tab order
@@ -11,7 +12,7 @@ import { SegmentedControl } from "@/components/ui";
 export function LanguageToggle() {
   const { lang, setLang } = useLanguage();
   return (
-    <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
+    <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8, marginBottom: 10 }}>
       <div style={{ width: 108 }}>
         <SegmentedControl
           small
@@ -20,6 +21,7 @@ export function LanguageToggle() {
           onChange={setLang}
         />
       </div>
+      <SettingsShortcut />
     </div>
   );
 }

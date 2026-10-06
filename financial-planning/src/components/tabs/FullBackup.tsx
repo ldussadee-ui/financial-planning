@@ -1,21 +1,18 @@
 "use client";
 
 import { useEffect, useState, type ChangeEvent, type CSSProperties } from "react";
+import Link from "next/link";
 import { db } from "@/lib/db";
 import {
-  daysSince, exportAll, importAll, isBackupFile, isFromNewerSchema,
-  LAST_BACKUP_KEY, markBackedUp, summarize, wipeAll, type BackupFile,
+  exportAll, importAll, isBackupFile, isFromNewerSchema,
+  markBackedUp, summarize, wipeAll, type BackupFile,
 } from "@/lib/backup";
-import { useSetting } from "@/hooks/useSetting";
+import { useBackupStatus } from "@/hooks/useBackupStatus";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, fillText } from "@/lib/i18n";
 import { Field, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 
-// Anything past this and the reminder starts nudging rather than just
-// reporting. Roughly a month: long enough not to nag, short enough that a
-// browser wiping its storage costs weeks of entries rather than years.
-const STALE_AFTER_DAYS = 30;
 
 const actionButtonStyle: CSSProperties = {
   border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
@@ -267,12 +264,10 @@ function StoragePersistence() {
 export function FullBackup() {
   const { lang, t } = useLanguage();
   const canShare = useCanShareFiles();
-  const [lastBackup] = useSetting<string | null>(LAST_BACKUP_KEY, null);
+  const { days, stale } = useBackupStatus();
   const [restoreOpen, setRestoreOpen] = useState(false);
   const [wipeOpen, setWipeOpen] = useState(false);
 
-  const days = daysSince(lastBackup);
-  const stale = days === null || days >= STALE_AFTER_DAYS;
   const statusText =
     days === null ? t(TR.settings.backupNever)
       : days === 0 ? t(TR.settings.backupToday)
@@ -326,5 +321,32 @@ export function FullBackup() {
       <RestoreModal open={restoreOpen} onClose={() => setRestoreOpen(false)} />
       <WipeModal open={wipeOpen} onClose={() => setWipeOpen(false)} />
     </>
+  );
+}
+
+// The overview's reminder, shown only while a backup is overdue. Settings
+// now sits behind an icon, so the warning there is easy to never see — and
+// with everything stored on this one device, it is the warning that matters
+// most. The button does the backup right here rather than sending the user
+// off to find it.
+export function BackupReminder() {
+  const { lang, t } = useLanguage();
+  const canShare = useCanShareFiles();
+  const { loaded, days, stale } = useBackupStatus();
+  if (!loaded || !stale) return null;
+  const statusText = days === null ? t(TR.settings.backupNever) : fillText(t(TR.settings.backupDaysAgo), { days });
+  return (
+    <div className="fp-card" style={{ padding: "18px 22px", marginBottom: 18, background: "#FFF4E8", border: "1px solid #F6D9B8" }}>
+      <div style={{ fontSize: 13.5, fontWeight: 600, color: "#9C4E28", marginBottom: 4 }}>💾 {statusText}</div>
+      <div style={{ fontSize: 12.5, color: "var(--ink-soft)", lineHeight: 1.55, marginBottom: 12 }}>{t(TR.dashboard.backupReminderNote)}</div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        <button type="button" onClick={() => void runBackup(lang, canShare)} style={primaryButtonStyle}>
+          {canShare ? t(TR.settings.backupShare) : t(TR.settings.backupDownload)}
+        </button>
+        <Link href="/settings" style={{ fontSize: 12.5, color: "#7A5C9E", fontWeight: 600, padding: "8px 4px" }}>
+          {t(TR.dashboard.backupReminderMore)}
+        </Link>
+      </div>
+    </div>
   );
 }

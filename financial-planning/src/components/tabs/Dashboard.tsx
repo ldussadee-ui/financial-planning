@@ -15,6 +15,7 @@ import { useInsuranceAnalysis } from "@/hooks/useInsuranceAnalysis";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, GOAL_TYPE_LABEL_EN, INVESTMENT_CAT_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
+import { BackupReminder } from "./FullBackup";
 
 const BUDGET_ALERT_THRESHOLD = 80;
 
@@ -96,6 +97,8 @@ export function Dashboard() {
   return (
     <div>
       <SectionHeader title={t(TR.dashboard.title)} sub={`${t(TR.dashboard.subtitle)} ${fmtRange(cycleRange, lang)}`} chip={t(TR.dashboard.trialChip)} />
+
+      <BackupReminder />
 
       <div className="fp-card" style={{ padding: 26 }}>
         <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>💗 {t(TR.dashboard.netWorthSection)}</h2>

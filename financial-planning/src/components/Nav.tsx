@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Wallet, Target, Layers, Settings,
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useBackupStatus } from "@/hooks/useBackupStatus";
 import { TR } from "@/lib/i18n";
 
 const NAV = [
@@ -73,7 +74,9 @@ export function BottomNav() {
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
-      {NAV.map((n) => {
+      {/* Settings is left out down here — it's the gear beside the language
+          toggle instead (SettingsShortcut), so four tabs share the bar. */}
+      {NAV.filter((n) => n.key !== "settings").map((n) => {
         const Icon = n.icon;
         const active = pathname === n.href;
         return (
@@ -92,5 +95,42 @@ export function BottomNav() {
         );
       })}
     </nav>
+  );
+}
+
+// Settings on a phone: a gear beside the language toggle at the top of every
+// page, in place of a fifth bottom tab. It carries a dot while a backup is
+// overdue, since the reminder inside Settings is otherwise out of sight.
+// Desktop keeps Settings in the sidebar, so this is hidden there.
+export function SettingsShortcut() {
+  const pathname = usePathname();
+  const { t } = useLanguage();
+  const { stale } = useBackupStatus();
+  const active = pathname === "/settings";
+  const label = stale ? `${t(TR.nav.settings)} · ${t(TR.nav.backupDue)}` : t(TR.nav.settings);
+  return (
+    <Link
+      href="/settings"
+      aria-label={label}
+      title={label}
+      aria-current={active ? "page" : undefined}
+      className="fp-mobile-only"
+      style={{
+        position: "relative", alignItems: "center", justifyContent: "center",
+        width: 34, height: 34, borderRadius: "50%",
+        background: active ? "#7A5C9E" : "var(--track)", color: active ? "#fff" : "#645878",
+      }}
+    >
+      <Settings size={17} strokeWidth={2} />
+      {stale && (
+        <span
+          aria-hidden
+          style={{
+            position: "absolute", top: 1, right: 1, width: 9, height: 9, borderRadius: "50%",
+            background: "#E0603F", boxShadow: "0 0 0 2px var(--bg)",
+          }}
+        />
+      )}
+    </Link>
   );
 }
