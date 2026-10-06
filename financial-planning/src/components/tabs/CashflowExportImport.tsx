@@ -37,11 +37,25 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
   const [end, setEnd] = useState(today);
 
   const doExport = async (share: boolean) => {
-    const all = await db.cashflow.toArray();
-    const entries = all.filter((e) => e.date >= start && e.date <= end);
+    const [all, methods] = await Promise.all([db.cashflow.toArray(), db.paymentMethods.toArray()]);
+    const methodById = new Map(methods.map((m) => [m.id, m]));
+    const cash = methods.find((m) => m.kind === "เงินสด");
+    // Each expense carries its payment method's name and kind, so the
+    // receiver can tell how it was paid — our own expense with no method
+    // counts as cash, as everywhere else. Entries this device imported from
+    // someone else already carry theirs and pass it on unchanged.
+    const entries = all
+      .filter((e) => e.date >= start && e.date <= end)
+      .map((e) => {
+        if (e.type !== "Expense" || e.owner) return e;
+        const method = e.payment_method_id ? methodById.get(e.payment_method_id) : cash;
+        return method ? { ...e, payment_method_label: method.name, payment_method_kind: method.kind } : e;
+      });
     const file: ExportFile = {
       app: EXPORT_APP_ID,
-      version: 1,
+      // 2: entries carry payment_method_label/kind. Version-1 files still
+      // import; their entries just arrive without a payment method.
+      version: 2,
       exportedAt: new Date().toISOString(),
       rangeStart: start,
       rangeEnd: end,
@@ -123,6 +137,8 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       incomeClass: en.incomeClass,
       expense_class: en.expense_class,
       payment_method_id: null,
+      payment_method_label: en.payment_method_label ?? null,
+      payment_method_kind: en.payment_method_kind ?? null,
       owner: owner.trim(),
     }));
     await db.cashflow.bulkAdd(toInsert);

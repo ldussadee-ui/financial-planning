@@ -19,6 +19,8 @@ export function RecurringEntriesView() {
   const { lang, t } = useLanguage();
   const rules = useLiveQuery(() => db.recurringEntries.toArray(), [], [] as RecurringEntry[]);
   const paymentMethods = useLiveQuery(() => db.paymentMethods.toArray(), [], []);
+  // No payment method chosen means cash, as on the entry form.
+  const cashId = (paymentMethods || []).find((m) => m.kind === "เงินสด")?.id ?? "";
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<{ type: CashFlowType; category: string; amount: string; dayOfMonth: number; shiftWeekend: boolean; payment_method_id: string }>({
@@ -39,7 +41,7 @@ export function RecurringEntriesView() {
     void db.recurringEntries.update(editingId, {
       type: form.type, category: form.category, amount: Number(form.amount),
       dayOfMonth: form.dayOfMonth, shiftWeekend: form.shiftWeekend,
-      payment_method_id: form.type === "Expense" ? (form.payment_method_id || null) : null,
+      payment_method_id: form.type === "Expense" ? (form.payment_method_id || cashId || null) : null,
     });
     closeModal();
   };
@@ -92,8 +94,7 @@ export function RecurringEntriesView() {
           </Field>
           {form.type === "Expense" && (
             <Field label={t(TR.cashflow.paidWith)}>
-              <select style={inputStyle} value={form.payment_method_id} onChange={(e) => setForm({ ...form, payment_method_id: e.target.value })}>
-                <option value="">—</option>
+              <select style={inputStyle} value={form.payment_method_id || cashId} onChange={(e) => setForm({ ...form, payment_method_id: e.target.value })}>
                 {(paymentMethods || []).map((m) => (
                   <option key={m.id} value={m.id}>{translateLabel(m.name, lang, PAYMENT_METHOD_LABEL_EN)}</option>
                 ))}

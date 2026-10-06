@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.21.0] - 2026-10-06
+
+### Added
+- Cashflow exports now say how each expense was paid ("บัตร KTC", "เงินสด"), and imported entries keep it. On the payment summary, someone else's spending gets its own groups named after the method and the person — "💳 บัตร SCB · แม่" — rather than being mixed into your own cards, and without adding their cards to the list you pick from when recording your own spending
+
+### Fixed
+- Imported entries never appeared on the payment summary at all: importing cleared their payment method, and the page only listed expenses paid with one of this device's own methods. Every expense in the cycle now lands in some group. Imports that don't say how they were paid — including everything imported before this version, whose files never carried the method — go under "❔ ไม่ระบุช่องทาง · <name>"; to get them split by card, the other person needs to export again from the updated app
+- Every payment method card had the same lavender background, so neighbouring groups were hard to tell apart. Each now has its own colour: cash is always green, cards take the next pastel along, and "no payment method" is a plain warm grey
+- A recurring expense left on "—" for its payment method generated entries with no method, which then vanished from the payment summary. "—" is gone: as on the entry form, not choosing means cash, and existing rules that had "—" now generate cash entries. Our own past expenses with no method are counted under cash too
+
 ## [0.20.2] - 2026-09-30
 
 ### Changed

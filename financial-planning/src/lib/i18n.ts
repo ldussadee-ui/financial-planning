@@ -432,7 +432,8 @@ export const TR = {
     paymentSummarySub: { th: "เงินสดและบัตรเครดิตที่ใช้จ่ายในรอบที่เลือก", en: "Cash and cards used in the selected cycle" } as Text,
     cycleTotal: { th: "รวมทั้งรอบ", en: "Total for the cycle" } as Text,
     totalWord: { th: "รวม", en: "total" } as Text,
-    noPaymentEntries: { th: "ยังไม่มีรายจ่ายที่ระบุช่องทางในรอบนี้", en: "No expenses with a payment method in this cycle yet" } as Text,
+    noPaymentEntries: { th: "ยังไม่มีรายจ่ายในรอบนี้", en: "No expenses in this cycle yet" } as Text,
+    unspecifiedMethod: { th: "ไม่ระบุช่องทาง", en: "No payment method" } as Text,
   },
   ratios: {
     backToOverview: { th: "กลับไปภาพรวม", en: "Back to overview" } as Text,

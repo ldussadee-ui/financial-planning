@@ -90,6 +90,12 @@ export interface CashFlowEntry {
   incomeClass?: IncomeClass;
   expense_class?: ExpenseClass;
   payment_method_id?: string | null;
+  // The payment method by name and kind, carried in exported files and kept
+  // on imported entries: another person's method ids mean nothing on this
+  // device, but "บัตร KTC" still says how they paid. Unindexed, so adding
+  // them needs no schema change.
+  payment_method_label?: string | null;
+  payment_method_kind?: PaymentMethodKind | null;
   owner?: string | null;
   recurringId?: string;
 }

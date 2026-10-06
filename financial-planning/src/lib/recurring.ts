@@ -19,10 +19,17 @@ function nextYearMonthKey(key: string): string {
   return yearMonthKey(new Date(y, m, 1));
 }
 
-function cashflowFieldsFor(rule: Pick<RecurringEntry, "type" | "category" | "payment_method_id">) {
+// An expense rule with no payment method chosen pays in cash — the same
+// default the entry form applies — so generated entries always land under a
+// method on the payment summary. Rules saved before this had "—" as an option.
+function cashflowFieldsFor(rule: Pick<RecurringEntry, "type" | "category" | "payment_method_id">, cashId: string | null) {
   return rule.type === "Income"
     ? { incomeClass: classifyIncome(rule.category) }
-    : { expense_class: classifyExpense(rule.category), payment_method_id: rule.payment_method_id ?? null };
+    : { expense_class: classifyExpense(rule.category), payment_method_id: rule.payment_method_id || cashId };
+}
+
+async function cashMethodId(): Promise<string | null> {
+  return (await db.paymentMethods.where("kind").equals("เงินสด").first())?.id ?? null;
 }
 
 export interface GeneratedEntryInfo {
@@ -53,7 +60,7 @@ export async function createRecurringRule(input: NewRecurringEntryInput): Promis
 
   const entry: CashFlowEntry = {
     id: uid(), type: rule.type, category: rule.category, amount: rule.amount,
-    date: isoDate(occursOn), recurringId: rule.id, ...cashflowFieldsFor(rule),
+    date: isoDate(occursOn), recurringId: rule.id, ...cashflowFieldsFor(rule, await cashMethodId()),
   };
   await db.cashflow.add(entry);
   return { type: rule.type, category: rule.category, amount: rule.amount };
@@ -65,6 +72,7 @@ export async function createRecurringRule(input: NewRecurringEntryInput): Promis
 // this only ever runs when the app itself is opened.
 export async function runRecurringGeneration(today: Date = new Date()): Promise<GeneratedEntryInfo[]> {
   const rules = await db.recurringEntries.toArray();
+  const cashId = await cashMethodId();
   const currentKey = yearMonthKey(today);
   const created: GeneratedEntryInfo[] = [];
 
@@ -77,7 +85,7 @@ export async function runRecurringGeneration(today: Date = new Date()): Promise<
       const occursOn = dateForDayOfMonth(y, m - 1, rule.dayOfMonth, rule.shiftWeekend);
       const entry: CashFlowEntry = {
         id: uid(), type: rule.type, category: rule.category, amount: rule.amount,
-        date: isoDate(occursOn), recurringId: rule.id, ...cashflowFieldsFor(rule),
+        date: isoDate(occursOn), recurringId: rule.id, ...cashflowFieldsFor(rule, cashId),
       };
       await db.cashflow.add(entry);
       created.push({ type: rule.type, category: rule.category, amount: rule.amount });

@@ -6,13 +6,33 @@ import { useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
 import { cycleRangeAtOffset, fmt, parseCycleOffset } from "@/lib/calc";
-import { usePaymentGroups } from "@/hooks/usePaymentGroups";
+import { usePaymentGroups, type PaymentGroup } from "@/hooks/usePaymentGroups";
 import { useSetting } from "@/hooks/useSetting";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR, PAYMENT_METHOD_LABEL_EN, translateLabel } from "@/lib/i18n";
+import { TR, PAYMENT_METHOD_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import { SectionHeader, Group, EmptyState } from "@/components/ui";
 import { CycleNav } from "@/components/CycleNav";
 import { renderByDay } from "./cashflowShared";
+
+// Each group gets its own background so neighbouring cards can be told
+// apart at a glance — they all used to share one lavender. Cash is always
+// the same green; cards take the next colour along; a group that doesn't
+// say how it was paid stays a plain warm grey.
+const CASH_TINT = "#E3F4EA";
+const UNSPECIFIED_TINT = "#F1EDE8";
+const CARD_TINTS = ["#EDE6FF", "#FFE9DA", "#DFEFF8", "#FFE6EC", "#FFF3CF", "#E6EAFF", "#F3E6F6"];
+
+function groupTint(group: PaymentGroup, index: number): string {
+  if (group.kind === "เงินสด") return CASH_TINT;
+  if (group.kind === null) return UNSPECIFIED_TINT;
+  return CARD_TINTS[index % CARD_TINTS.length];
+}
+
+function groupTitle(group: PaymentGroup, lang: Language, unspecified: string): string {
+  const icon = group.kind === "เงินสด" ? "💵" : group.kind === null ? "❔" : "💳";
+  const name = group.kind === null ? unspecified : translateLabel(group.name, lang, PAYMENT_METHOD_LABEL_EN);
+  return `${icon} ${name}${group.owner ? ` · ${group.owner}` : ""}`;
+}
 
 export function PaymentSummaryView() {
   const { lang, t } = useLanguage();
@@ -66,14 +86,14 @@ export function PaymentSummaryView() {
       </div>
 
       {paymentGroups.length ? (
-        paymentGroups.map(({ method, items }) => (
+        paymentGroups.map((group, i) => (
           <Group
-            key={method.id}
-            title={`${method.kind === "เงินสด" ? "💵" : "💳"} ${translateLabel(method.name, lang, PAYMENT_METHOD_LABEL_EN)}`}
-            amount={fmt(items.reduce((s, c) => s + c.amount, 0))}
-            tint="#F5F0FF"
+            key={group.key}
+            title={groupTitle(group, lang, t(TR.reports.unspecifiedMethod))}
+            amount={fmt(group.items.reduce((s, c) => s + c.amount, 0))}
+            tint={groupTint(group, i)}
           >
-            {renderByDay(items, remove, undefined, undefined, lang)}
+            {renderByDay(group.items, remove, undefined, undefined, lang)}
           </Group>
         ))
       ) : (
