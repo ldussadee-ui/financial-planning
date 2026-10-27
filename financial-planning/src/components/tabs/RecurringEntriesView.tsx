@@ -5,14 +5,16 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
+import { cleanLabel } from "@/lib/categoryTree";
 import { fmt } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR, CATEGORY_LABEL_EN, PAYMENT_METHOD_LABEL_EN, translateLabel } from "@/lib/i18n";
+import { TR, PAYMENT_METHOD_LABEL_EN, translateLabel } from "@/lib/i18n";
 import {
   SectionHeader, EmptyState, Field, Modal, Row, SegmentedControl, DayPicker,
   cancelButtonStyle, inputStyle,
 } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
+import { CategoryLabel } from "@/components/tabs/cashflowShared";
 import type { CashFlowType, RecurringEntry } from "@/lib/types";
 
 export function RecurringEntriesView() {
@@ -23,13 +25,13 @@ export function RecurringEntriesView() {
   const cashId = (paymentMethods || []).find((m) => m.kind === "เงินสด")?.id ?? "";
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<{ type: CashFlowType; category: string; amount: string; dayOfMonth: number; shiftWeekend: boolean; payment_method_id: string }>({
-    type: "Income", category: "", amount: "", dayOfMonth: 1, shiftWeekend: false, payment_method_id: "",
+  const [form, setForm] = useState<{ type: CashFlowType; category: string; sub: string; amount: string; dayOfMonth: number; shiftWeekend: boolean; payment_method_id: string }>({
+    type: "Income", category: "", sub: "", amount: "", dayOfMonth: 1, shiftWeekend: false, payment_method_id: "",
   });
 
   const openEdit = (rule: RecurringEntry) => {
     setForm({
-      type: rule.type, category: rule.category, amount: String(rule.amount),
+      type: rule.type, category: rule.category, sub: rule.sub || "", amount: String(rule.amount),
       dayOfMonth: rule.dayOfMonth, shiftWeekend: rule.shiftWeekend, payment_method_id: rule.payment_method_id || "",
     });
     setEditingId(rule.id);
@@ -39,7 +41,7 @@ export function RecurringEntriesView() {
   const submit = () => {
     if (!editingId || !form.category || !form.amount) return;
     void db.recurringEntries.update(editingId, {
-      type: form.type, category: form.category, amount: Number(form.amount),
+      type: form.type, category: cleanLabel(form.category), sub: cleanLabel(form.sub).replace(/^#+/, "") || null, amount: Number(form.amount),
       dayOfMonth: form.dayOfMonth, shiftWeekend: form.shiftWeekend,
       payment_method_id: form.type === "Expense" ? (form.payment_method_id || cashId || null) : null,
     });
@@ -79,6 +81,9 @@ export function RecurringEntriesView() {
           </Field>
           <Field label={t(TR.cashflow.category)}>
             <input style={inputStyle} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+          </Field>
+          <Field label="#">
+            <input style={inputStyle} value={form.sub} onChange={(e) => setForm({ ...form, sub: e.target.value })} placeholder={t(TR.cashflow.subPlaceholder)} />
           </Field>
           <Field label={t(TR.common.amount)}><CalcInput value={form.amount} onChange={(v) => setForm({ ...form, amount: v })} placeholder="0" /></Field>
           <Field label={t(TR.cashflow.date)}>
@@ -120,7 +125,7 @@ export function RecurringEntriesView() {
             key={r.id}
             left={
               <div style={{ opacity: r.active ? 1 : 0.5 }}>
-                <div style={{ fontSize: 14 }}>{translateLabel(r.category, lang, CATEGORY_LABEL_EN)}</div>
+                <div style={{ fontSize: 14 }}><CategoryLabel category={r.category} sub={r.sub} lang={lang} /></div>
                 <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(TR.recurring.everyDayOf)} {r.dayOfMonth}</div>
               </div>
             }

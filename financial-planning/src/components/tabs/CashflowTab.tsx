@@ -157,7 +157,7 @@ export function CashflowTab() {
         <div className="fp-card" style={{ padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 12.5, background: "#F5EFFF" }}>
           <div style={{ flex: 1 }}>
             <b>{t(TR.recurring.noticePrefix)}</b>{" "}
-            {recurringNotice.map((n) => `${translateLabel(n.category, lang, CATEGORY_LABEL_EN)} ${fmt(n.amount)}`).join(", ")}
+            {recurringNotice.map((n) => `${translateLabel(n.category, lang, CATEGORY_LABEL_EN)}${n.sub ? ` #${n.sub}` : ""} ${fmt(n.amount)}`).join(", ")}
           </div>
           <button
             type="button"

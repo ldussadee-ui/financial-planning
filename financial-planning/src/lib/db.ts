@@ -1,5 +1,6 @@
 import Dexie, { type EntityTable } from "dexie";
-import { ICON_MAP, DEFAULT_INCOME_LABELS, DEFAULT_EXPENSE_LABELS } from "./constants";
+import { ICON_MAP } from "./constants";
+import { consolidateCategories, defaultCategoryChips } from "./categoryTree";
 import { classifyExpense, classifyIncome, isoDaysAgo, uid } from "./calc";
 import type {
   LiquidAsset,
@@ -130,7 +131,7 @@ class FinancialPlanningDB extends Dexie {
 
     // Adds "ออมเงิน"/"ลงทุน DCA" expense category chips retroactively so
     // existing installs get them without a data reset (fresh installs get
-    // them from DEFAULT_EXPENSE_LABELS via seedIfEmpty already).
+    // them from the default category list via seedIfEmpty already).
     this.version(102)
       .stores({
         liquidAssets: "id, goal_id",
@@ -190,7 +191,7 @@ class FinancialPlanningDB extends Dexie {
 
     // Adds "ของใช้ในบ้าน" expense category chip retroactively so existing
     // installs get it without a data reset (fresh installs get it from
-    // DEFAULT_EXPENSE_LABELS via seedIfEmpty already).
+    // the default category list via seedIfEmpty already).
     this.version(105)
       .stores({
         liquidAssets: "id, goal_id",
@@ -328,31 +329,53 @@ class FinancialPlanningDB extends Dexie {
             entry.expense_class = classifyExpense(entry.category);
           });
       });
+
+    // Folds the many single-level categories into main categories with
+    // #sub-items (v0.23.0): every entry, recurring rule, budget and shortcut
+    // button moves to its new place. No index changes.
+    this.version(111)
+      .stores({
+        liquidAssets: "id, goal_id",
+        investmentAssets: "id, goal_id, category",
+        personalAssets: "id, liability_id",
+        liabilities: "id, term",
+        goals: "id",
+        cashflow: "id, date, type",
+        categories: "id, entryType, order",
+        settings: "key",
+        paymentMethods: "id, kind",
+        budgets: "category",
+        netWorthHistory: "date",
+        insurancePolicies: "id, policyType",
+        recurringEntries: "id, type",
+      })
+      .upgrade((tx) =>
+        consolidateCategories({
+          cashflow: tx.table("cashflow"),
+          categories: tx.table("categories"),
+          budgets: tx.table("budgets"),
+          recurringEntries: tx.table("recurringEntries"),
+        })
+      );
   }
 }
 
 export const db = new FinancialPlanningDB();
 
-const makeCat = (entryType: CategoryChip["entryType"], label: string, order: number): CategoryChip => ({
-  id: uid(),
-  entryType,
-  label,
-  icon: ICON_MAP[label] || "🏷️",
-  order,
-});
-
-const mkExpense = (category: string, amount: number, daysAgo = 0): CashFlowEntry => ({
+const mkExpense = (category: string, sub: string, amount: number, daysAgo = 0): CashFlowEntry => ({
   id: uid(),
   type: "Expense",
   category,
+  sub,
   amount,
   date: isoDaysAgo(daysAgo),
   expense_class: classifyExpense(category),
 });
-const mkIncome = (category: string, amount: number, daysAgo = 0): CashFlowEntry => ({
+const mkIncome = (category: string, sub: string, amount: number, daysAgo = 0): CashFlowEntry => ({
   id: uid(),
   type: "Income",
   category,
+  sub,
   amount,
   date: isoDaysAgo(daysAgo),
   incomeClass: classifyIncome(category),
@@ -409,20 +432,16 @@ export async function seedIfEmpty() {
       ]);
 
       await db.cashflow.bulkAdd([
-        mkIncome("เงินเดือน", 55000, 3),
-        mkIncome("ปันผลหุ้น/DR", 3200, 1),
-        mkExpense("ผ่อนบ้าน", 12000, 5),
-        mkExpense("ผ่อนรถ", 8500, 6),
-        mkExpense("ค่าน้ำค่าไฟ", 2200, 4),
-        mkExpense("ค่าอินเทอร์เน็ต", 590, 2),
-        mkExpense("ค่าอาหาร", 9000, 1),
-        mkExpense("ช้อปปิ้ง", 6500, 0),
+        mkIncome("รายได้จากงาน", "เงินเดือน", 55000, 3),
+        mkIncome("รายได้จากทรัพย์สิน", "ปันผลหุ้น/DR", 3200, 1),
+        mkExpense("ประกัน", "เบี้ยประกัน", 2500, 5),
+        mkExpense("บิลรายเดือน", "ค่าน้ำค่าไฟ", 2200, 4),
+        mkExpense("บิลรายเดือน", "ค่าอินเทอร์เน็ต", 590, 2),
+        mkExpense("อาหาร", "มื้อหลัก", 9000, 1),
+        mkExpense("ดูแลตัวเองและช้อปปิ้ง", "ช้อปปิ้ง", 6500, 0),
       ]);
 
-      await db.categories.bulkAdd([
-        ...DEFAULT_INCOME_LABELS.map((label, i) => makeCat("Income", label, i)),
-        ...DEFAULT_EXPENSE_LABELS.map((label, i) => makeCat("Expense", label, i)),
-      ]);
+      await db.categories.bulkAdd(defaultCategoryChips());
 
       await db.paymentMethods.add({ id: uid(), name: CASH_METHOD_NAME, kind: "เงินสด" });
 

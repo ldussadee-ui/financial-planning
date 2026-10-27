@@ -38,25 +38,32 @@ export const PERSONAL_TYPES: PersonalItemType[] = ["รถยนต์", "บ้
 export const GOAL_TYPES: GoalType[] = ["เกษียณ", "บ้าน", "การศึกษา", "ท่องเที่ยว", "กองทุนฉุกเฉิน", "อื่นๆ"];
 export const POLICY_TYPES: PolicyType[] = ["ชีวิต", "สุขภาพ", "อุบัติเหตุ", "โรคร้ายแรง", "คุ้มครองสินเชื่อ"];
 
+// Icons for the main categories (see categoryTree.ts), then for the
+// single-level categories used before v0.23.0, which imported files from an
+// older app can still carry.
 export const ICON_MAP: Record<string, string> = {
+  "รายได้จากงาน": "💼", "รายได้จากทรัพย์สิน": "💰",
+  "อาหาร": "🍜", "บ้าน": "🏠", "เดินทาง": "🚗", "ท่องเที่ยว": "✈️", "สุขภาพ": "💊",
+  "ดูแลตัวเองและช้อปปิ้ง": "💄", "งานและการเรียนรู้": "📚", "งานอดิเรกและสัตว์เลี้ยง": "🎨",
+  "ทำบุญ": "🙏", "อื่นๆ": "📦", "บิลรายเดือน": "📑", "ประกัน": "🛡️", "ครอบครัว": "👵", "ออมและลงทุน": "📈",
   "เงินเดือน": "💼", "ฟรีแลนซ์": "💻", "โบนัส": "🎁", "ปันผลหุ้น/DR": "📈", "ดอกเบี้ย": "🏦", "ค่าเช่า": "🏠",
   "ผ่อนบ้าน": "🏠", "ผ่อนรถ": "🚗", "ค่าเช่าที่พัก": "🔑", "ค่าน้ำค่าไฟ": "💡", "ค่าอินเทอร์เน็ต": "📶",
   "เบี้ยประกัน": "🛡️", "ค่าอาหาร": "🍜", "ค่าเดินทาง": "🚌", "ช้อปปิ้ง": "🛍️", "ท่องเที่ยว/สังสรรค์": "🎉",
   "ของใช้ในบ้าน": "🧻", "ออมเงิน": "🌱", "ลงทุน DCA": "📈",
 };
-export const DEFAULT_INCOME_LABELS = ["เงินเดือน", "ฟรีแลนซ์", "โบนัส", "ปันผลหุ้น/DR", "ดอกเบี้ย", "ค่าเช่า"];
-export const DEFAULT_EXPENSE_LABELS = ["ผ่อนบ้าน", "ผ่อนรถ", "ค่าเช่าที่พัก", "ค่าน้ำค่าไฟ", "ค่าอินเทอร์เน็ต", "เบี้ยประกัน", "ค่าอาหาร", "ค่าเดินทาง", "ช้อปปิ้ง", "ท่องเที่ยว/สังสรรค์", "ของใช้ในบ้าน", "ออมเงิน", "ลงทุน DCA"];
 
 // keywords used to auto-detect fixed (recurring/committed) expenses — everything else defaults to variable
 // ("ให้แม่" and "ค่าจ้างทำสวน" are the user's own monthly commitments — money
 // to their mother and the gardener — added at their request.)
-export const FIXED_KEYWORDS = ["ผ่อน", "ค่าเช่า", "โทรศัพท์", "อินเทอร์เน็ต", "เน็ตบ้าน", "เบี้ยประกัน", "ประกัน", "ค่าเทอม", "สมาชิก", "งวด", "หนี้", "ให้แม่", "ค่าจ้างทำสวน"];
+// "บิลรายเดือน", "ครอบครัว" and "ประกัน" are main categories whose every
+// sub-item is a monthly commitment.
+export const FIXED_KEYWORDS = ["บิลรายเดือน", "ครอบครัว", "ผ่อน", "ค่าเช่า", "โทรศัพท์", "อินเทอร์เน็ต", "เน็ตบ้าน", "เบี้ยประกัน", "ประกัน", "ค่าเทอม", "สมาชิก", "งวด", "หนี้", "ให้แม่", "ค่าจ้างทำสวน"];
 
 // keywords used to auto-detect saving/investment expenses — checked before FIXED_KEYWORDS
 export const INVEST_KEYWORDS = ["ออม", "ลงทุน", "กองทุนรวม", "DCA", "RMF", "SSF", "ประกันสะสมทรัพย์", "บำนาญ", "PVD", "กองทุนสำรองเลี้ยงชีพ", "Reinvestment", "Reinvest"];
 
 // keywords used to auto-detect passive income — everything else defaults to active
-export const PASSIVE_KEYWORDS = ["ปันผล", "ดอกเบี้ย", "ค่าเช่า", "เช่า", "ลิขสิทธิ์", "royalty", "dividend", "แบ่งปันกำไร", "กำไรจากการขาย", "ค่าตอบแทนกองทุน"];
+export const PASSIVE_KEYWORDS = ["รายได้จากทรัพย์สิน", "ปันผล", "ดอกเบี้ย", "ค่าเช่า", "เช่า", "ลิขสิทธิ์", "royalty", "dividend", "แบ่งปันกำไร", "กำไรจากการขาย", "ค่าตอบแทนกองทุน"];
 
 // keywords for Active income that's still one-off/irregular (bonuses,
 // incentives, commissions) — excluded from the hourly-wage estimate so a

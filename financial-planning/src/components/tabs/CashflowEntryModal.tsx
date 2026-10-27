@@ -10,7 +10,8 @@ import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { EXPENSE_COLOR, INCOME_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR, CATEGORY_LABEL_EN, PAYMENT_METHOD_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
+import { TR, CATEGORY_LABEL_EN, PAYMENT_METHOD_LABEL_EN, fillText, translateLabel, type Language } from "@/lib/i18n";
+import { cleanLabel } from "@/lib/categoryTree";
 import { Field, AddButton, DayPicker, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
@@ -30,6 +31,20 @@ const chipDeleteBadge: CSSProperties = {
   position: "absolute", top: -7, right: -7, width: 18, height: 18, borderRadius: 999,
   background: "#FF8C7A", color: "#fff", border: "2px solid #FFF8F1", fontSize: 11, lineHeight: "14px",
   textAlign: "center", padding: 0, cursor: "pointer", boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+};
+// A #sub-item: smaller and squarer than the category chips above it, in the
+// lavender the cashflow list uses for the same tag, so the two levels never
+// read as one row of choices.
+function subChipStyle(active: boolean): CSSProperties {
+  return {
+    border: active ? "1px solid #6B5490" : "1px solid transparent",
+    background: active ? "#6B5490" : "#EFEAFE",
+    color: active ? "#fff" : "#5B4AA8",
+    borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 500, cursor: "pointer",
+  };
+}
+const newSubChipStyle: CSSProperties = {
+  ...subChipStyle(false), background: "transparent", border: "1px dashed #CFC5F7",
 };
 const doneButtonStyle: CSSProperties = {
   background: "#0F6E56", color: "#fff", border: "none",
@@ -86,12 +101,14 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const { hourlyWage } = useHourlyWage();
   const { goal: primaryGoal, linked: primaryGoalLinked } = usePrimaryGoal();
 
-  const [form, setForm] = useState({ type: "Income" as CashFlowType, category: "", amount: "", date: isoToday(), payment_method_id: "" });
+  const [form, setForm] = useState({ type: "Income" as CashFlowType, category: "", sub: "", amount: "", date: isoToday(), payment_method_id: "" });
   const [customMode, setCustomMode] = useState(false);
   const [saveShortcut, setSaveShortcut] = useState(true);
   const [editing, setEditing] = useState(false);
   const [addingCard, setAddingCard] = useState(false);
   const [newCardName, setNewCardName] = useState("");
+  const [addingSub, setAddingSub] = useState(false);
+  const [newSubName, setNewSubName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingRecurringId, setEditingRecurringId] = useState<string | null>(null);
   const [recurring, setRecurring] = useState(false);
@@ -113,6 +130,12 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const accent = form.type === "Expense" ? EXPENSE_COLOR : INCOME_COLOR;
   const preview = form.type === "Expense" ? classifyExpense(form.category) : classifyIncome(form.category);
   const cats = (allCategories || []).filter((c) => c.entryType === form.type);
+  const selectedCat = customMode ? undefined : cats.find((c) => c.label === form.category);
+  // An entry being edited may carry a # that has since been removed from
+  // its category's list; it still shows, selected, so saving keeps it.
+  const subOptions = selectedCat
+    ? [...(selectedCat.subs || []), ...(form.sub && !(selectedCat.subs || []).includes(form.sub) ? [form.sub] : [])]
+    : [];
 
   const amountNum = Number(form.amount || 0);
   const spendCompare = form.type === "Expense" && amountNum > 0
@@ -132,7 +155,27 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
       })()
     : null;
 
-  const pickCategory = (label: string) => { setCustomMode(false); setForm({ ...form, category: label }); };
+  const pickCategory = (label: string) => {
+    setCustomMode(false);
+    setAddingSub(false);
+    setForm({ ...form, category: label, sub: label === form.category ? form.sub : "" });
+  };
+  const pickSub = (sub: string) => setForm({ ...form, sub: form.sub === sub ? "" : sub });
+  const addSub = () => {
+    const name = cleanLabel(newSubName).replace(/^#+/, "");
+    if (!name || !selectedCat) return;
+    if (!(selectedCat.subs || []).includes(name)) {
+      void db.categories.update(selectedCat.id, { subs: [...(selectedCat.subs || []), name] });
+    }
+    setForm({ ...form, sub: name });
+    setNewSubName("");
+    setAddingSub(false);
+  };
+  const removeSub = (sub: string) => {
+    if (!selectedCat) return;
+    void db.categories.update(selectedCat.id, { subs: (selectedCat.subs || []).filter((x) => x !== sub) });
+    if (form.sub === sub) setForm({ ...form, sub: "" });
+  };
 
   const startPress = () => {
     longPressFired.current = false;
@@ -150,7 +193,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   };
   const removeCat = (id: string, label: string) => {
     void db.categories.delete(id);
-    if (form.category === label) setForm({ ...form, category: "" });
+    if (form.category === label) setForm({ ...form, category: "", sub: "" });
   };
   // Pointer Events (not the HTML5 drag-and-drop API) so reordering works on
   // touch devices — native `draggable`/`ondragstart` never fires on mobile.
@@ -190,9 +233,10 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const closeModal = () => {
     setEditingId(null);
     setEditingRecurringId(null);
-    setForm({ type: "Income", category: "", amount: "", date: isoToday(), payment_method_id: "" });
+    setForm({ type: "Income", category: "", sub: "", amount: "", date: isoToday(), payment_method_id: "" });
     setCustomMode(false);
     setAddingCard(false);
+    setAddingSub(false);
     setActiveModal(null);
     setRecurring(false);
     setDayOfMonth(new Date().getDate());
@@ -200,10 +244,12 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   };
 
   const submit = () => {
-    if (!form.category || !form.amount) return;
+    const category = cleanLabel(form.category);
+    const sub = form.sub || null;
+    if (!category || !form.amount) return;
     if (recurring && !editingId) {
       void createRecurringRule({
-        type: form.type, category: form.category, amount: Number(form.amount),
+        type: form.type, category, sub, amount: Number(form.amount),
         dayOfMonth, shiftWeekend: dayShiftWeekend,
         payment_method_id: form.type === "Expense" ? (effectivePaymentMethodId || null) : null,
       });
@@ -214,16 +260,16 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
     // Preserve recurringId when editing an entry that came from a recurring
     // rule — put() replaces the whole row, so omitting it here would
     // silently detach the entry from its source rule.
-    const base = { id, category: form.category, amount: Number(form.amount), date: form.date || isoToday(), recurringId: editingRecurringId ?? undefined };
+    const base = { id, category, sub, amount: Number(form.amount), date: form.date || isoToday(), recurringId: editingRecurringId ?? undefined };
     if (form.type === "Income") {
-      void db.cashflow.put({ ...base, type: "Income", incomeClass: classifyIncome(form.category) });
+      void db.cashflow.put({ ...base, type: "Income", incomeClass: classifyIncome(category) });
     } else {
-      void db.cashflow.put({ ...base, type: "Expense", expense_class: classifyExpense(form.category), payment_method_id: effectivePaymentMethodId || null });
+      void db.cashflow.put({ ...base, type: "Expense", expense_class: classifyExpense(category), payment_method_id: effectivePaymentMethodId || null });
     }
     if (customMode && saveShortcut) {
-      const exists = cats.some((c) => c.label === form.category);
+      const exists = cats.some((c) => c.label === category);
       if (!exists) {
-        const cat: CategoryChip = { id: uid(), entryType: form.type, label: form.category, icon: "🏷️", order: cats.length };
+        const cat: CategoryChip = { id: uid(), entryType: form.type, label: category, icon: "🏷️", order: cats.length, subs: [] };
         void db.categories.add(cat);
       }
     }
@@ -233,7 +279,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
   const openNew = (type: CashFlowType) => {
     setEditingId(null);
     setEditingRecurringId(null);
-    setForm({ type, category: "", amount: "", date: isoToday(), payment_method_id: "" });
+    setForm({ type, category: "", sub: "", amount: "", date: isoToday(), payment_method_id: "" });
     setCustomMode(false);
     setEditing(false);
     setAddingCard(false);
@@ -248,6 +294,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
     setForm({
       type: entry.type,
       category: entry.category,
+      sub: entry.sub || "",
       amount: String(entry.amount),
       date: entry.date,
       payment_method_id: entry.payment_method_id || "",
@@ -257,6 +304,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
     setEditingRecurringId(entry.recurringId ?? null);
     setEditing(false);
     setAddingCard(false);
+    setAddingSub(false);
     setActiveModal(entry.type);
   };
 
@@ -342,7 +390,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                 </div>
               ))}
               {!editing && (
-                <button type="button" onClick={() => { setCustomMode(true); setForm({ ...form, category: "" }); setSaveShortcut(true); }} style={chipStyle(customMode, accent)}>
+                <button type="button" onClick={() => { setCustomMode(true); setForm({ ...form, category: "", sub: "" }); setSaveShortcut(true); }} style={chipStyle(customMode, accent)}>
                   {t(TR.cashflow.typeOwn)}
                 </button>
               )}
@@ -353,6 +401,39 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
             <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
               {editing ? t(TR.cashflow.dragToReorder) : t(TR.cashflow.holdToReorder)}
             </div>
+            {selectedCat && (
+              <div style={{ marginTop: 10, background: "#FAF7FF", borderRadius: 12, padding: 10, maxWidth: 480 }}>
+                <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 6 }}>
+                  {fillText(t(TR.cashflow.subsIn), { category: translateLabel(selectedCat.label, lang, CATEGORY_LABEL_EN) })}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {subOptions.map((sub) => (
+                    <div key={sub} style={{ position: "relative", display: "inline-block" }}>
+                      <button type="button" onClick={() => { if (!editing) pickSub(sub); }} style={subChipStyle(!editing && form.sub === sub)}>#{sub}</button>
+                      {editing && (selectedCat.subs || []).includes(sub) && (
+                        <button type="button" onClick={() => removeSub(sub)} title={t(TR.cashflow.removeSub)} style={chipDeleteBadge}>×</button>
+                      )}
+                    </div>
+                  ))}
+                  {!editing && (
+                    <button type="button" onClick={() => setAddingSub(true)} style={newSubChipStyle}>{t(TR.cashflow.addSub)}</button>
+                  )}
+                </div>
+                {addingSub && !editing && (
+                  <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                    <input
+                      autoFocus
+                      style={{ ...inputStyle, flex: 1 }}
+                      value={newSubName}
+                      onChange={(e) => setNewSubName(e.target.value)}
+                      placeholder={t(TR.cashflow.subPlaceholder)}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addSub(); } }}
+                    />
+                    <button type="button" onClick={addSub} style={doneButtonStyle}>{t(TR.common.add)}</button>
+                  </div>
+                )}
+              </div>
+            )}
             {customMode && (
               <div style={{ marginTop: 8 }}>
                 <input

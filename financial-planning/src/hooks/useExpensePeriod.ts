@@ -5,11 +5,19 @@ import { db } from "@/lib/db";
 import { periodContains, type Period } from "@/lib/period";
 import type { ExpenseClass } from "@/lib/types";
 
+export interface SubTotal {
+  /** null gathers the entries recorded without a #. */
+  sub: string | null;
+  amount: number;
+}
+
 export interface CategoryTotal {
   category: string;
   amount: number;
   count: number;
   expenseClass: ExpenseClass;
+  /** The category's total split by #sub-item, largest first; they add up to `amount`. */
+  subs: SubTotal[];
 }
 
 // What did I spend in this period, broken down by Fixed/Variable and by
@@ -27,15 +35,21 @@ export function useExpensePeriod(period: Period) {
   const byCategoryMap = new Map<string, CategoryTotal>();
   for (const e of entries) {
     const expenseClass: ExpenseClass = e.expense_class === "Fixed" ? "Fixed" : e.expense_class === "Invest" ? "Invest" : "Variable";
-    const existing = byCategoryMap.get(e.category);
-    if (existing) {
-      existing.amount += Number(e.amount || 0);
-      existing.count += 1;
-    } else {
-      byCategoryMap.set(e.category, { category: e.category, amount: Number(e.amount || 0), count: 1, expenseClass });
+    const amount = Number(e.amount || 0);
+    let total = byCategoryMap.get(e.category);
+    if (!total) {
+      total = { category: e.category, amount: 0, count: 0, expenseClass, subs: [] };
+      byCategoryMap.set(e.category, total);
     }
+    total.amount += amount;
+    total.count += 1;
+    const sub = e.sub || null;
+    const subTotal = total.subs.find((s) => s.sub === sub);
+    if (subTotal) subTotal.amount += amount;
+    else total.subs.push({ sub, amount });
   }
   const byCategory = Array.from(byCategoryMap.values()).sort((a, b) => b.amount - a.amount);
+  for (const c of byCategory) c.subs.sort((a, b) => b.amount - a.amount);
 
   return { total, fixedTotal, variableTotal, investTotal, byCategory, loading };
 }

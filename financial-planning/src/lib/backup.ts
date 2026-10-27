@@ -1,4 +1,5 @@
 import { db } from "./db";
+import { consolidateCategories } from "./categoryTree";
 import pkg from "../../package.json";
 
 // Distinct from the per-domain export ids ("...-cashflow-export",
@@ -9,6 +10,9 @@ export const BACKUP_APP_ID = "financial-planning-full-backup";
 
 /** Settings key holding the ISO timestamp of the last full backup. */
 export const LAST_BACKUP_KEY = "lastFullBackupAt";
+
+/** The Dexie version that introduced main categories with #sub-items. */
+const CATEGORY_TREE_SCHEMA = 111;
 
 /** Settings key the seeder uses to decide a database is already set up. */
 const SEEDED_KEY = "seeded";
@@ -86,6 +90,16 @@ export async function importAll(file: BackupFile): Promise<number> {
         await table.bulkPut(rows);
         restored += rows.length;
       }
+    }
+    // A backup from before main categories and #sub-items would bring the
+    // old category list back; move it across the way the upgrade did.
+    if (typeof file.schemaVersion !== "number" || file.schemaVersion < CATEGORY_TREE_SCHEMA) {
+      await consolidateCategories({
+        cashflow: db.table("cashflow"),
+        categories: db.table("categories"),
+        budgets: db.table("budgets"),
+        recurringEntries: db.table("recurringEntries"),
+      });
     }
     await ensureSeededFlag();
     // The file's own settings snapshot was taken just before its timestamp

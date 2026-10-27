@@ -26,6 +26,22 @@ function entryIcon(c: CashFlowEntry) {
   );
 }
 
+const subTagStyle: CSSProperties = {
+  display: "inline-block", fontSize: 11.5, fontWeight: 500, color: "#5B4AA8", background: "#EFEAFE",
+  borderRadius: 6, padding: "1px 7px", marginLeft: 6, whiteSpace: "nowrap",
+};
+
+// "อาหาร #ของกินเล่น" — a category with its #sub-item, wherever an entry or a
+// recurring rule is listed, so the two levels look the same everywhere.
+export function CategoryLabel({ category, sub, lang }: { category: string; sub?: string | null; lang: Language }) {
+  return (
+    <span>
+      {translateLabel(category, lang, CATEGORY_LABEL_EN)}
+      {sub && <span style={subTagStyle}>#{sub}</span>}
+    </span>
+  );
+}
+
 // Newest first, clustered under one prominent date header per day so a day
 // with several entries doesn't repeat the same date on every row. Shared
 // between the main cashflow list and the payment-method summary page.
@@ -49,7 +65,7 @@ export function renderByDay(
       lastDate = c.date;
     }
     const extraNode = extra ? extra(c) : null;
-    const label = translateLabel(c.category, lang, CATEGORY_LABEL_EN);
+    const label = <CategoryLabel category={c.category} sub={c.sub} lang={lang} />;
     nodes.push(
       <Row
         key={c.id}

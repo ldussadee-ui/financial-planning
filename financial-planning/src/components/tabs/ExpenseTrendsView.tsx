@@ -152,6 +152,7 @@ export function ExpenseTrendsView() {
   const { total, fixedTotal, variableTotal, investTotal, byCategory, loading } = useExpensePeriod(period);
   const { map: budgetMap } = useBudgets();
   const { lang, t } = useLanguage();
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   const changeGranularity = (g: Granularity) => { setGranularity(g); setPeriod(defaultPeriod(g)); };
 
@@ -209,21 +210,41 @@ export function ExpenseTrendsView() {
               </PieChart>
             </ResponsiveContainer>
             <div style={{ flex: 1, minWidth: 220, fontSize: 13 }}>
-              {byCategory.map((c, i) => (
-                <div key={c.category} style={{ marginBottom: 8 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <span style={{ width: 10, height: 10, borderRadius: 5, background: CATEGORY_PALETTE[i % CATEGORY_PALETTE.length], flexShrink: 0 }} />
-                    <span>{ICON_MAP[c.category] || "🏷️"}</span>
-                    <span style={{ color: "var(--ink)" }}>{translateLabel(c.category, lang, CATEGORY_LABEL_EN)}</span>
-                    <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>({c.count} {t(TR.reports.itemsCount)})</span>
-                    <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>{fmt(c.amount)}</span>
-                    <span className="fp-num" style={{ width: 40, textAlign: "right", color: "var(--ink-soft)" }}>
-                      {total > 0 ? ((c.amount / total) * 100).toFixed(0) : 0}%
-                    </span>
+              {byCategory.map((c, i) => {
+                const isOpen = openCategory === c.category;
+                return (
+                  <div key={c.category} style={{ marginBottom: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenCategory(isOpen ? null : c.category)}
+                      aria-expanded={isOpen}
+                      style={{ all: "unset", boxSizing: "border-box", display: "flex", alignItems: "center", gap: 7, width: "100%", cursor: "pointer" }}
+                    >
+                      <span style={{ width: 10, height: 10, borderRadius: 5, background: CATEGORY_PALETTE[i % CATEGORY_PALETTE.length], flexShrink: 0 }} />
+                      <span>{ICON_MAP[c.category] || "🏷️"}</span>
+                      <span style={{ color: "var(--ink)" }}>{translateLabel(c.category, lang, CATEGORY_LABEL_EN)}</span>
+                      <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>({c.count} {t(TR.reports.itemsCount)})</span>
+                      <span style={{ fontSize: 10, color: "var(--ink-soft)" }}>{isOpen ? "▲" : "▼"}</span>
+                      <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>{fmt(c.amount)}</span>
+                      <span className="fp-num" style={{ width: 40, textAlign: "right", color: "var(--ink-soft)" }}>
+                        {total > 0 ? ((c.amount / total) * 100).toFixed(0) : 0}%
+                      </span>
+                    </button>
+                    <BudgetBar spent={c.amount} budget={(budgetMap.get(c.category) || 0) * MONTHS_IN_PERIOD[period.granularity]} />
+                    {isOpen && (
+                      <div style={{ padding: "4px 0 6px 17px", display: "grid", gap: 4 }}>
+                        {c.subs.map((s) => (
+                          <div key={s.sub ?? ""} style={{ display: "flex", fontSize: 12.5 }}>
+                            <span style={{ color: s.sub ? "#5B4AA8" : "var(--ink-soft)" }}>{s.sub ? `#${s.sub}` : t(TR.reports.noSub)}</span>
+                            <span className="fp-num" style={{ marginLeft: "auto" }}>{fmt(s.amount)}</span>
+                            <span style={{ width: 40 }} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <BudgetBar spent={c.amount} budget={(budgetMap.get(c.category) || 0) * MONTHS_IN_PERIOD[period.granularity]} />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ) : (

@@ -35,6 +35,7 @@ async function cashMethodId(): Promise<string | null> {
 export interface GeneratedEntryInfo {
   type: CashFlowType;
   category: string;
+  sub: string | null;
   amount: number;
 }
 
@@ -59,11 +60,11 @@ export async function createRecurringRule(input: NewRecurringEntryInput): Promis
   if (hasPassed) return null;
 
   const entry: CashFlowEntry = {
-    id: uid(), type: rule.type, category: rule.category, amount: rule.amount,
+    id: uid(), type: rule.type, category: rule.category, sub: rule.sub ?? null, amount: rule.amount,
     date: isoDate(occursOn), recurringId: rule.id, ...cashflowFieldsFor(rule, await cashMethodId()),
   };
   await db.cashflow.add(entry);
-  return { type: rule.type, category: rule.category, amount: rule.amount };
+  return { type: rule.type, category: rule.category, sub: rule.sub ?? null, amount: rule.amount };
 }
 
 // Catches up every active rule to the current month, generating one entry
@@ -84,11 +85,11 @@ export async function runRecurringGeneration(today: Date = new Date()): Promise<
       const [y, m] = targetKey.split("-").map(Number);
       const occursOn = dateForDayOfMonth(y, m - 1, rule.dayOfMonth, rule.shiftWeekend);
       const entry: CashFlowEntry = {
-        id: uid(), type: rule.type, category: rule.category, amount: rule.amount,
+        id: uid(), type: rule.type, category: rule.category, sub: rule.sub ?? null, amount: rule.amount,
         date: isoDate(occursOn), recurringId: rule.id, ...cashflowFieldsFor(rule, cashId),
       };
       await db.cashflow.add(entry);
-      created.push({ type: rule.type, category: rule.category, amount: rule.amount });
+      created.push({ type: rule.type, category: rule.category, sub: rule.sub ?? null, amount: rule.amount });
       cursorKey = targetKey;
       targetKey = nextYearMonthKey(targetKey);
     }

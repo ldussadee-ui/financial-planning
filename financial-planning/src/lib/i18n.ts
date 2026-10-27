@@ -131,6 +131,10 @@ export const TR = {
     typeCustomCategory: { th: "พิมพ์หมวดหมู่ของคุณเอง", en: "Type your own category" } as Text,
     saveAsShortcut: { th: "บันทึกเป็นปุ่มลัดไว้ใช้ครั้งหน้า", en: "Save as a shortcut for next time" } as Text,
     removeShortcut: { th: "ลบปุ่มนี้", en: "Remove this shortcut" } as Text,
+    subsIn: { th: "# ใน {category} (ไม่บังคับ)", en: "# in {category} (optional)" } as Text,
+    addSub: { th: "+ #ใหม่", en: "+ New #" } as Text,
+    subPlaceholder: { th: "ชื่อ # เช่น ของกินเล่น", en: "# name, e.g. Snacks" } as Text,
+    removeSub: { th: "ลบ # นี้", en: "Remove this #" } as Text,
     paidWith: { th: "จ่ายด้วย", en: "Paid With" } as Text,
     addCard: { th: "➕ เพิ่มบัตร", en: "➕ Add Card" } as Text,
     cardNamePlaceholder: { th: "ชื่อบัตร เช่น KTC, SCB", en: "Card name, e.g. Visa, Amex" } as Text,
@@ -428,6 +432,7 @@ export const TR = {
     investLabel: { th: "🌱 ออมและลงทุน", en: "🌱 Savings & Investing" } as Text,
     byCategory: { th: "🏷️ แยกตามหมวดหมู่", en: "🏷️ By Category" } as Text,
     itemsCount: { th: "รายการ", en: "items" } as Text,
+    noSub: { th: "ไม่ระบุ #", en: "No #" } as Text,
     noExpensesThisPeriod: { th: "ยังไม่มีรายจ่ายในช่วงนี้", en: "No expenses in this period yet" } as Text,
     allCategories: { th: "ทั้งหมด", en: "All" } as Text,
     trendHalfYear: { th: "📈 แนวโน้มรายจ่ายรายเดือน (ครึ่งปีนี้)", en: "📈 Monthly Expense Trend (This Half-Year)" } as Text,
@@ -537,6 +542,11 @@ export const TR = {
 // shown on screen. A custom label the user typed themselves has no entry
 // here and is shown verbatim, in whatever language they typed it.
 export const CATEGORY_LABEL_EN: Record<string, string> = {
+  "รายได้จากงาน": "Work Income", "รายได้จากทรัพย์สิน": "Income from Assets",
+  "อาหาร": "Food", "บ้าน": "Home", "เดินทาง": "Transport", "ท่องเที่ยว": "Travel", "สุขภาพ": "Health",
+  "ดูแลตัวเองและช้อปปิ้ง": "Self-care & Shopping", "งานและการเรียนรู้": "Work & Learning",
+  "งานอดิเรกและสัตว์เลี้ยง": "Hobbies & Pets", "ทำบุญ": "Merit & Donations", "อื่นๆ": "Other",
+  "บิลรายเดือน": "Monthly Bills", "ประกัน": "Insurance", "ครอบครัว": "Family", "ออมและลงทุน": "Savings & Investing",
   "เงินเดือน": "Salary", "ฟรีแลนซ์": "Freelance", "โบนัส": "Bonus", "ปันผลหุ้น/DR": "Dividends",
   "ดอกเบี้ย": "Interest", "ค่าเช่า": "Rental Income",
   "ผ่อนบ้าน": "Mortgage", "ผ่อนรถ": "Car Loan", "ค่าเช่าที่พัก": "Rent", "ค่าน้ำค่าไฟ": "Utilities",

@@ -8,6 +8,7 @@ import { TR } from "@/lib/i18n";
 import { Field, AddButton, Modal, inputStyle } from "@/components/ui";
 import { Share2 } from "lucide-react";
 import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
+import { upgradeEntry } from "@/lib/categoryTree";
 import type { CashFlowEntry } from "@/lib/types";
 
 const EXPORT_APP_ID = "financial-planning-cashflow-export";
@@ -55,7 +56,9 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
       app: EXPORT_APP_ID,
       // 2: entries carry payment_method_label/kind. Version-1 files still
       // import; their entries just arrive without a payment method.
-      version: 2,
+      // 3: entries carry `sub`, the #sub-item. Entries from older files have
+      // their old category moved to its main category on import.
+      version: 3,
       exportedAt: new Date().toISOString(),
       rangeStart: start,
       rangeEnd: end,
@@ -128,10 +131,11 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
   const doImport = async () => {
     if (!fileData || !owner.trim()) return;
     const inRange = fileData.entries.filter((en) => en.date >= start && en.date <= end);
-    const toInsert: CashFlowEntry[] = inRange.map((en) => ({
+    const toInsert: CashFlowEntry[] = inRange.map(upgradeEntry).map((en) => ({
       id: uid(),
       type: en.type,
       category: en.category,
+      sub: en.sub ?? null,
       amount: en.amount,
       date: en.date,
       incomeClass: en.incomeClass,

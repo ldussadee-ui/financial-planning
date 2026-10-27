@@ -85,6 +85,9 @@ export interface CashFlowEntry {
   id: string;
   type: CashFlowType;
   category: string;
+  // The #sub-item inside the category ("ของกินเล่น" in อาหาร), or null for
+  // none. Absent only on entries from before v0.23.0 — see categoryTree.ts.
+  sub?: string | null;
   amount: number;
   date: string;
   incomeClass?: IncomeClass;
@@ -106,6 +109,7 @@ export interface RecurringEntry {
   id: string;
   type: CashFlowType;
   category: string;
+  sub?: string | null;
   amount: number;
   dayOfMonth: number;
   shiftWeekend: boolean;
@@ -124,6 +128,8 @@ export interface CategoryChip {
   label: string;
   icon: string;
   order: number;
+  // The #sub-items offered under this category, in display order.
+  subs?: string[];
 }
 
 export type PaymentMethodKind = "เงินสด" | "บัตรเครดิต";

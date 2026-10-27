@@ -10,8 +10,9 @@ import type { CashFlowEntry } from "@/lib/types";
 
 const HOURS_PER_MONTH = 160;
 
-const isIrregularIncome = (category: string) => {
-  const t = (category || "").toLowerCase();
+// Checks the #sub-item too: a bonus is recorded as รายได้จากงาน #โบนัส.
+const isIrregularIncome = (category: string, sub?: string | null) => {
+  const t = `${category || ""} ${sub || ""}`.toLowerCase();
   return IRREGULAR_INCOME_KEYWORDS.some((k) => t.includes(k.toLowerCase()));
 };
 
@@ -37,7 +38,7 @@ export function useHourlyWage(): {
   const [manualWage, setManualWage] = useSetting<number>("hourlyWage", 0);
 
   const activeIncomeThisCycle = cashflow
-    .filter((c) => c.type === "Income" && c.incomeClass === "Active" && !isIrregularIncome(c.category) && inRange(c.date, cycleRange))
+    .filter((c) => c.type === "Income" && c.incomeClass === "Active" && !isIrregularIncome(c.category, c.sub) && inRange(c.date, cycleRange))
     .reduce((s, c) => s + Number(c.amount || 0), 0);
   const computedWage = activeIncomeThisCycle > 0 ? Math.round(activeIncomeThisCycle / HOURS_PER_MONTH) : 0;
 

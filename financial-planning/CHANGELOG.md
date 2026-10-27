@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.23.0] - 2026-10-27
+
+### Changed
+- Income and expense categories are now a short list of main categories, each holding #sub-items. The 34 expense categories that had built up became 14: อาหาร, บ้าน, เดินทาง, ท่องเที่ยว, สุขภาพ, ดูแลตัวเองและช้อปปิ้ง, งานและการเรียนรู้, งานอดิเรกและสัตว์เลี้ยง, ทำบุญ, อื่นๆ, บิลรายเดือน, ประกัน, ครอบครัว and ออมและลงทุน; income became รายได้จากงาน and รายได้จากทรัพย์สิน. With so many small categories, most of them holding one or two entries a cycle, the charts and summaries had become hard to read
+- Everything already recorded moved across automatically the first time the app opens after updating: each old category became a # inside its main category (ค่าอาหาร → อาหาร #มื้อหลัก, Subscribe ChatGPT → บิลรายเดือน #ChatGPT), and the recurring rules, budgets and category buttons moved with them. Amounts, dates, payment methods and owners are unchanged. Duplicates were merged ("ของกินเล่น" and "ของกินเล่น/เครื่องดื่ม" are both #ของกินเล่น), and names with a stray vowel or trailing space ("ืทำบุญ", "Reinvestment ") were cleaned up. A category the list doesn't know stays as a main category of its own, so nothing is hidden
+- Subscriptions and ค่าน้ำค่าไฟ now sit in บิลรายเดือน, which counts as Fixed (ประจำ), so they no longer trigger overspend alerts on the overview
+- A budget set on an old category now belongs to its main category, adding up the old ones (a budget for ค่าอาหาร plus one for ของกินเล่น became one for อาหาร)
+
+### Added
+- The entry sheet shows the chosen category's #sub-items under the category buttons. Picking one is optional, and each entry takes at most one, so a category's #sub-items always add up to its total. "+ #ใหม่" adds a new one on the spot, and holding a category button to edit also lets a # be removed. Date, monthly repeat, adding or removing categories and the payment method work as before; a monthly repeat keeps its # too
+- The cashflow list shows each entry's # beside its category, and on the expense summary a category can be tapped open to see its total split by #
+- A new ✈️ ท่องเที่ยว category with #ที่พัก, #ค่าเดินทาง, #ค่ากิน and #ค่าเข้าชม
+- Cashflow exports carry each entry's #. A file exported from an older version of the app is moved into the main categories as it is imported, and so is a full backup made before this version when it is restored, so neither can bring the old list back
+
 ## [0.22.0] - 2026-10-06
 
 ### Changed
