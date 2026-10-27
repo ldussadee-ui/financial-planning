@@ -23,11 +23,6 @@ export const TR = {
     subtitle: { th: "สรุปสถานะสินทรัพย์ หนี้สิน และกระแสเงินสด · รอบปัจจุบัน", en: "Assets, liabilities, and cashflow at a glance · Current cycle" } as Text,
     trialChip: { th: "ทดลองใช้งาน", en: "Beta" } as Text,
     netWorthSection: { th: "มูลค่าสุทธิ", en: "Net Worth" } as Text,
-    backupReminderNote: {
-      th: "ข้อมูลทั้งหมดอยู่ในเครื่องนี้เท่านั้น ถ้าล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่อง ข้อมูลจะหายถาวร — สำรองเก็บไว้ใน Drive/Files หรือส่งหาตัวเอง",
-      en: "Everything lives only on this device — clearing browser data or switching phones loses it for good. Keep a copy in Drive/Files or send it to yourself",
-    } as Text,
-    backupReminderMore: { th: "ตั้งค่าการสำรอง", en: "Backup settings" } as Text,
     liquidAssets: { th: "สินทรัพย์สภาพคล่อง", en: "Liquid Assets" } as Text,
     investmentAssets: { th: "สินทรัพย์เพื่อการลงทุน", en: "Investment Assets" } as Text,
     personalAssets: { th: "สินทรัพย์ส่วนตัว (ไม่ก่อรายได้)", en: "Personal Assets (Non-Income)" } as Text,

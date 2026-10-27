@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type ChangeEvent, type CSSProperties } from "react";
-import Link from "next/link";
 import { db } from "@/lib/db";
 import {
   exportAll, importAll, isBackupFile, isFromNewerSchema,
@@ -321,32 +320,5 @@ export function FullBackup() {
       <RestoreModal open={restoreOpen} onClose={() => setRestoreOpen(false)} />
       <WipeModal open={wipeOpen} onClose={() => setWipeOpen(false)} />
     </>
-  );
-}
-
-// The overview's reminder, shown only while a backup is overdue. Settings
-// now sits behind an icon, so the warning there is easy to never see — and
-// with everything stored on this one device, it is the warning that matters
-// most. The button does the backup right here rather than sending the user
-// off to find it.
-export function BackupReminder() {
-  const { lang, t } = useLanguage();
-  const canShare = useCanShareFiles();
-  const { loaded, days, stale } = useBackupStatus();
-  if (!loaded || !stale) return null;
-  const statusText = days === null ? t(TR.settings.backupNever) : fillText(t(TR.settings.backupDaysAgo), { days });
-  return (
-    <div className="fp-card" style={{ padding: "18px 22px", marginBottom: 18, background: "#FFF4E8", border: "1px solid #F6D9B8" }}>
-      <div style={{ fontSize: 13.5, fontWeight: 600, color: "#9C4E28", marginBottom: 4 }}>💾 {statusText}</div>
-      <div style={{ fontSize: 12.5, color: "var(--ink-soft)", lineHeight: 1.55, marginBottom: 12 }}>{t(TR.dashboard.backupReminderNote)}</div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <button type="button" onClick={() => void runBackup(lang, canShare)} style={primaryButtonStyle}>
-          {canShare ? t(TR.settings.backupShare) : t(TR.settings.backupDownload)}
-        </button>
-        <Link href="/settings" style={{ fontSize: 12.5, color: "#7A5C9E", fontWeight: 600, padding: "8px 4px" }}>
-          {t(TR.dashboard.backupReminderMore)}
-        </Link>
-      </div>
-    </div>
   );
 }

@@ -18,10 +18,10 @@ export interface BackupStatus {
   stale: boolean;
 }
 
-// One judgement of "is a backup overdue", shared by the Settings card, the
-// overview's reminder and the dot on the settings icon, so they can't
-// disagree. Unlike useSetting it reports loading separately: a default of
-// "never" while the database opens would flash the reminder on every launch.
+// One judgement of "is a backup overdue", shared by the Settings card and
+// the dot on the settings icon, so they can't disagree. Unlike useSetting it
+// reports loading separately: a default of "never" while the database opens
+// would flash the dot on every launch.
 export function useBackupStatus(): BackupStatus {
   const lastBackup = useLiveQuery(async () => ((await db.settings.get(LAST_BACKUP_KEY))?.value as string | undefined) ?? null, []);
   if (lastBackup === undefined) return { loaded: false, days: null, stale: false };

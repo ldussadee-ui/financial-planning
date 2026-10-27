@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.23.1] - 2026-10-27
+
+### Changed
+- The overdue-backup card is gone from the top of the overview, where it pushed the net worth down every time a backup was more than 30 days old. The red dot on ⚙️ still appears when a backup is overdue, and the warning with the backup button is inside Settings as before
+
 ## [0.23.0] - 2026-10-27
 
 ### Changed
