@@ -21,15 +21,15 @@ import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
 // for income.
 function chipStyle(active: boolean, accent: string): CSSProperties {
   return {
-    border: active ? "none" : "1px solid var(--line)",
-    background: active ? accent : "#FFFCFA",
-    color: active ? "#fff" : "var(--ink-soft)",
+    border: active ? "2px solid var(--border)" : "2px solid var(--line)",
+    background: active ? accent : "var(--panel)",
+    color: active ? "var(--ink)" : "var(--ink-soft)",
     borderRadius: 999, padding: "7px 13px", fontSize: 12.5, fontWeight: 500, cursor: "pointer",
   };
 }
 const chipDeleteBadge: CSSProperties = {
   position: "absolute", top: -7, right: -7, width: 18, height: 18, borderRadius: 999,
-  background: "#FF8C7A", color: "#fff", border: "2px solid #FFF8F1", fontSize: 11, lineHeight: "14px",
+  background: "var(--danger)", color: "#fff", border: "2px solid var(--bg)", fontSize: 11, lineHeight: "14px",
   textAlign: "center", padding: 0, cursor: "pointer", boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
 };
 // A #sub-item: smaller and squarer than the category chips above it, in the
@@ -37,9 +37,9 @@ const chipDeleteBadge: CSSProperties = {
 // read as one row of choices.
 function subChipStyle(active: boolean): CSSProperties {
   return {
-    border: active ? "1px solid #6B5490" : "1px solid transparent",
-    background: active ? "#6B5490" : "#EFEAFE",
-    color: active ? "#fff" : "#5B4AA8",
+    border: active ? "1px solid var(--ink)" : "1px solid transparent",
+    background: active ? "var(--ink)" : "var(--lilac)",
+    color: active ? "#fff" : "var(--accent)",
     borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 500, cursor: "pointer",
   };
 }
@@ -47,7 +47,7 @@ const newSubChipStyle: CSSProperties = {
   ...subChipStyle(false), background: "transparent", border: "1px dashed #CFC5F7",
 };
 const doneButtonStyle: CSSProperties = {
-  background: "#0F6E56", color: "#fff", border: "none",
+  background: "var(--teal)", color: "var(--ink)", border: "2px solid var(--border)",
   borderRadius: 999, padding: "8px 16px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
 };
 function badgeLabel(type: CashFlowType, cls: string, lang: Language) {
@@ -349,8 +349,8 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
 
           {editingId && editingRecurringId && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, flexBasis: "100%" }}>
-              <span style={{ color: "#7A5C9E", fontWeight: 600 }}>{t(TR.recurring.fromRecurringBadge)}</span>
-              <Link href="/cashflow/recurring" style={{ color: "#7A5C9E", textDecoration: "none", fontWeight: 600 }}>{t(TR.recurring.editSourceLink)}</Link>
+              <span style={{ color: "var(--accent)", fontWeight: 600 }}>{t(TR.recurring.fromRecurringBadge)}</span>
+              <Link href="/cashflow/recurring" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>{t(TR.recurring.editSourceLink)}</Link>
             </div>
           )}
 
@@ -402,7 +402,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
               {editing ? t(TR.cashflow.dragToReorder) : t(TR.cashflow.holdToReorder)}
             </div>
             {selectedCat && (
-              <div style={{ marginTop: 10, background: "#FAF7FF", borderRadius: 12, padding: 10, maxWidth: 480 }}>
+              <div style={{ marginTop: 10, background: "var(--lilac)", borderRadius: 12, padding: 10, maxWidth: 480 }}>
                 <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 6 }}>
                   {fillText(t(TR.cashflow.subsIn), { category: translateLabel(selectedCat.label, lang, CATEGORY_LABEL_EN) })}
                 </div>
@@ -493,7 +493,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
             <span style={badgeStyle(form.type, preview)}>{badgeLabel(form.type, preview, lang)}</span>
           )}
           {spendCompare && (
-            <span style={{ fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20, background: "#F5EFFF", color: "#7A5C9E" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20, background: "var(--lilac)", color: "var(--accent)" }}>
               ⏱️ {spendCompare}
             </span>
           )}

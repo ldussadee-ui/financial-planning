@@ -17,7 +17,7 @@ function formatValue(r: FinancialRatio, lang: Language) {
 function statusBadge(status: RatioStatus, t: <K extends { th: string; en: string }>(entry: K) => string) {
   if (status === "pass") return { text: t(TR.ratios.pass), bg: "#E1F5EE", color: "#0F6E56" };
   if (status === "fail") return { text: t(TR.ratios.fail), bg: "#FCEBEB", color: "#A32D2D" };
-  return { text: t(TR.ratios.noData), bg: "#F5F3EE", color: "var(--ink-soft)" };
+  return { text: t(TR.ratios.noData), bg: "var(--track)", color: "var(--ink-soft)" };
 }
 
 export function FinancialRatiosView() {
@@ -34,7 +34,7 @@ export function FinancialRatiosView() {
         style={{
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           width: 34, height: 34, borderRadius: "50%",
-          background: "#F5EFFF", color: "#7A5C9E", marginBottom: 12,
+          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
         }}
       >
         <ArrowLeft size={17} />

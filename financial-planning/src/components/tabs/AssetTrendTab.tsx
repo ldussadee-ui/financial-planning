@@ -14,13 +14,13 @@ const GRANULARITY_COUNT: Record<AssetGranularity, number> = { month: 6, quarter:
 
 // Distinct from the three bar colours: validated at worst-adjacent 18.8 dE
 // for normal vision and 10.5 under deuteranopia against them.
-const GROWTH_COLOR = "#7A5C9E";
+const GROWTH_COLOR = "var(--accent)";
 
 const compactAmount = (n: number) => (Math.abs(n) >= 1000 ? Math.round(n / 1000) + "k" : String(n));
 
 const thStyle: CSSProperties = { textAlign: "right", padding: "8px 10px", fontSize: 12, color: "var(--ink-soft)", fontWeight: 600, whiteSpace: "nowrap" };
 const tdStyle: CSSProperties = { padding: "8px 10px", whiteSpace: "nowrap" };
-const tdNumStyle: CSSProperties = { ...tdStyle, textAlign: "right", fontFamily: "var(--font-prompt), 'Prompt', sans-serif" };
+const tdNumStyle: CSSProperties = { ...tdStyle, textAlign: "right", fontFamily: "var(--font-kanit), 'Kanit', sans-serif" };
 
 export function AssetTrendTab() {
   const { lang, t } = useLanguage();
@@ -33,7 +33,7 @@ export function AssetTrendTab() {
 
   const SERIES = [
     { key: "assets", name: t(TR.assets.assetsAll), color: "#7FB8D9" },
-    { key: "liab", name: t(TR.assets.liabAll), color: "#FF8C7A" },
+    { key: "liab", name: t(TR.assets.liabAll), color: "var(--danger)" },
     { key: "netWorth", name: "Net Worth", color: "#0F6E56" },
   ] as const;
   const GROWTH_NAME: Record<AssetGranularity, string> = {
@@ -108,7 +108,7 @@ export function AssetTrendTab() {
 
       <div className="fp-card" style={{ padding: 20, marginTop: 4 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
-          <div style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>{t(TR.assets.comparisonTable)}</div>
+          <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600 }}>{t(TR.assets.comparisonTable)}</div>
           <div style={{ width: 200 }}>
             <SegmentedControl small options={TABLE_COUNT_OPTIONS} value={String(tableCount)} onChange={(v) => setTableCount(Number(v))} />
           </div>
@@ -132,10 +132,10 @@ export function AssetTrendTab() {
                   <td style={tdNumStyle}>{r.assets !== null ? fmt(r.assets) : "—"}</td>
                   <td style={tdNumStyle}>{r.liab !== null ? fmt(r.liab) : "—"}</td>
                   <td style={tdNumStyle}>{r.netWorth !== null ? fmt(r.netWorth) : "—"}</td>
-                  <td style={{ ...tdNumStyle, color: r.delta === null ? undefined : r.delta >= 0 ? "#0F6E56" : "#FF8C7A" }}>
+                  <td style={{ ...tdNumStyle, color: r.delta === null ? undefined : r.delta >= 0 ? "#0F6E56" : "var(--danger)" }}>
                     {r.delta !== null ? (r.delta >= 0 ? "+" : "") + fmt(r.delta) : "—"}
                   </td>
-                  <td style={{ ...tdNumStyle, color: r.pct === null ? undefined : r.pct >= 0 ? "#0F6E56" : "#FF8C7A" }}>
+                  <td style={{ ...tdNumStyle, color: r.pct === null ? undefined : r.pct >= 0 ? "#0F6E56" : "var(--danger)" }}>
                     {r.pct !== null ? (r.pct >= 0 ? "+" : "") + r.pct.toFixed(1) + "%" : "—"}
                   </td>
                 </tr>

@@ -40,7 +40,7 @@ const emptyForm = {
 const pairRowStyle: CSSProperties = { display: "flex", gap: 10, alignItems: "flex-end" };
 
 const helperBoxStyle: CSSProperties = {
-  background: "#FAF4FF", border: "1px solid #ECE0F7", borderRadius: 14,
+  background: "var(--lilac)", border: "1px solid #ECE0F7", borderRadius: 14,
   padding: "12px 13px", display: "flex", flexDirection: "column", gap: 10,
 };
 const dividerStyle: CSSProperties = { borderTop: "1px dashed #E0D2EF", paddingTop: 10 };
@@ -48,7 +48,7 @@ const resultRowStyle: CSSProperties = {
   display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10,
 };
 const resultValueStyle: CSSProperties = {
-  fontFamily: "var(--font-prompt), Prompt, sans-serif", fontVariantNumeric: "tabular-nums",
+  fontFamily: "var(--font-kanit), Kanit, sans-serif", fontVariantNumeric: "tabular-nums",
   fontWeight: 600, color: "var(--ink)", fontSize: 13, whiteSpace: "nowrap",
 };
 const subNoteStyle: CSSProperties = { fontSize: 10.5, color: "var(--ink-soft)", lineHeight: 1.4, marginTop: 1 };
@@ -238,7 +238,7 @@ export function GoalsTab() {
           <div style={isRetirement ? helperBoxStyle : { display: "flex", flexDirection: "column", gap: 10 }}>
             {isRetirement && (
               <>
-                <h3 style={{ fontFamily: "var(--font-prompt), Prompt, sans-serif", fontSize: 13, fontWeight: 600, color: "#6B4A8F", margin: 0 }}>
+                <h3 style={{ fontFamily: "var(--font-kanit), Kanit, sans-serif", fontSize: 13, fontWeight: 600, color: "var(--accent)", margin: 0 }}>
                   {t(TR.goals.retireHelperTitle)}
                 </h3>
                 <SegmentedControl
@@ -305,7 +305,7 @@ export function GoalsTab() {
                       <span style={{ fontSize: 12.5, color: "var(--ink)", fontWeight: 600 }}>
                         {fillText(t(TR.goals.retireTotalNeeded), { years: form.retireYears })}
                       </span>
-                      <span style={{ ...resultValueStyle, fontSize: 16, color: "#6B4A8F" }}>{shortBaht(plan.total)}</span>
+                      <span style={{ ...resultValueStyle, fontSize: 16, color: "var(--accent)" }}>{shortBaht(plan.total)}</span>
                     </div>
                     <div style={{ ...subNoteStyle, color: "#7D68A0" }}>{totalExplanation()}</div>
                   </div>
@@ -315,7 +315,7 @@ export function GoalsTab() {
                     would give no reason to open it. */}
                 <div style={dividerStyle}>
                   <button type="button" style={compareBarStyle} onClick={() => setCompareOpen((v) => !v)} aria-expanded={compareOpen}>
-                    <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 13, fontWeight: 600, color: "#6B4A8F" }}>
+                    <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
                       {t(TR.goals.retireCompare)}
                       <ChevronDown size={18} style={{ transform: compareOpen ? "rotate(180deg)" : undefined, transition: "transform 0.15s ease", flexShrink: 0 }} />
                     </span>
@@ -355,12 +355,12 @@ export function GoalsTab() {
                               ...compareGrid, width: "100%", border: "none", padding: "8px 7px", borderRadius: 8,
                               cursor: "pointer", fontSize: 11.5, fontFamily: "inherit", textAlign: "left",
                               background: current ? "#EBDCFA" : "transparent",
-                              color: current ? "#6B4A8F" : "var(--ink-soft)",
+                              color: current ? "var(--accent)" : "var(--ink-soft)",
                             }}
                           >
                             <span>{row.rate}%</span>
-                            <span style={{ ...resultValueStyle, fontSize: 11.5, textAlign: "right", color: current ? "#6B4A8F" : "var(--ink)" }}>{shortBaht(row.total)}</span>
-                            <span style={{ ...resultValueStyle, fontSize: 11.5, textAlign: "right", color: current ? "#6B4A8F" : "var(--ink)" }}>{row.monthly === null ? "—" : fmt(Math.round(row.monthly))}</span>
+                            <span style={{ ...resultValueStyle, fontSize: 11.5, textAlign: "right", color: current ? "var(--accent)" : "var(--ink)" }}>{shortBaht(row.total)}</span>
+                            <span style={{ ...resultValueStyle, fontSize: 11.5, textAlign: "right", color: current ? "var(--accent)" : "var(--ink)" }}>{row.monthly === null ? "—" : fmt(Math.round(row.monthly))}</span>
                           </button>
                         );
                       })}
@@ -376,9 +376,9 @@ export function GoalsTab() {
               <div style={dividerStyle}>
                 <div style={resultRowStyle}>
                   <span style={{ fontSize: 12, color: "var(--ink-soft)", fontWeight: 600 }}>{t(TR.goals.targetAmount)}</span>
-                  <span style={{ ...resultValueStyle, fontSize: 15, color: "#6B4A8F" }}>{fmt(helperTarget)}</span>
+                  <span style={{ ...resultValueStyle, fontSize: 15, color: "var(--accent)" }}>{fmt(helperTarget)}</span>
                 </div>
-                <div style={{ ...subNoteStyle, color: "#6B4A8F" }}>{t(TR.goals.retireSavedNote)}</div>
+                <div style={{ ...subNoteStyle, color: "var(--accent)" }}>{t(TR.goals.retireSavedNote)}</div>
               </div>
             ) : (
               <div style={isRetirement ? dividerStyle : undefined}>
@@ -427,8 +427,8 @@ export function GoalsTab() {
                   </button>
                 </div>
               </div>
-              <div style={{ height: 8, background: "#FBF2FF", borderRadius: 999, overflow: "hidden", marginTop: 9 }}>
-                <div style={{ width: pct + "%", height: "100%", background: "#D4577E", borderRadius: 999 }} />
+              <div style={{ height: 8, background: "var(--lilac)", borderRadius: 999, overflow: "hidden", marginTop: 9 }}>
+                <div style={{ width: pct + "%", height: "100%", background: "var(--accent)", borderRadius: 999 }} />
               </div>
               {monthlyNeeded !== null ? (
                 <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>

@@ -25,7 +25,7 @@ const emptyForm = {
 function statusBadge(status: InsuranceCheckStatus, t: <K extends { th: string; en: string }>(entry: K) => string) {
   if (status === "pass") return { text: t(TR.ratios.pass), bg: "#E1F5EE", color: "#0F6E56" };
   if (status === "fail") return { text: t(TR.ratios.fail), bg: "#FCEBEB", color: "#A32D2D" };
-  return { text: t(TR.ratios.noData), bg: "#F5F3EE", color: "var(--ink-soft)" };
+  return { text: t(TR.ratios.noData), bg: "var(--track)", color: "var(--ink-soft)" };
 }
 
 function CheckCard({ check, t }: { check: InsuranceCheck; t: <K extends { th: string; en: string }>(entry: K) => string }) {
@@ -95,7 +95,7 @@ export function InsuranceView() {
         style={{
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           width: 34, height: 34, borderRadius: "50%",
-          background: "#F5EFFF", color: "#7A5C9E", marginBottom: 12,
+          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
         }}
       >
         <ArrowLeft size={17} />
@@ -126,7 +126,7 @@ export function InsuranceView() {
         </div>
       </Modal>
 
-      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.checksTitle)}</div>
+      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.checksTitle)}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 18 }}>
         {checks.map((c) => <CheckCard key={c.key} check={c} t={t} />)}
       </div>
@@ -147,7 +147,7 @@ export function InsuranceView() {
         </div>
       )}
 
-      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.policiesTitle)}</div>
+      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.policiesTitle)}</div>
       <div className="fp-card" style={{ padding: 10 }}>
         {policies.length ? policies.map((p) => (
           <Row
@@ -170,7 +170,7 @@ export function InsuranceView() {
       </div>
 
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 12 }}>
-        <Link href="/dashboard/financial-ratios" style={{ color: "#7A5C9E", fontWeight: 600, textDecoration: "none" }}>
+        <Link href="/dashboard/financial-ratios" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
           {t(TR.insurance.ratiosFooter)}
         </Link>
       </div>

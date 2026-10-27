@@ -6,11 +6,11 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 
 const navButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
   borderRadius: 999, width: 26, height: 26, fontSize: 13, cursor: "pointer", lineHeight: "1",
 };
 const backToCurrentStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink-soft)",
   borderRadius: 999, padding: "5px 11px", fontSize: 11.5, fontWeight: 500, cursor: "pointer",
 };
 
