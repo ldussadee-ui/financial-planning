@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.24.0] - 2026-10-27
+
+### Changed
+- A new look across the whole app ("Bold Pop"): white cards with a solid dark outline and a hard shadow on a light periwinkle background, flat bright colour blocks, and the Kanit typeface throughout. The old pastel style was soft enough that the important numbers and the buttons didn't stand out from everything else
+- Buttons, chips, the TH/EN switch, the cycle arrows and the floating รับ/จ่าย buttons are now outlined blocks, so what can be tapped is obvious. Buttons on a coloured background use dark text, which reads better than white did on the pastel colours
+- The bottom tab bar is solid white with a dark top line, and the active tab's icon fills yellow. On desktop the sidebar is yellow
+- Investment category colours in the charts are brighter so the slices are easier to tell apart
+
+### Added
+- The overview opens with net worth on a big yellow card, showing how much it moved since last month and a small line of the last few months (from the history the app already records). Investable Net Worth sits at the bottom of the same card
+- Liquid, investment, personal and liabilities are four coloured tiles under it. Tapping a tile lists what's in it, as the old expandable rows did
+- Financial ratios and risk protection sit side by side, with one segment per criterion so the score reads at a glance
+- The cashflow page shows the cycle's income, expenses and what's left as three boxes above the lists
+
 ## [0.23.1] - 2026-10-27
 
 ### Changed

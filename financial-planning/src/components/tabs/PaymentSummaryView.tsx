@@ -19,8 +19,8 @@ import { renderByDay } from "./cashflowShared";
 // the same green; cards take the next colour along; a group that doesn't
 // say how it was paid stays a plain warm grey.
 const CASH_TINT = "#E3F4EA";
-const UNSPECIFIED_TINT = "#F1EDE8";
-const CARD_TINTS = ["#EDE6FF", "#FFE9DA", "#DFEFF8", "#FFE6EC", "#FFF3CF", "#E6EAFF", "#F3E6F6"];
+const UNSPECIFIED_TINT = "var(--track)";
+const CARD_TINTS = ["#EDE6FF", "#FFE9DA", "#DFEFF8", "#FFE6EC", "#FFF3CF", "#E6EAFF", "var(--lilac)"];
 
 function groupTint(group: PaymentGroup, index: number): string {
   if (group.kind === "เงินสด") return CASH_TINT;
@@ -63,7 +63,7 @@ export function PaymentSummaryView() {
         style={{
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           width: 34, height: 34, borderRadius: "50%",
-          background: "#F5EFFF", color: "#7A5C9E", marginBottom: 12,
+          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
         }}
       >
         <ArrowLeft size={17} />

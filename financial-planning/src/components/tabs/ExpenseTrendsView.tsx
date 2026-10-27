@@ -14,7 +14,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl } from "@/components/ui";
 
-const CATEGORY_PALETTE = ["#FF9AA2", "#7FD1C9", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
+const CATEGORY_PALETTE = ["#FF9AA2", "var(--teal)", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
 
 // A category budget is a monthly figure; scale it to however many months
 // the currently-viewed period spans so the comparison stays meaningful.
@@ -23,13 +23,13 @@ const MONTHS_IN_PERIOD: Record<Granularity, number> = { month: 1, halfYear: 6, y
 function toggleStyle(active: boolean): CSSProperties {
   return {
     border: active ? "none" : "1px solid var(--line)",
-    background: active ? "#7FD1C9" : "#FFFCFA",
+    background: active ? "var(--teal)" : "var(--panel)",
     color: active ? "#fff" : "var(--ink-soft)",
     borderRadius: 999, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
   };
 }
 const navButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
   borderRadius: 999, width: 32, height: 32, fontSize: 14, cursor: "pointer",
 };
 const compactAmount = (n: number) => (n >= 1000 ? Math.round(n / 1000) + "k" : String(n));
@@ -101,7 +101,7 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
 
   return (
     <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>{trendTitle}</div>
+      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}>{trendTitle}</div>
       {categories.length ? (
         <>
           <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
@@ -129,7 +129,7 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
                     </Bar>
                   ))
                 : (
-                  <Bar dataKey={selected} name={translateLabel(selected, lang, CATEGORY_LABEL_EN)} fill="#7FD1C9" radius={[6, 6, 0, 0]}>
+                  <Bar dataKey={selected} name={translateLabel(selected, lang, CATEGORY_LABEL_EN)} fill="var(--teal)" radius={[6, 6, 0, 0]}>
                     <LabelList
                       {...barLabelProps}
                       valueAccessor={(entry) => labelFor(Number(entry.payload[selected]) || 0, barWidth(entry))}
@@ -170,7 +170,7 @@ export function ExpenseTrendsView() {
         style={{
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           width: 34, height: 34, borderRadius: "50%",
-          background: "#F5EFFF", color: "#7A5C9E", marginBottom: 12,
+          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
         }}
       >
         <ArrowLeft size={17} />
@@ -183,14 +183,14 @@ export function ExpenseTrendsView() {
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 18 }}>
         <button type="button" onClick={() => setPeriod((p) => shiftPeriod(p, -1))} style={navButtonStyle} aria-label={t(TR.reports.prevPeriod)}>‹</button>
-        <div className="fp-display" style={{ fontSize: 17, fontWeight: 700, color: "#6B5490", minWidth: 160, textAlign: "center" }}>
+        <div className="fp-display" style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)", minWidth: 160, textAlign: "center" }}>
           {periodLabel(period, lang)}
         </div>
         <button type="button" onClick={() => setPeriod((p) => shiftPeriod(p, 1))} style={navButtonStyle} aria-label={t(TR.reports.nextPeriod)}>›</button>
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.overview)}</div>
+        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.overview)}</div>
         <StatRow label={t(TR.reports.total)} value={fmt(total)} big />
         <StatRow label={t(TR.reports.fixedLabel)} value={fmt(fixedTotal)} />
         <StatRow label={t(TR.reports.generalLabel)} value={fmt(variableTotal)} />
@@ -198,7 +198,7 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.byCategory)}</div>
+        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.byCategory)}</div>
         {byCategory.length ? (
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
             <ResponsiveContainer width={180} height={180}>
@@ -235,7 +235,7 @@ export function ExpenseTrendsView() {
                       <div style={{ padding: "4px 0 6px 17px", display: "grid", gap: 4 }}>
                         {c.subs.map((s) => (
                           <div key={s.sub ?? ""} style={{ display: "flex", fontSize: 12.5 }}>
-                            <span style={{ color: s.sub ? "#5B4AA8" : "var(--ink-soft)" }}>{s.sub ? `#${s.sub}` : t(TR.reports.noSub)}</span>
+                            <span style={{ color: s.sub ? "var(--accent)" : "var(--ink-soft)" }}>{s.sub ? `#${s.sub}` : t(TR.reports.noSub)}</span>
                             <span className="fp-num" style={{ marginLeft: "auto" }}>{fmt(s.amount)}</span>
                             <span style={{ width: 40 }} />
                           </div>

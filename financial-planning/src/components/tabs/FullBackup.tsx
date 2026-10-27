@@ -14,11 +14,11 @@ import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 
 
 const actionButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
   borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer",
 };
 const primaryButtonStyle: CSSProperties = {
-  ...actionButtonStyle, border: "none", background: "#7FD1C9", color: "#fff",
+  ...actionButtonStyle, background: "var(--teal)", color: "var(--ink)", boxShadow: "var(--shadow-sm)",
 };
 // Erasing is the one action here with no undo, so it is the only one that
 // wears a warning color — and it stays outline-only rather than a filled
@@ -27,7 +27,7 @@ const dangerButtonStyle: CSSProperties = {
   ...actionButtonStyle, border: "1px solid #E5B4AA", color: "#A32D2D",
 };
 const dangerFilledStyle: CSSProperties = {
-  ...actionButtonStyle, border: "none", background: "#A32D2D", color: "#fff",
+  ...actionButtonStyle, background: "#A32D2D", color: "#fff", boxShadow: "var(--shadow-sm)",
 };
 const warningBoxStyle: CSSProperties = {
   background: "#FCEBEB", color: "#A32D2D", borderRadius: 10, padding: "10px 12px",

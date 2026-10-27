@@ -59,7 +59,7 @@ export function RecurringEntriesView() {
         style={{
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           width: 34, height: 34, borderRadius: "50%",
-          background: "#F5EFFF", color: "#7A5C9E", marginBottom: 12,
+          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
         }}
       >
         <ArrowLeft size={17} />

@@ -17,7 +17,7 @@ import { FullBackup } from "./FullBackup";
 import pkg from "../../../package.json";
 
 const syncButtonStyle = {
-  border: "none", background: "#F5EFFF", color: "#7A5C9E",
+  border: "none", background: "var(--lilac)", color: "var(--accent)",
   borderRadius: 999, padding: "3px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer",
 } as const;
 
@@ -28,7 +28,7 @@ function SpendCompareSettings() {
 
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-      <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.spendCompare)}</div>
+      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.spendCompare)}</div>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
         {t(TR.settings.spendCompareNote)}
       </div>
@@ -41,7 +41,7 @@ function SpendCompareSettings() {
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
         <Field label={t(TR.settings.hourlyWage)}>
           {autoWage ? (
-            <input readOnly value={hourlyWage || 0} style={{ ...inputStyle, background: "#F5F3EE", color: "var(--ink-soft)" }} />
+            <input readOnly value={hourlyWage || 0} style={{ ...inputStyle, background: "var(--track)", color: "var(--ink-soft)" }} />
           ) : (
             <CalcInput value={String(manualWage || "")} onChange={(v) => setManualWage(Number(v) || 0)} placeholder="0" />
           )}
@@ -84,7 +84,7 @@ function BudgetSettings() {
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
       <div onClick={() => setOpen((v) => !v)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
-        <div style={{ fontSize: 13, color: "#645878", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           {t(TR.settings.budgetTitle)}
         </div>
@@ -115,14 +115,14 @@ export function SettingsTab() {
           under headings that say which is which: this one replaces your own
           data wholesale, the ones below append someone else's to it. */}
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.backupSection)}</h2>
+        <h2 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.backupSection)}</h2>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.backupNote)}
         </div>
         <FullBackup />
       </div>
 
-      <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600, margin: "0 0 4px 2px" }}>
+      <h2 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, margin: "0 0 4px 2px" }}>
         {t(TR.settings.mergeHeading)}
       </h2>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", margin: "0 0 12px 2px", lineHeight: 1.55 }}>
@@ -130,7 +130,7 @@ export function SettingsTab() {
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <h3 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.cashflowSection)}</h3>
+        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.cashflowSection)}</h3>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.cashflowExportNote)}
         </div>
@@ -138,7 +138,7 @@ export function SettingsTab() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <h3 style={{ fontSize: 13, color: "#645878", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.assetsSection)}</h3>
+        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.assetsSection)}</h3>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.assetsExportNote)}
         </div>

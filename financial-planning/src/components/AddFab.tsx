@@ -8,10 +8,9 @@ import { TR } from "@/lib/i18n";
 
 const fabStyle: CSSProperties = {
   position: "fixed", left: 20, bottom: 90, zIndex: 40,
-  width: 52, height: 52, borderRadius: "50%",
-  border: "none", background: "#7FD1C9", color: "#fff",
-  display: "flex", alignItems: "center", justifyContent: "center",
-  boxShadow: "0 4px 16px rgba(74,68,88,0.18)", cursor: "pointer",
+  width: 52, height: 52, borderRadius: 16,
+  background: "var(--teal)", color: "var(--ink)",
+  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
 };
 
 const subscribeNever = () => () => {};
@@ -31,7 +30,7 @@ export function AddFab({ onClick }: { onClick: () => void }) {
   const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
   if (!hydrated) return null;
   return createPortal(
-    <button type="button" onClick={onClick} style={fabStyle} aria-label={t(TR.common.addItemAria)}>
+    <button type="button" onClick={onClick} className="fp-pop" style={fabStyle} aria-label={t(TR.common.addItemAria)}>
       <Plus size={24} />
     </button>,
     document.body,

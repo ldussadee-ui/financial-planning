@@ -22,7 +22,7 @@ interface AssetExportFile {
 }
 
 const actionButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
   borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer",
 };
 

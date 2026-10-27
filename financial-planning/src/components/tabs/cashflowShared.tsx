@@ -6,8 +6,8 @@ import { CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import type { CashFlowEntry } from "@/lib/types";
 
 const dateHeaderStyle: CSSProperties = {
-  fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
-  fontSize: 13, fontWeight: 600, color: "#645878",
+  fontFamily: "var(--font-kanit), 'Kanit', sans-serif",
+  fontSize: 13, fontWeight: 600, color: "var(--ink-soft)",
   padding: "14px 14px 6px", marginTop: 6, borderTop: "1px solid var(--line)",
 };
 const firstDateHeaderStyle: CSSProperties = { ...dateHeaderStyle, borderTop: "none", marginTop: 0 };
@@ -27,7 +27,7 @@ function entryIcon(c: CashFlowEntry) {
 }
 
 const subTagStyle: CSSProperties = {
-  display: "inline-block", fontSize: 11.5, fontWeight: 500, color: "#5B4AA8", background: "#EFEAFE",
+  display: "inline-block", fontSize: 11.5, fontWeight: 500, color: "var(--accent)", background: "var(--lilac)",
   borderRadius: 6, padding: "1px 7px", marginLeft: 6, whiteSpace: "nowrap",
 };
 

@@ -8,12 +8,12 @@ export interface CatInfo {
 }
 
 export const CATS: CatInfo[] = [
-  { key: "FixedIncome", label: "ตราสารหนี้", color: "#B7E4C7", liquidity: "สูง" },
-  { key: "Equity", label: "หุ้น", color: "#FFB5A7", liquidity: "สูง" },
-  { key: "MutualFund", label: "กองทุนรวม", color: "#A0CED9", liquidity: "สูง" },
-  { key: "RealEstate", label: "อสังหาริมทรัพย์", color: "#C9B8FF", liquidity: "ต่ำ" },
-  { key: "Gold", label: "ทองคำ", color: "#FFE29A", liquidity: "ต่ำ" },
-  { key: "Alternative", label: "สินทรัพย์ทางเลือก", color: "#FFAFCC", liquidity: "กลาง" },
+  { key: "FixedIncome", label: "ตราสารหนี้", color: "#20C58A", liquidity: "สูง" },
+  { key: "Equity", label: "หุ้น", color: "#FF5C7A", liquidity: "สูง" },
+  { key: "MutualFund", label: "กองทุนรวม", color: "#5AC8FF", liquidity: "สูง" },
+  { key: "RealEstate", label: "อสังหาริมทรัพย์", color: "#9B87FF", liquidity: "ต่ำ" },
+  { key: "Gold", label: "ทองคำ", color: "#FFD84D", liquidity: "ต่ำ" },
+  { key: "Alternative", label: "สินทรัพย์ทางเลือก", color: "#FF9F5A", liquidity: "กลาง" },
 ];
 export const catInfo = (key: InvestmentCategory): CatInfo => CATS.find((c) => c.key === key) || CATS[0];
 
@@ -24,15 +24,15 @@ export const LIQUID_TYPES: LiquidType[] = ["เงินสด", "บัญช�
 // drawn in — changing them there would change the charts. Nothing else has
 // per-row categories worth encoding, since every list is already grouped by
 // exactly the thing a per-category colour would repeat.
-export const LIQUID_COLOR = "#BFE3F0";
-export const PERSONAL_COLOR = "#FFD8A8";
-export const LIABILITY_COLOR = "#DDB3AC";
+export const LIQUID_COLOR = "#B6E0FF";
+export const PERSONAL_COLOR = "#FFE9A8";
+export const LIABILITY_COLOR = "#FFC2CF";
 
 // The two cashflow directions. Shared so the floating button that opens an
 // entry sheet and the confirm button inside it cannot drift apart — teal
 // means income on this screen, so an expense confirming in teal reads wrong.
-export const INCOME_COLOR = "#7FD1C9";
-export const EXPENSE_COLOR = "#FF9AA2";
+export const INCOME_COLOR = "#20C58A";
+export const EXPENSE_COLOR = "#FF5C7A";
 
 export const PERSONAL_TYPES: PersonalItemType[] = ["รถยนต์", "บ้านอยู่เอง", "ของสะสม", "เครื่องประดับ", "เฟอร์นิเจอร์", "อื่นๆ"];
 export const GOAL_TYPES: GoalType[] = ["เกษียณ", "บ้าน", "การศึกษา", "ท่องเที่ยว", "กองทุนฉุกเฉิน", "อื่นๆ"];

@@ -37,11 +37,11 @@ function withSeparators(raw: string): string {
 
 const keyStyle: CSSProperties = {
   border: "none", borderRadius: 14, padding: "16px 0", fontSize: 18, fontWeight: 600,
-  cursor: "pointer", background: "#FFFCFA", color: "var(--ink)",
+  cursor: "pointer", background: "var(--panel)", color: "var(--ink)",
 };
-const opKeyStyle: CSSProperties = { ...keyStyle, background: "#F5EFFF", color: "#7A5C9E" };
+const opKeyStyle: CSSProperties = { ...keyStyle, background: "var(--lilac)", color: "var(--accent)" };
 const muteKeyStyle: CSSProperties = { ...keyStyle, background: "#FFEFE6", color: "#D07A4E" };
-const eqKeyStyle: CSSProperties = { ...keyStyle, background: "#D4577E", color: "#fff" };
+const eqKeyStyle: CSSProperties = { ...keyStyle, background: "var(--accent)", color: "#fff" };
 const confirmButtonStyle: CSSProperties = {
   width: "100%", marginTop: 12, border: "none", borderRadius: 14, padding: "13px 0",
   fontSize: 14.5, fontWeight: 700, cursor: "pointer", background: "#0F6E56", color: "#fff",
@@ -93,7 +93,7 @@ function CalcKeypad({ initial, onConfirm }: { initial: string; onConfirm: (value
 
   return (
     <div>
-      <div style={{ background: "#FBF7F2", borderRadius: 16, padding: "16px 18px", marginBottom: 12, textAlign: "right" }}>
+      <div style={{ background: "var(--track)", borderRadius: 16, padding: "16px 18px", marginBottom: 12, textAlign: "right" }}>
         <div style={{ fontSize: 12.5, color: "var(--ink-soft)", height: 16 }}>
           {accumulator !== null && operator ? `${fmtNum(accumulator)} ${operator}` : " "}
         </div>

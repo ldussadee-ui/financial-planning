@@ -11,7 +11,7 @@ export function SectionHeader({ title, sub, chip }: { title: string; sub?: strin
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 26, flexWrap: "wrap", gap: 10 }}>
       <div>
-        <h1 className="fp-display" style={{ fontSize: 26, fontWeight: 700, color: "#6B5490" }}>{title}</h1>
+        <h1 className="fp-display" style={{ fontSize: 28, fontWeight: 600, color: "var(--ink)", lineHeight: 1.2 }}>{title}</h1>
         {sub && <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 5 }}>{sub}</div>}
       </div>
       {chip && (
@@ -167,9 +167,9 @@ export function Modal({
         onPointerCancel={onSheetPointerUp}
       >
         <div onPointerDown={onHandlePointerDown} style={{ cursor: "grab", touchAction: "none", marginBottom: 8 }}>
-          <div style={{ width: 36, height: 5, background: "#e3d9ce", borderRadius: 999, margin: "0 auto 14px" }} />
+          <div style={{ width: 36, height: 5, background: "var(--line)", borderRadius: 999, margin: "0 auto 14px" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 id={titleId} className="fp-display" style={{ fontSize: 18, fontWeight: 600, color: "#6B5490" }}>{title}</h2>
+            <h2 id={titleId} className="fp-display" style={{ fontSize: 19, fontWeight: 600, color: "var(--ink)" }}>{title}</h2>
             <button
               type="button"
               onClick={onClose}
@@ -205,13 +205,13 @@ export function BudgetBar({ spent, budget }: { spent: number; budget: number }) 
   if (!budget) return null;
   const pct = Math.min((spent / budget) * 100, 100);
   const over = spent > budget;
-  const color = over ? "#FF8C7A" : pct >= 80 ? "#D07A4E" : "#0F6E56";
+  const color = over ? "var(--danger)" : pct >= 80 ? "#FF9F5A" : "var(--teal)";
   return (
     <div>
-      <div style={{ height: 5, background: "#F0E9E2", borderRadius: 999, overflow: "hidden", marginTop: 4 }}>
+      <div style={{ height: 9, background: "var(--track)", border: "1.5px solid var(--border)", borderRadius: 999, overflow: "hidden", marginTop: 4 }}>
         <div style={{ width: pct + "%", height: "100%", background: color, borderRadius: 999 }} />
       </div>
-      <div className="fp-num" style={{ fontSize: 12, color: over ? "#FF8C7A" : "var(--ink-soft)", marginTop: 2 }}>
+      <div className="fp-num" style={{ fontSize: 12, color: over ? "#C2243F" : "var(--ink-soft)", marginTop: 2 }}>
         {fmt(spent)} / {fmt(budget)}{over ? t(TR.common.overBudget) : ""}
       </div>
     </div>
@@ -223,8 +223,8 @@ export function EmptyState({ text }: { text: string }) {
 }
 
 export const inputStyle: CSSProperties = {
-  border: "1px solid var(--line)", borderRadius: 12, padding: "8px 12px",
-  fontSize: 13, background: "#FFFCFA", color: "var(--ink)", minWidth: 130,
+  border: "1.5px solid var(--border)", borderRadius: 12, padding: "8px 12px",
+  fontSize: 13, background: "var(--panel)", color: "var(--ink)", minWidth: 130,
 };
 export const deleteBtn: CSSProperties = { border: "none", background: "transparent", color: "var(--ink-soft)", cursor: "pointer", padding: 4, borderRadius: 8 };
 
@@ -242,7 +242,7 @@ export const formPairCellStyle: CSSProperties = { flex: 1, minWidth: 0 };
 export const formActionsStyle: CSSProperties = { display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 3 };
 export const fullInputStyle: CSSProperties = { ...inputStyle, width: "100%", minWidth: 0 };
 export const cancelButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
   borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
 };
 
@@ -285,12 +285,12 @@ export function SegmentedControl<T extends string>({
   const idx = Math.max(0, options.findIndex((o) => o.value === value));
   const thumbAt = thumb ? thumb.index : idx;
   return (
-    <div style={{ position: "relative", display: "flex", background: "var(--track)", borderRadius: small ? 9 : 11, padding: 3 }}>
+    <div style={{ position: "relative", display: "flex", background: "var(--panel)", border: "2px solid var(--border)", borderRadius: small ? 11 : 13, padding: 3 }}>
       <div
         style={{
           position: "absolute", top: 3, bottom: 3,
           left: `calc(${(thumbAt * 100) / n}% + 3px)`, width: `calc(${100 / n}% - 6px)`,
-          background: "#fff", borderRadius: small ? 7 : 8, boxShadow: "0 1px 4px rgba(74,68,88,0.18)",
+          background: "var(--yellow)", borderRadius: small ? 7 : 8, border: "2px solid var(--border)",
           transition: thumb?.tracking ? "none" : "left 0.2s ease",
         }}
       />
@@ -317,15 +317,16 @@ export function SegmentedControl<T extends string>({
 // form already carries a colour of its own — the expense entry sheet is
 // reached from a pink button and is about spending, so a teal confirm there
 // would wear the exact colour that same screen uses to mean income.
-export function AddButton({ onClick, label, color = "#7FD1C9", icon }: { onClick: () => void; label?: string; color?: string; icon?: ReactNode }) {
+export function AddButton({ onClick, label, color = "var(--teal)", icon }: { onClick: () => void; label?: string; color?: string; icon?: ReactNode }) {
   const { t } = useLanguage();
   return (
     <button
       type="button"
       onClick={onClick}
+      className="fp-pop"
       style={{
-        display: "flex", alignItems: "center", gap: 6, background: color, color: "#fff",
-        border: "none", borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
+        display: "flex", alignItems: "center", gap: 6, background: color, color: "var(--ink)",
+        borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
       }}
     >
       {icon ?? <Plus size={14} />} {label ?? t(TR.common.add)}
@@ -346,14 +347,14 @@ export function Group({ title, amount, tint, children }: { title: string; amount
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
-        <h2 style={{ fontSize: 14, color: "#645878", fontWeight: 600 }}>{title}</h2>
+        <h2 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600 }}>{title}</h2>
         {amount && (
-          <span className="fp-num" style={{ marginLeft: "auto", fontSize: 17, fontWeight: 700, color: "var(--ink)" }}>
+          <span className="fp-num" style={{ marginLeft: "auto", fontSize: 17, fontWeight: 600, color: "var(--ink)" }}>
             {amount}
           </span>
         )}
       </div>
-      <div className="fp-card" style={{ padding: 8, background: items.length ? tint : "#FAF6F1" }}>
+      <div className="fp-card" style={{ padding: 8, background: items.length ? tint : "var(--track)" }}>
         {items.length ? items : <EmptyState text={t(TR.common.noItems)} />}
       </div>
     </div>
@@ -380,18 +381,18 @@ export function NestedGroup({
   const { t } = useLanguage();
   const headerStyle: CSSProperties = {
     display: "flex", alignItems: "center", gap: 7, width: "100%",
-    fontFamily: "var(--font-prompt), 'Prompt', sans-serif",
+    fontFamily: "var(--font-kanit), 'Kanit', sans-serif",
     padding: "8px 14px 4px",
   };
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
-        <h2 style={{ display: "inline", fontSize: 20, color: accent, fontWeight: 700 }}>{label}</h2>
-        <span className="fp-num" style={{ fontSize: 20, fontWeight: 700, color: accent }}>{amount}</span>
+        <h2 style={{ display: "inline", fontSize: 20, color: accent, fontWeight: 600 }}>{label}</h2>
+        <span className="fp-num" style={{ fontSize: 20, fontWeight: 600, color: accent }}>{amount}</span>
       </div>
       <div className="fp-card" style={{ padding: 8, display: "flex", flexDirection: "column", gap: 8 }}>
         {subGroups.map((sg) => {
-          const color = sg.dot || "#645878";
+          const color = sg.dot || "var(--ink-soft)";
           const foldable = !!(sg.id && onToggle);
           const folded = foldable && !!collapsed?.includes(sg.id!);
           const headerContent = (
@@ -411,7 +412,7 @@ export function NestedGroup({
             </>
           );
           return (
-            <div key={sg.id ?? sg.label} style={{ background: sg.tint, borderRadius: 12, padding: folded ? "2px 0 6px" : "2px 0 4px" }}>
+            <div key={sg.id ?? sg.label} style={{ background: sg.tint, border: "1.5px solid var(--border)", borderRadius: 12, padding: folded ? "2px 0 6px" : "2px 0 4px" }}>
               {foldable ? (
                 <button
                   type="button"
@@ -443,11 +444,11 @@ export function Switch({ checked, onChange, ariaLabel }: { checked: boolean; onC
       onClick={(e) => { e.stopPropagation(); onChange(!checked); }}
       style={{
         width: 40, height: 24, borderRadius: 999, border: "none", padding: 2, flexShrink: 0,
-        background: checked ? "#0F6E56" : "#E4DFEA", cursor: "pointer",
+        background: checked ? "var(--teal)" : "var(--track)", outline: "2px solid var(--border)", outlineOffset: -2, cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: checked ? "flex-end" : "flex-start",
       }}
     >
-      <span style={{ width: 20, height: 20, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+      <span style={{ width: 20, height: 20, borderRadius: "50%", background: "#fff", border: "2px solid var(--border)" }} />
     </button>
   );
 }
@@ -468,7 +469,7 @@ export function Row({
     >
       {icon}
       <div style={{ flex: 1, minWidth: 0, fontSize: 14 }}>{left}</div>
-      {date && <span style={{ fontSize: 12, color: "var(--ink-soft)", background: "#F5EFFF", padding: "2px 8px", borderRadius: 999 }}>{date}</span>}
+      {date && <span style={{ fontSize: 12, color: "var(--ink)", background: "var(--lilac)", padding: "2px 8px", borderRadius: 999 }}>{date}</span>}
       <span className="fp-num" style={{ fontSize: 14, fontWeight: 600 }}>{right}</span>
       {onClick && (
         <span style={{ color: "var(--ink-soft)", display: "flex" }} aria-hidden>
@@ -492,20 +493,20 @@ export function Row({
 }
 
 const dayPickerButtonStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink)",
-  borderRadius: 999, padding: "7px 14px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
+  borderRadius: 999, padding: "6px 14px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
 };
 const dayPickerPopoverStyle: CSSProperties = {
   position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 30,
-  background: "#fff", borderRadius: 18, boxShadow: "0 8px 24px rgba(74,68,88,0.12)",
+  background: "var(--panel)", borderRadius: 16, border: "2px solid var(--border)", boxShadow: "var(--shadow)",
   padding: 14, width: 260,
 };
 function dayCellStyle(active: boolean): CSSProperties {
   return {
     width: 26, height: 26, borderRadius: 8, border: "none", fontSize: 11.5, cursor: "pointer",
     display: "flex", alignItems: "center", justifyContent: "center",
-    background: active ? "#7FD1C9" : "#FBF7F2",
-    color: active ? "#fff" : "var(--ink-soft)", fontWeight: active ? 700 : 400,
+    background: active ? "var(--yellow)" : "var(--track)",
+    color: active ? "var(--ink)" : "var(--ink-soft)", fontWeight: active ? 700 : 400,
   };
 }
 

@@ -52,7 +52,7 @@ export function BudgetEditorModal({ open, onClose }: { open: boolean; onClose: (
             type="button"
             onClick={onClose}
             style={{
-              border: "none", background: "#7FD1C9", color: "#fff", borderRadius: 999,
+              border: "2px solid var(--border)", boxShadow: "var(--shadow-sm)", background: "var(--teal)", color: "var(--ink)", borderRadius: 999,
               padding: "9px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer",
             }}
           >

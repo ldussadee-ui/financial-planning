@@ -1,19 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Prompt, Sarabun } from "next/font/google";
+import { Kanit } from "next/font/google";
 import { DbInit } from "@/components/DbInit";
 import { PwaRegister } from "@/components/PwaRegister";
 import { NetWorthSnapshotter } from "@/components/NetWorthSnapshotter";
 import { RecurringGenerator } from "@/components/RecurringGenerator";
 import "./globals.css";
 
-const prompt = Prompt({
-  variable: "--font-prompt",
-  subsets: ["latin", "thai"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const sarabun = Sarabun({
-  variable: "--font-sarabun",
+const kanit = Kanit({
+  variable: "--font-kanit",
   subsets: ["latin", "thai"],
   weight: ["400", "500", "600", "700"],
 });
@@ -33,12 +27,12 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#FFF8F1",
+  themeColor: "#EEF3FF",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="th" className={`${prompt.variable} ${sarabun.variable}`}>
+    <html lang="th" className={kanit.variable}>
       <body>
         <DbInit />
         <PwaRegister />

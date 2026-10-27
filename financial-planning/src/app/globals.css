@@ -1,16 +1,25 @@
 :root {
-  --bg: #fff8f1;
+  /* Bold Pop: light periwinkle ground, white cards with a solid ink outline
+     and a hard (unblurred) offset shadow, flat saturated colour blocks. */
+  --bg: #eef3ff;
   --panel: #ffffff;
-  --ink: #4a4458;
-  --ink-soft: #645878;
-  --pink: #ff9aa2;
-  --teal: #7fd1c9;
-  --lav: #b4a7f5;
-  --peach: #ffd8a8;
-  --mint: #b7e4c7;
-  --line: #f2e9e1;
-  --danger: #ff8c7a;
-  --track: #f0e6db;
+  --ink: #16131f;
+  --ink-soft: #4b465a;
+  --border: #16131f;
+  --shadow: 3px 3px 0 #16131f;
+  --shadow-sm: 2px 2px 0 #16131f;
+  --accent: #5b3df5;
+  --yellow: #ffd84d;
+  --pink: #ff5c7a;
+  --teal: #20c58a;
+  --lav: #cfc4ff;
+  --peach: #ffe9a8;
+  --mint: #b6f0d2;
+  --rose: #ffc2cf;
+  --lilac: #efeaff;
+  --line: #e6e1f2;
+  --danger: #ff5c7a;
+  --track: #efeaff;
 }
 
 html {
@@ -27,7 +36,7 @@ body {
   min-height: 100%;
   color: var(--ink);
   background: var(--bg);
-  font-family: var(--font-sarabun), "Sarabun", sans-serif;
+  font-family: var(--font-kanit), "Kanit", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -44,16 +53,28 @@ a {
 }
 
 .fp-display {
-  font-family: var(--font-prompt), "Prompt", sans-serif;
+  font-family: var(--font-kanit), "Kanit", sans-serif;
 }
 .fp-num {
-  font-family: var(--font-prompt), "Prompt", sans-serif;
+  font-family: var(--font-kanit), "Kanit", sans-serif;
   font-variant-numeric: tabular-nums;
 }
 .fp-card {
   background: var(--panel);
-  border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(74, 68, 88, 0.06);
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+/* For anything pressable that should read as a raised block: the shadow
+   shrinks on press so the tap feels like pushing the block down. */
+.fp-pop {
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.fp-pop:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--border);
 }
 /* `vh` on mobile Safari is computed against the viewport with the browser
    chrome hidden, not the currently-visible one — a bottom-sheet sized off
@@ -66,10 +87,11 @@ a {
   max-height: 88dvh;
 }
 .fp-chip {
-  background: #f1e7fa;
-  color: #6b4a8f;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--border);
   border-radius: 999px;
-  font-family: var(--font-prompt), "Prompt", sans-serif;
+  font-family: var(--font-kanit), "Kanit", sans-serif;
   font-size: 12px;
   font-weight: 600;
   padding: 9px 16px;
@@ -87,7 +109,7 @@ a {
   transition: background 0.15s ease;
 }
 .fp-row:hover {
-  background: var(--bg);
+  background: var(--lilac);
 }
 /* Inset to roughly clear the row icon (30px) + row padding/gap, matching
    the grouped-list divider style instead of a full-width line. */
@@ -101,20 +123,20 @@ a {
 }
 input,
 select {
-  font-family: var(--font-sarabun), "Sarabun", sans-serif;
+  font-family: var(--font-kanit), "Kanit", sans-serif;
 }
 ::placeholder {
-  color: #c9c1d6;
+  color: #a9a3b8;
 }
 button {
-  font-family: var(--font-sarabun), "Sarabun", sans-serif;
+  font-family: var(--font-kanit), "Kanit", sans-serif;
 }
 /* No element in the app set its own focus style, so keyboard users had no
    way to see where they were. `:focus-visible` (not `:focus`) keeps mouse
    clicks free of the ring while keyboard/assistive-tech navigation always
    gets one. */
 :focus-visible {
-  outline: 2px solid #7a5c9e;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 @keyframes fp-wiggle {

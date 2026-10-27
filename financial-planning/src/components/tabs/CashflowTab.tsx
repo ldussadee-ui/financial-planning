@@ -26,17 +26,17 @@ import type { CashFlowEntry } from "@/lib/types";
 const shortcutLinkStyle: CSSProperties = {
   flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center",
   textAlign: "center", whiteSpace: "normal", lineHeight: 1.25,
-  background: "#F1E7FA", color: "#6B4A8F", border: "none", fontWeight: 600,
-  borderRadius: 999, padding: "8px 6px", fontSize: 12,
+  background: "var(--panel)", color: "var(--ink)", border: "2px solid var(--border)", fontWeight: 500,
+  borderRadius: 999, padding: "7px 6px", fontSize: 12,
 };
 const editChipStyle: CSSProperties = {
-  border: "1px solid var(--line)", background: "#FFFCFA", color: "var(--ink-soft)",
+  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink-soft)",
   borderRadius: 999, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", flexShrink: 0,
 };
 // Dashed and tinted rather than a solid card: it is an offer to set
 // something up, not a report of anything that exists yet.
 const budgetInviteStyle: CSSProperties = {
-  width: "100%", textAlign: "left", border: "1px dashed #DED0EF", background: "#FAF6FF",
+  width: "100%", textAlign: "left", border: "2px dashed var(--border)", background: "var(--lilac)",
   borderRadius: 14, padding: "15px 17px", marginTop: 18, cursor: "pointer",
   display: "flex", alignItems: "center", gap: 11, fontFamily: "inherit",
 };
@@ -124,6 +124,8 @@ export function CashflowTab() {
   const investExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class === "Invest");
   const varExp = cycleCF.filter((c) => c.type === "Expense" && c.expense_class !== "Fixed" && c.expense_class !== "Invest");
   const budgetStatus = categoryBudgetStatus(cycleCF, budgetMap);
+  const totalIncome = sum(incomeActive) + sum(incomePassive);
+  const totalExpense = sum(fixedExp) + sum(varExp) + sum(investExp);
 
   return (
     <div>
@@ -153,8 +155,26 @@ export function CashflowTab() {
         </span>
       </div>
 
+      {/* The cycle's bottom line before any detail: what came in, what went
+          out, and what is left — the last on its own colour block since it
+          is the number the rest of the page explains. */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10, marginBottom: 18 }}>
+        {[
+          { key: "in", label: t(TR.cashflow.income), value: totalIncome, bg: "var(--panel)", color: "#0A8A55" },
+          { key: "out", label: t(TR.cashflow.expense), value: totalExpense, bg: "var(--panel)", color: "var(--ink)" },
+          { key: "left", label: t(TR.cashflow.remaining), value: totalIncome - totalExpense, bg: "var(--accent)", color: "#fff" },
+        ].map((c) => (
+          <div key={c.key} className="fp-card" style={{ background: c.bg, color: c.color, padding: "10px 12px", minWidth: 0 }}>
+            <div style={{ fontSize: 12, color: c.key === "left" ? "#fff" : "var(--ink-soft)" }}>{c.label}</div>
+            <div className="fp-num" style={{ fontSize: 17, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {c.value < 0 ? "−" : ""}{fmt(Math.abs(c.value)).replace("฿", "")}
+            </div>
+          </div>
+        ))}
+      </div>
+
       {recurringNotice.length > 0 && (
-        <div className="fp-card" style={{ padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 12.5, background: "#F5EFFF" }}>
+        <div className="fp-card" style={{ padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 12.5, background: "var(--lilac)" }}>
           <div style={{ flex: 1 }}>
             <b>{t(TR.recurring.noticePrefix)}</b>{" "}
             {recurringNotice.map((n) => `${translateLabel(n.category, lang, CATEGORY_LABEL_EN)}${n.sub ? ` #${n.sub}` : ""} ${fmt(n.amount)}`).join(", ")}
@@ -172,7 +192,7 @@ export function CashflowTab() {
 
       <NestedGroup
         label={t(TR.cashflow.income)}
-        amount={fmt(sum(incomeActive) + sum(incomePassive))}
+        amount={fmt(totalIncome)}
         accent="#0F6E56"
         collapsed={collapsedGroups}
         onToggle={toggleGroup}
@@ -183,7 +203,7 @@ export function CashflowTab() {
       />
       <NestedGroup
         label={t(TR.cashflow.expense)}
-        amount={fmt(sum(fixedExp) + sum(varExp) + sum(investExp))}
+        amount={fmt(totalExpense)}
         accent="#9C4E28"
         collapsed={collapsedGroups}
         onToggle={toggleGroup}
@@ -201,7 +221,7 @@ export function CashflowTab() {
       {budgetStatus.length > 0 ? (
         <div className="fp-card" style={{ padding: 20, marginTop: 18 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 12 }}>
-            <h2 style={{ fontSize: 13, color: "#645878", fontWeight: 600 }}>🎯 {t(TR.cashflow.budgetThisCycle)}</h2>
+            <h2 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600 }}>{t(TR.cashflow.budgetThisCycle)}</h2>
             <button type="button" onClick={() => setBudgetOpen(true)} style={editChipStyle}>
               {t(TR.cashflow.budgetEdit)}
             </button>
@@ -222,7 +242,7 @@ export function CashflowTab() {
         <button type="button" onClick={() => setBudgetOpen(true)} style={budgetInviteStyle}>
           <span style={{ fontSize: 19, flexShrink: 0 }}>🎯</span>
           <span style={{ minWidth: 0 }}>
-            <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#6B4A8F" }}>
+            <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
               {t(TR.cashflow.budgetInviteTitle)}
             </span>
             <span style={{ display: "block", fontSize: 11.5, color: "var(--ink-soft)", lineHeight: 1.45, marginTop: 1 }}>

@@ -60,11 +60,12 @@ function DraggableButton({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onClick={handleClick}
+      className="fp-pop"
       style={{
         ...posStyle,
-        border: "none", background: color, color: "#fff", borderRadius: 999,
-        width: 96, padding: "14px 0", fontSize: 13, fontWeight: 600, cursor: "grab",
-        boxShadow: "0 4px 16px rgba(74,68,88,0.18)", touchAction: "none", userSelect: "none",
+        background: color, color: "var(--ink)", borderRadius: 16,
+        width: 96, padding: "12px 0", fontSize: 13, fontWeight: 600, cursor: "grab",
+        touchAction: "none", userSelect: "none",
       }}
     >
       {label}

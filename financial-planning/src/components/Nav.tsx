@@ -24,12 +24,12 @@ export function Sidebar() {
     <div
       className="fp-sidebar"
       style={{
-        width: 236, background: "#F5EBF7", flexShrink: 0, padding: "24px 16px",
+        width: 236, background: "var(--yellow)", borderRight: "2px solid var(--border)", flexShrink: 0, padding: "24px 16px",
       }}
     >
       <div style={{ padding: "0 8px 24px 8px" }}>
-        <div className="fp-display" style={{ fontSize: 21, fontWeight: 700, color: "#7A5C9E" }}>{t(TR.nav.appName)}</div>
-        <div style={{ fontSize: 12, color: "#645878", marginTop: 3 }}>{t(TR.nav.appTagline)}</div>
+        <div className="fp-display" style={{ fontSize: 22, fontWeight: 600, color: "var(--ink)" }}>{t(TR.nav.appName)}</div>
+        <div style={{ fontSize: 12, color: "var(--ink)", marginTop: 3 }}>{t(TR.nav.appTagline)}</div>
       </div>
       <nav aria-label={t(TR.nav.mainNavAria)} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         {NAV.map((n) => {
@@ -43,9 +43,10 @@ export function Sidebar() {
               style={{
                 display: "flex", alignItems: "center", gap: 10, padding: "13px 12px",
                 cursor: "pointer", textAlign: "left",
-                background: active ? "#FFFFFF" : "transparent",
-                color: active ? "#7A5C9E" : "#645878", fontSize: 14, fontWeight: active ? 600 : 400,
-                boxShadow: "none",
+                background: active ? "var(--panel)" : "transparent",
+                border: active ? "2px solid var(--border)" : "2px solid transparent",
+                color: "var(--ink)", fontSize: 14, fontWeight: active ? 600 : 400,
+                boxShadow: active ? "var(--shadow-sm)" : "none",
               }}
             >
               <Icon size={16} strokeWidth={2} />
@@ -67,9 +68,8 @@ export function BottomNav() {
       aria-label={t(TR.nav.quickNavAria)}
       style={{
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: "rgba(255,255,255,0.72)",
-        backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)",
-        borderTop: "1px solid rgba(74,68,88,0.08)",
+        background: "var(--panel)",
+        borderTop: "2px solid var(--border)",
         display: "flex", justifyContent: "space-around",
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
@@ -85,11 +85,11 @@ export function BottomNav() {
             href={n.href}
             style={{
               flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-              padding: "8px 2px 6px", color: active ? "#7A5C9E" : "#645878", fontSize: 11,
+              padding: "8px 2px 6px", color: active ? "var(--ink)" : "var(--ink-soft)", fontSize: 11,
               fontWeight: active ? 600 : 400,
             }}
           >
-            <Icon size={19} strokeWidth={2} fill={active ? "#7A5C9E" : "none"} />
+            <Icon size={20} strokeWidth={2} fill={active ? "var(--yellow)" : "none"} />
             {t(n.label)}
           </Link>
         );
@@ -118,7 +118,8 @@ export function SettingsShortcut() {
       style={{
         position: "relative", alignItems: "center", justifyContent: "center",
         width: 34, height: 34, borderRadius: "50%",
-        background: active ? "#7A5C9E" : "var(--track)", color: active ? "#fff" : "#645878",
+        background: active ? "var(--yellow)" : "var(--panel)", color: "var(--ink)",
+        border: "2px solid var(--border)",
       }}
     >
       <Settings size={17} strokeWidth={2} />
@@ -127,7 +128,7 @@ export function SettingsShortcut() {
           aria-hidden
           style={{
             position: "absolute", top: 1, right: 1, width: 9, height: 9, borderRadius: "50%",
-            background: "#E0603F", boxShadow: "0 0 0 2px var(--bg)",
+            background: "var(--pink)", border: "1.5px solid var(--border)",
           }}
         />
       )}
