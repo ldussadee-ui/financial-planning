@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.4] - 2026-10-28
+
+### Changed
+- On รายรับ-จ่าย the cycle row and the start-day button now fit on one line on a phone. Before, they took two lines and the › arrow could drop onto a line of its own. "รอบบัญชีปัจจุบัน" is now a small line above the dates, centred between ‹ and ›, and the start-day button is shortened to "เริ่ม 25" at the end of the row. Tapping it still opens the day picker, which now opens towards the left so it stays on screen. When you step back to an older cycle, the "กลับไปรอบปัจจุบัน" button appears on a second line only then. The payment summary uses the same row, so it changes the same way
+
 ## [0.26.3] - 2026-10-28
 
 ### Changed

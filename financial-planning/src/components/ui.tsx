@@ -525,7 +525,7 @@ export function Row({
 
 const dayPickerButtonStyle: CSSProperties = {
   border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
-  borderRadius: 999, padding: "6px 14px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+  borderRadius: 999, padding: "5px 12px 5px 6px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
 };
 const dayPickerPopoverStyle: CSSProperties = {
   position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 30,
@@ -542,7 +542,7 @@ function dayCellStyle(active: boolean): CSSProperties {
 }
 
 export function DayPicker({
-  value, onChange, shiftWeekend, onShiftWeekendChange, buttonLabel, buttonIcon = "calendar", popoverTitle, maxDay = 28,
+  value, onChange, shiftWeekend, onShiftWeekendChange, buttonLabel, buttonIcon = "calendar", popoverTitle, maxDay = 28, alignRight,
 }: {
   value: number;
   onChange: (day: number) => void;
@@ -552,6 +552,8 @@ export function DayPicker({
   buttonIcon?: IconName;
   popoverTitle?: string;
   maxDay?: number;
+  // Open the calendar leftwards, for a button at the right end of a row.
+  alignRight?: boolean;
 }) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -565,11 +567,11 @@ export function DayPicker({
   }, []);
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
-      <button type="button" onClick={() => setOpen((v) => !v)} style={dayPickerButtonStyle}>
+      <button type="button" onClick={() => setOpen((v) => !v)} style={dayPickerButtonStyle} aria-label={`${t(TR.common.startDay)} ${value}`}>
         <IconLabel name={buttonIcon}>{buttonLabel ?? t(TR.common.startDay)} {value}</IconLabel>
       </button>
       {open && (
-        <div style={dayPickerPopoverStyle}>
+        <div style={alignRight ? { ...dayPickerPopoverStyle, left: "auto", right: 0 } : dayPickerPopoverStyle}>
           <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 8, fontWeight: 600 }}>{popoverTitle ?? t(TR.common.chooseCycleStartDay)}</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 5 }}>
             {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (

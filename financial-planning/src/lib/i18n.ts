@@ -91,6 +91,7 @@ export const TR = {
     deleteItemConfirm: { th: "ลบรายการนี้ใช่หรือไม่?", en: "Delete this entry?" } as Text,
     deleteItemAria: { th: "ลบรายการ", en: "Delete entry" } as Text,
     startDay: { th: "เริ่มวันที่", en: "Starts on day" } as Text,
+    startDayShort: { th: "เริ่ม", en: "Starts" } as Text,
     chooseCycleStartDay: { th: "เลือกวันเริ่มรอบบัญชี", en: "Choose the cycle start day" } as Text,
     weekendShiftNote: { th: "ถ้าวันเริ่มตรงเสาร์-อาทิตย์ เลื่อนเป็นวันศุกร์ก่อนหน้า", en: "If the start day falls on a weekend, shift it to the preceding Friday" } as Text,
     calculatorTitle: { th: "คำนวณจำนวนเงิน", en: "Calculate Amount" } as Text,

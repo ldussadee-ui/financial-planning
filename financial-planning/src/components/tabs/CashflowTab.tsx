@@ -134,11 +134,22 @@ export function CashflowTab() {
     <div>
       <SectionHeader title={t(TR.cashflow.title)} icon="cashflow" sub={t(TR.cashflow.subtitle)} />
 
-      <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 10 }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
-          <CycleNav offset={cycleOffset} range={cycleRange} onChange={setCycleOffset} />
-          <DayPicker value={cycleStartDay} onChange={setCycleStartDay} shiftWeekend={shiftWeekend} onShiftWeekendChange={setShiftWeekend} />
-        </span>
+      <div className="fp-card" style={{ padding: "14px 16px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+        <CycleNav
+          offset={cycleOffset}
+          range={cycleRange}
+          onChange={setCycleOffset}
+          trailing={
+            <DayPicker
+              value={cycleStartDay}
+              onChange={setCycleStartDay}
+              shiftWeekend={shiftWeekend}
+              onShiftWeekendChange={setShiftWeekend}
+              buttonLabel={t(TR.common.startDayShort)}
+              alignRight
+            />
+          }
+        />
         <span style={{ display: "flex", gap: 6 }}>
           <Link href="/cashflow/reports" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
             <PopIcon name="report" />{t(TR.cashflow.monthlyReport)}
