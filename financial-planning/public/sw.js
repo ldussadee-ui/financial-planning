@@ -8,7 +8,7 @@
 // Bump when a cached file changes in place (same URL, new content) — the app
 // icons, for one. The new worker's activate step then deletes the old cache,
 // instead of it serving the stale copy first until it's revalidated.
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAME = `fp-shell-${CACHE_VERSION}`;
 const OFFLINE_URL = "/dashboard";
 
