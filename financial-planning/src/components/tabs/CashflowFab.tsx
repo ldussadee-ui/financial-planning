@@ -6,7 +6,7 @@ import { EXPENSE_COLOR, INCOME_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 import type { CashFlowType } from "@/lib/types";
-import { IconLabel } from "@/components/icons";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 
 const DRAG_THRESHOLD = 6;
 
@@ -49,6 +49,7 @@ function DraggableButton({
     onOpen(type);
   };
 
+  const Arrow = type === "Income" ? ArrowDownLeft : ArrowUpRight;
   const posStyle: CSSProperties = pos
     ? { position: "fixed", left: pos.left, top: pos.top, zIndex: 40 }
     : { position: "fixed", right: defaultRight, bottom: defaultBottom, zIndex: 40 };
@@ -65,11 +66,15 @@ function DraggableButton({
       style={{
         ...posStyle,
         background: color, color: "var(--ink)", borderRadius: 16,
-        width: 96, padding: "12px 0", fontSize: 13, fontWeight: 600, cursor: "grab",
+        minWidth: 96, padding: "11px 14px", fontSize: 16, fontWeight: 700, cursor: "grab",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
         touchAction: "none", userSelect: "none",
       }}
     >
-      <IconLabel name={type === "Income" ? "income" : "expense"} size="glyph">{label}</IconLabel>
+      {/* Same arrows as the income/expense icons, drawn larger and bolder so
+          they fill the button rather than floating small in the middle. */}
+      <Arrow aria-hidden size={20} strokeWidth={3} />
+      {label}
     </button>
   );
 }
