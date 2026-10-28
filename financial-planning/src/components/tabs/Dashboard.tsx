@@ -7,7 +7,6 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { db } from "@/lib/db";
 import { categoryBudgetStatus, fmt, inRange } from "@/lib/calc";
-import { ICON_MAP } from "@/lib/constants";
 import { useMetrics } from "@/hooks/useMetrics";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useFinancialRatios } from "@/hooks/useFinancialRatios";
@@ -16,6 +15,7 @@ import { useNetWorthTrend } from "@/hooks/useNetWorthTrend";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, type Language, CATEGORY_LABEL_EN, GOAL_TYPE_LABEL_EN, INVESTMENT_CAT_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
+import { CategoryIcon } from "@/components/icons";
 
 const BUDGET_ALERT_THRESHOLD = 80;
 
@@ -141,7 +141,7 @@ export function Dashboard() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.dashboard.title)} />
+      <SectionHeader title={t(TR.dashboard.title)} icon="overview" />
 
       <NetWorthHero
         netWorth={metrics.totalNetWorth}
@@ -197,7 +197,7 @@ export function Dashboard() {
           {budgetAlerts.map((b) => (
             <div key={b.category} style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, marginBottom: 6 }}>
-                <span>{ICON_MAP[b.category] || "🏷️"}</span>
+                <CategoryIcon category={b.category} />
                 <span>{translateLabel(b.category, lang, CATEGORY_LABEL_EN)}</span>
               </div>
               <BudgetBar spent={b.spent} budget={b.budget} />

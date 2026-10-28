@@ -8,6 +8,7 @@ import { TR } from "@/lib/i18n";
 import { AddButton, Field, Modal, inputStyle } from "@/components/ui";
 import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 import type { LiquidAsset, InvestmentAsset, PersonalAsset, Liability } from "@/lib/types";
+import { IconLabel } from "@/components/icons";
 
 const EXPORT_APP_ID = "financial-planning-asset-export";
 
@@ -121,7 +122,7 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
             <div><AddButton onClick={doImport} label={t(TR.common.importAction)} /></div>
           </>
         )}
-        {done !== null && <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}>{t(TR.exportImport.importedCount)} {done} {t(TR.exportImport.itemsWord)}</div>}
+        {done !== null && <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}><IconLabel name="pass">{t(TR.exportImport.importedCount)} {done} {t(TR.exportImport.itemsWord)}</IconLabel></div>}
       </div>
     </Modal>
   );
@@ -136,13 +137,13 @@ export function AssetExportImport() {
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         {canShare ? (
           <>
-            <button type="button" onClick={() => void exportAssets(lang, true)} style={actionButtonStyle}>📤 {t(TR.common.share)}</button>
-            <button type="button" onClick={() => void exportAssets(lang, false)} style={actionButtonStyle}>💾 {t(TR.common.download)}</button>
+            <button type="button" onClick={() => void exportAssets(lang, true)} style={actionButtonStyle}><IconLabel name="exportData">{t(TR.common.share)}</IconLabel></button>
+            <button type="button" onClick={() => void exportAssets(lang, false)} style={actionButtonStyle}><IconLabel name="backup">{t(TR.common.download)}</IconLabel></button>
           </>
         ) : (
-          <button type="button" onClick={() => void exportAssets(lang, false)} style={actionButtonStyle}>📤 {t(TR.common.exportData)}</button>
+          <button type="button" onClick={() => void exportAssets(lang, false)} style={actionButtonStyle}><IconLabel name="exportData">{t(TR.common.exportData)}</IconLabel></button>
         )}
-        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 {t(TR.common.importData)}</button>
+        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}><IconLabel name="importData">{t(TR.common.importData)}</IconLabel></button>
       </div>
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} />
     </>

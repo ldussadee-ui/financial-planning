@@ -15,6 +15,7 @@ import { CashflowExportImport } from "./CashflowExportImport";
 import { AssetExportImport } from "./AssetExportImport";
 import { FullBackup } from "./FullBackup";
 import pkg from "../../../package.json";
+import { IconLabel } from "@/components/icons";
 
 const syncButtonStyle = {
   border: "none", background: "var(--lilac)", color: "var(--accent)",
@@ -28,7 +29,7 @@ function SpendCompareSettings() {
 
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.spendCompare)}</div>
+      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="spendCompare">{t(TR.settings.spendCompare)}</IconLabel></div>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
         {t(TR.settings.spendCompareNote)}
       </div>
@@ -86,7 +87,7 @@ function BudgetSettings() {
       <div onClick={() => setOpen((v) => !v)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
         <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-          {t(TR.settings.budgetTitle)}
+          <IconLabel name="budget">{t(TR.settings.budgetTitle)}</IconLabel>
         </div>
         <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{summary}</span>
       </div>
@@ -106,7 +107,7 @@ export function SettingsTab() {
   const { t } = useLanguage();
   return (
     <div>
-      <SectionHeader title={t(TR.settings.title)} sub={t(TR.settings.subtitle)} />
+      <SectionHeader title={t(TR.settings.title)} icon="settings" sub={t(TR.settings.subtitle)} />
 
       <SpendCompareSettings />
       <BudgetSettings />
@@ -115,7 +116,7 @@ export function SettingsTab() {
           under headings that say which is which: this one replaces your own
           data wholesale, the ones below append someone else's to it. */}
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <h2 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.backupSection)}</h2>
+        <h2 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="backup">{t(TR.settings.backupSection)}</IconLabel></h2>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.backupNote)}
         </div>
@@ -130,7 +131,7 @@ export function SettingsTab() {
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.cashflowSection)}</h3>
+        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="cashflow">{t(TR.settings.cashflowSection)}</IconLabel></h3>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.cashflowExportNote)}
         </div>
@@ -138,7 +139,7 @@ export function SettingsTab() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}>{t(TR.settings.assetsSection)}</h3>
+        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="assets">{t(TR.settings.assetsSection)}</IconLabel></h3>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.assetsExportNote)}
         </div>

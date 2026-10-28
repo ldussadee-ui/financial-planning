@@ -6,12 +6,16 @@ import { Plus, Trash2, ChevronRight, X } from "lucide-react";
 import { fmt } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
+import { IconLabel, PopIcon, type IconName } from "@/components/icons";
 
-export function SectionHeader({ title, sub }: { title: string; sub?: string }) {
+export function SectionHeader({ title, sub, icon }: { title: string; sub?: string; icon?: IconName }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 26, flexWrap: "wrap", gap: 10 }}>
       <div>
-        <h1 className="fp-display" style={{ fontSize: 28, fontWeight: 600, color: "var(--ink)", lineHeight: 1.2 }}>{title}</h1>
+        <h1 className="fp-display" style={{ fontSize: 28, fontWeight: 600, color: "var(--ink)", lineHeight: 1.2, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          {title}
+          {icon && <PopIcon name={icon} size="lg" />}
+        </h1>
         {sub && <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 5 }}>{sub}</div>}
       </div>
     </div>
@@ -182,7 +186,7 @@ export function Modal({
   );
 }
 
-export function StatRow({ label, value, big }: { label: string; value: string; big?: boolean }) {
+export function StatRow({ label, value, big }: { label: ReactNode; value: string; big?: boolean }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "7px 0" }}>
       <span style={{ fontSize: big ? 14 : 13, color: "var(--ink-soft)" }}>{label}</span>
@@ -214,7 +218,7 @@ export function BudgetBar({ spent, budget }: { spent: number; budget: number }) 
 }
 
 export function EmptyState({ text }: { text: string }) {
-  return <div style={{ padding: "28px 20px", fontSize: 13, color: "var(--ink-soft)" }}>{text} 🌤️</div>;
+  return <div style={{ padding: "28px 20px", fontSize: 13, color: "var(--ink-soft)" }}><IconLabel name="empty">{text}</IconLabel></div>;
 }
 
 export const inputStyle: CSSProperties = {
@@ -336,7 +340,7 @@ export function AddButton({ onClick, label, color = "var(--teal)", icon }: { onC
 // between NestedGroup's section total (20) and its subgroup totals (13):
 // these categories sit one level shallower than a cashflow subgroup but
 // have no parent total above them, and a tab can hold several at once.
-export function Group({ title, amount, tint, children }: { title: string; amount?: string; tint: string; children: ReactNode[] }) {
+export function Group({ title, amount, tint, children }: { title: ReactNode; amount?: string; tint: string; children: ReactNode[] }) {
   const { t } = useLanguage();
   const items = children.filter(Boolean);
   return (
@@ -506,13 +510,14 @@ function dayCellStyle(active: boolean): CSSProperties {
 }
 
 export function DayPicker({
-  value, onChange, shiftWeekend, onShiftWeekendChange, buttonLabel, popoverTitle, maxDay = 28,
+  value, onChange, shiftWeekend, onShiftWeekendChange, buttonLabel, buttonIcon = "calendar", popoverTitle, maxDay = 28,
 }: {
   value: number;
   onChange: (day: number) => void;
   shiftWeekend: boolean;
   onShiftWeekendChange: (shift: boolean) => void;
   buttonLabel?: string;
+  buttonIcon?: IconName;
   popoverTitle?: string;
   maxDay?: number;
 }) {
@@ -529,7 +534,7 @@ export function DayPicker({
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
       <button type="button" onClick={() => setOpen((v) => !v)} style={dayPickerButtonStyle}>
-        {buttonLabel ?? t(TR.common.startDay)} {value}
+        <IconLabel name={buttonIcon}>{buttonLabel ?? t(TR.common.startDay)} {value}</IconLabel>
       </button>
       {open && (
         <div style={dayPickerPopoverStyle}>

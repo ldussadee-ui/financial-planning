@@ -16,15 +16,16 @@ import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { InsuranceCheck, InsuranceCheckStatus } from "@/lib/insuranceAnalysis";
 import type { InsurancePolicy, PolicyType } from "@/lib/types";
+import { IconLabel, PopIcon } from "@/components/icons";
 
 const emptyForm = {
   policyType: "ชีวิต" as PolicyType, provider: "", sumAssured: "", annualPremium: "", expiryDate: "", beneficiarySet: false,
 };
 
 function statusBadge(status: InsuranceCheckStatus, t: <K extends { th: string; en: string }>(entry: K) => string) {
-  if (status === "pass") return { text: t(TR.ratios.pass), bg: "#E1F5EE", color: "#0F6E56" };
-  if (status === "fail") return { text: t(TR.ratios.fail), bg: "#FCEBEB", color: "#A32D2D" };
-  return { text: t(TR.ratios.noData), bg: "var(--track)", color: "var(--ink-soft)" };
+  if (status === "pass") return { text: t(TR.ratios.pass), icon: "pass" as const, bg: "#E1F5EE", color: "#0F6E56" };
+  if (status === "fail") return { text: t(TR.ratios.fail), icon: "fail" as const, bg: "#FCEBEB", color: "#A32D2D" };
+  return { text: t(TR.ratios.noData), icon: undefined, bg: "var(--track)", color: "var(--ink-soft)" };
 }
 
 function CheckCard({ check, t }: { check: InsuranceCheck; t: <K extends { th: string; en: string }>(entry: K) => string }) {
@@ -37,7 +38,7 @@ function CheckCard({ check, t }: { check: InsuranceCheck; t: <K extends { th: st
           <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 2 }}>{check.formulaLabel}</div>
         </div>
         <span style={{ fontSize: 11, fontWeight: 700, color: badge.color, background: badge.bg, padding: "4px 10px", borderRadius: 999, whiteSpace: "nowrap" }}>
-          {badge.text}
+          {badge.icon ? <IconLabel name={badge.icon} size="glyph">{badge.text}</IconLabel> : badge.text}
         </span>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 12.5, color: "var(--ink-soft)", borderTop: "1px solid var(--line)", paddingTop: 8, marginTop: 4 }}>
@@ -45,8 +46,8 @@ function CheckCard({ check, t }: { check: InsuranceCheck; t: <K extends { th: st
         <span className="fp-num" style={{ fontWeight: 700, fontSize: 15, color: "var(--ink)" }}>{check.displayValue}</span>
       </div>
       {check.advice && (
-        <div style={{ fontSize: 12, color: "#A32D2D", background: "#FCEBEB", borderRadius: 10, padding: "8px 10px", marginTop: 8 }}>
-          💡 {check.advice}
+        <div style={{ fontSize: 12, color: "#A32D2D", background: "#FCEBEB", borderRadius: 10, padding: "8px 10px", marginTop: 8, display: "flex", gap: 8, alignItems: "flex-start" }}>
+          <PopIcon name="tip" /><span>{check.advice}</span>
         </div>
       )}
     </div>
@@ -88,7 +89,7 @@ export function InsuranceView() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.insurance.title)} sub={t(TR.insurance.subtitle)} />
+      <SectionHeader title={t(TR.insurance.title)} icon="insurance" sub={t(TR.insurance.subtitle)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.insurance.editTitle) : t(TR.insurance.addTitle)}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
@@ -121,7 +122,7 @@ export function InsuranceView() {
 
       {(expiringPolicies.length > 0 || noBeneficiaryPolicies.length > 0) && (
         <div className="fp-card" style={{ padding: "16px 18px", marginBottom: 18 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t(TR.insurance.alertsTitle)}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}><IconLabel name="warning">{t(TR.insurance.alertsTitle)}</IconLabel></div>
           {expiringPolicies.length > 0 && (
             <div style={{ fontSize: 12.5, color: "var(--ink-soft)", marginBottom: 6 }}>
               {t(TR.insurance.expiringWithin)} {expiringPolicies.map(policyLabel).join(", ")}
@@ -145,8 +146,8 @@ export function InsuranceView() {
                 <div style={{ fontSize: 14 }}>{policyLabel(p)}</div>
                 <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>
                   {fmt(p.annualPremium)}{t(TR.assets.perYear)}
-                  {expiringPolicies.includes(p) && <span style={{ color: "#D07A4E" }}> · ⏰ {t(TR.insurance.expiringSoon)}</span>}
-                  {!p.beneficiarySet && <span style={{ color: "#D07A4E" }}> · 👤 {t(TR.insurance.noBeneficiaryBadge)}</span>}
+                  {expiringPolicies.includes(p) && <span style={{ color: "#D07A4E" }}> · <IconLabel name="expiring">{t(TR.insurance.expiringSoon)}</IconLabel></span>}
+                  {!p.beneficiarySet && <span style={{ color: "#D07A4E" }}> · <IconLabel name="beneficiary">{t(TR.insurance.noBeneficiaryBadge)}</IconLabel></span>}
                 </div>
               </div>
             }

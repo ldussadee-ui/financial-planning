@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { db } from "@/lib/db";
 import { cycleRangeAtOffset, fmt, parseCycleOffset } from "@/lib/calc";
@@ -11,6 +11,7 @@ import { TR, PAYMENT_METHOD_LABEL_EN, translateLabel, type Language } from "@/li
 import { SectionHeader, Group, EmptyState } from "@/components/ui";
 import { CycleNav } from "@/components/CycleNav";
 import { renderByDay } from "./cashflowShared";
+import { IconLabel } from "@/components/icons";
 
 // Each group gets its own background so neighbouring cards can be told
 // apart at a glance — they all used to share one lavender. Cash is always
@@ -26,10 +27,10 @@ function groupTint(group: PaymentGroup, index: number): string {
   return CARD_TINTS[index % CARD_TINTS.length];
 }
 
-function groupTitle(group: PaymentGroup, lang: Language, unspecified: string): string {
-  const icon = group.kind === "เงินสด" ? "💵" : group.kind === null ? "❔" : "💳";
+function groupTitle(group: PaymentGroup, lang: Language, unspecified: string): ReactNode {
+  const icon = group.kind === "เงินสด" ? "cash" : group.kind === null ? "unknownMethod" : "card";
   const name = group.kind === null ? unspecified : translateLabel(group.name, lang, PAYMENT_METHOD_LABEL_EN);
-  return `${icon} ${name}${group.owner ? ` · ${group.owner}` : ""}`;
+  return <IconLabel name={icon}>{name}{group.owner ? ` · ${group.owner}` : ""}</IconLabel>;
 }
 
 export function PaymentSummaryView() {
@@ -55,7 +56,7 @@ export function PaymentSummaryView() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.reports.paymentSummaryTitle)} sub={t(TR.reports.paymentSummarySub)} />
+      <SectionHeader title={t(TR.reports.paymentSummaryTitle)} icon="paymentSummary" sub={t(TR.reports.paymentSummarySub)} />
 
       {/* The total changes with the cycle, so it sits under the control that
           changes it rather than in the subtitle above. */}

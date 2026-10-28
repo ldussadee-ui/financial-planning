@@ -38,9 +38,11 @@ export const PERSONAL_TYPES: PersonalItemType[] = ["รถยนต์", "บ้
 export const GOAL_TYPES: GoalType[] = ["เกษียณ", "บ้าน", "การศึกษา", "ท่องเที่ยว", "กองทุนฉุกเฉิน", "อื่นๆ"];
 export const POLICY_TYPES: PolicyType[] = ["ชีวิต", "สุขภาพ", "อุบัติเหตุ", "โรคร้ายแรง", "คุ้มครองสินเชื่อ"];
 
-// Icons for the main categories (see categoryTree.ts), then for the
-// single-level categories used before v0.23.0, which imported files from an
-// older app can still carry.
+// Emoji stored in each CategoryChip's `icon` field for the main categories
+// (see categoryTree.ts), then for the single-level categories used before
+// v0.23.0, which imported files from an older app can still carry. Since
+// v0.26.0 the UI draws CategoryIcon (components/icons.tsx) from the label
+// instead; this only keeps the stored field filled as before.
 export const ICON_MAP: Record<string, string> = {
   "รายได้จากงาน": "💼", "รายได้จากทรัพย์สิน": "💰",
   "อาหาร": "🍜", "บ้าน": "🏠", "เดินทาง": "🚗", "ท่องเที่ยว": "✈️", "สุขภาพ": "💊",

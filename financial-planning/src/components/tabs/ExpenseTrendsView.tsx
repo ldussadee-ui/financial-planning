@@ -3,7 +3,6 @@
 import { useState, type CSSProperties } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
 import { fmt } from "@/lib/calc";
-import { ICON_MAP } from "@/lib/constants";
 import { defaultPeriod, shiftPeriod, periodLabel, type Granularity, type Period } from "@/lib/period";
 import { useExpensePeriod } from "@/hooks/useExpensePeriod";
 import { useBudgets } from "@/hooks/useBudgets";
@@ -11,6 +10,7 @@ import { useMonthlyCategoryTrend } from "@/hooks/useMonthlyCategoryTrend";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl } from "@/components/ui";
+import { CategoryIcon, IconLabel } from "@/components/icons";
 
 const CATEGORY_PALETTE = ["#FF9AA2", "var(--teal)", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
 
@@ -99,14 +99,14 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
 
   return (
     <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}>{trendTitle}</div>
+      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="monthlyTrend">{trendTitle}</IconLabel></div>
       {categories.length ? (
         <>
           <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
             <button type="button" onClick={() => setSelected(null)} style={toggleStyle(selected === null)}>{t(TR.reports.allCategories)}</button>
             {categories.map((cat) => (
               <button key={cat} type="button" onClick={() => setSelected(cat)} style={toggleStyle(selected === cat)}>
-                {ICON_MAP[cat] || "🏷️"} {translateLabel(cat, lang, CATEGORY_LABEL_EN)}
+                <span className="fp-ic-label"><CategoryIcon category={cat} />{translateLabel(cat, lang, CATEGORY_LABEL_EN)}</span>
               </button>
             ))}
           </div>
@@ -162,7 +162,7 @@ export function ExpenseTrendsView() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.reports.title)} sub={t(TR.reports.subtitle)} />
+      <SectionHeader title={t(TR.reports.title)} icon="report" sub={t(TR.reports.subtitle)} />
 
       <div style={{ marginBottom: 18, maxWidth: 320 }}>
         <SegmentedControl options={GRANULARITY_OPTIONS} value={granularity} onChange={changeGranularity} />
@@ -177,15 +177,15 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.overview)}</div>
+        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="cashflow">{t(TR.reports.overview)}</IconLabel></div>
         <StatRow label={t(TR.reports.total)} value={fmt(total)} big />
-        <StatRow label={t(TR.reports.fixedLabel)} value={fmt(fixedTotal)} />
-        <StatRow label={t(TR.reports.generalLabel)} value={fmt(variableTotal)} />
-        <StatRow label={t(TR.reports.investLabel)} value={fmt(investTotal)} />
+        <StatRow label={<IconLabel name="fixed">{t(TR.reports.fixedLabel)}</IconLabel>} value={fmt(fixedTotal)} />
+        <StatRow label={<IconLabel name="general">{t(TR.reports.generalLabel)}</IconLabel>} value={fmt(variableTotal)} />
+        <StatRow label={<IconLabel name="saveInvest">{t(TR.reports.investLabel)}</IconLabel>} value={fmt(investTotal)} />
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}>{t(TR.reports.byCategory)}</div>
+        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="category">{t(TR.reports.byCategory)}</IconLabel></div>
         {byCategory.length ? (
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
             <ResponsiveContainer width={180} height={180}>
@@ -208,7 +208,7 @@ export function ExpenseTrendsView() {
                       style={{ all: "unset", boxSizing: "border-box", display: "flex", alignItems: "center", gap: 7, width: "100%", cursor: "pointer" }}
                     >
                       <span style={{ width: 10, height: 10, borderRadius: 5, background: CATEGORY_PALETTE[i % CATEGORY_PALETTE.length], flexShrink: 0 }} />
-                      <span>{ICON_MAP[c.category] || "🏷️"}</span>
+                      <CategoryIcon category={c.category} />
                       <span style={{ color: "var(--ink)" }}>{translateLabel(c.category, lang, CATEGORY_LABEL_EN)}</span>
                       <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>({c.count} {t(TR.reports.itemsCount)})</span>
                       <span style={{ fontSize: 10, color: "var(--ink-soft)" }}>{isOpen ? "▲" : "▼"}</span>
