@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { Plus, Trash2, ChevronRight, X } from "lucide-react";
+import { Plus, Trash2, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { fmt } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
@@ -19,6 +19,28 @@ export function SectionHeader({ title, sub, icon }: { title: string; sub?: strin
         {sub && <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 5 }}>{sub}</div>}
       </div>
     </div>
+  );
+}
+
+// The round ‹ › button that steps to the previous/next period (cashflow
+// cycle, report period). A bold chevron drawn centred in the circle: the
+// old "‹" text character was thin and sat off-centre because of the font's
+// own spacing.
+export function StepButton({ dir, onClick, label, size = 30 }: { dir: "prev" | "next"; onClick: () => void; label: string; size?: number }) {
+  const Chevron = dir === "prev" ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="fp-pop"
+      style={{
+        width: size, height: size, borderRadius: 999, background: "var(--panel)", color: "var(--ink)",
+        display: "inline-grid", placeItems: "center", padding: 0, cursor: "pointer", flexShrink: 0,
+      }}
+    >
+      <Chevron size={Math.round(size * 0.6)} strokeWidth={3} aria-hidden />
+    </button>
   );
 }
 

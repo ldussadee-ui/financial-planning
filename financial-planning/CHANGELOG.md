@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.1] - 2026-10-28
+
+### Fixed
+- The round ‹ › buttons that step to the previous/next accounting cycle (รายรับ-จ่าย, payment summary) and period (expense report) now show a bold arrow drawn in the exact middle of the circle, with the same hard shadow as the other buttons. Before, the arrow was a thin text character that sat off-centre because of the font's spacing. Both screens now use one shared button, so they can't drift apart again
+
 ## [0.26.0] - 2026-10-28
 
 ### Changed
