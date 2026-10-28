@@ -6,9 +6,17 @@ import {
   LayoutDashboard, Layers, Leaf, Lightbulb, Lock, Package, Palette, PartyPopper, PenLine, Pill, Plane, Plus, Repeat,
   Scale, Settings, Shield, ShieldCheck, ShoppingBag, Sparkles, SprayCan, Sprout, Tag, Target, Timer, TrendingUp,
   TriangleAlert, Upload, Download, User, Users, UtensilsCrossed, WalletCards, Wifi, Zap, Wallet, ScrollText, Building2,
-  Shapes, Trophy, Sofa, type LucideIcon,
+  Shapes, Trophy, Sofa, createLucideIcon, type LucideIcon,
 } from "lucide-react";
 import type { InvestmentCategory, LiabilityTerm, LiquidType, PersonalItemType } from "@/lib/types";
+
+// Lucide's ChartPie leaves a gap in its outline next to the slice, which
+// reads as a broken line once the "tint" size fills it. This one is a whole
+// circle with the slice marked by two lines inside.
+const ClosedChartPie = createLucideIcon("ClosedChartPie", [
+  ["circle", { cx: "12", cy: "12", r: "9", key: "circle" }],
+  ["path", { d: "M12 3v9h9", key: "slice" }],
+]);
 
 // The app's "Pop Sticker" icon set (v0.26.0): a line glyph on a flat colour
 // tile with the Bold Pop ink outline and hard shadow. Every concept gets one
@@ -28,7 +36,7 @@ const ICONS = {
   liability: [CreditCard, "pink"],
   assetTrend: [ChartLine, "lav"],
   goals: [Target, "yellow"],
-  report: [ChartPie, "sky"],
+  report: [ClosedChartPie, "sky"],
   paymentSummary: [WalletCards, "teal"],
   ratios: [Scale, "lav"],
   insurance: [ShieldCheck, "teal"],
@@ -73,6 +81,8 @@ const TONE_VAR: Record<IconTone, string> = {
   yellow: "var(--yellow)", pink: "var(--pink)", teal: "var(--teal)", lav: "var(--lav)", sky: "var(--sky)",
 };
 
+const OPEN_GLYPHS = new Set<LucideIcon>([Repeat]);
+
 // "lg" sits beside a page title, "md" at the start of a list row, "sm" in
 // front of a label, and "glyph" is the
 // bare line icon for places that already have their own coloured background
@@ -86,7 +96,9 @@ export type IconSize = "lg" | "md" | "sm" | "glyph" | "tint";
 function Sticker({ Glyph, tone, size }: { Glyph: LucideIcon; tone: IconTone | string; size: IconSize }) {
   if (size === "glyph") return <Glyph aria-hidden size={15} strokeWidth={2.5} style={{ flexShrink: 0 }} />;
   const bg = TONE_VAR[tone as IconTone] ?? tone;
-  if (size === "tint") return <Glyph aria-hidden size={15} strokeWidth={2.5} fill={bg} style={{ flexShrink: 0 }} />;
+  // Glyphs made only of open strokes (Repeat's arrows) would fill as stray
+  // slivers, so they stay unfilled.
+  if (size === "tint") return <Glyph aria-hidden size={15} strokeWidth={2.5} fill={OPEN_GLYPHS.has(Glyph) ? "none" : bg} style={{ flexShrink: 0 }} />;
   return (
     <span aria-hidden className={size === "sm" ? "fp-ic" : `fp-ic fp-ic-${size}`} style={{ ["--ic-tone" as string]: bg }}>
       <Glyph strokeWidth={size === "sm" ? 2.5 : 2.25} />
