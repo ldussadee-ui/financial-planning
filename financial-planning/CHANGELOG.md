@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.25.0] - 2026-10-28
+
+### Changed
+- The back button on the sub-pages (financial ratios, insurance, recurring entries, payment summary, expense report) now sits on the same row as the TH/EN switch and the settings gear, instead of on its own row underneath. That frees a row at the top of the screen
+- The back button has the Bold Pop look: a white pill with a dark outline and hard shadow, a big bold ‹ arrow, and the name of the page it goes back to ("‹ ภาพรวม" or "‹ รายรับ-จ่าย"), so you can see where it takes you before you tap. The old faint purple circle didn't match the other buttons and was easy to miss
+
+### Added
+- The top row (back button, language switch, settings) stays pinned to the top of the screen while you scroll, so you can go back or switch language from anywhere on a long page without scrolling up first
+
+### Fixed
+- On the recurring entries page, screen readers announced the back button as "back to overview" although it goes to รายรับ-จ่าย. All sub-pages now share one back button that takes its target and name from the page you're on, so this can't drift again
+
 ## [0.24.2] - 2026-10-28
 
 ### Changed

@@ -1,9 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
 import { cycleRangeAtOffset, fmt, parseCycleOffset } from "@/lib/calc";
 import { usePaymentGroups, type PaymentGroup } from "@/hooks/usePaymentGroups";
@@ -57,17 +55,6 @@ export function PaymentSummaryView() {
 
   return (
     <div>
-      <Link
-        href="/cashflow"
-        aria-label={t(TR.reports.backToCashflow)}
-        style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          width: 34, height: 34, borderRadius: "50%",
-          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
-        }}
-      >
-        <ArrowLeft size={17} />
-      </Link>
       <SectionHeader title={t(TR.reports.paymentSummaryTitle)} sub={t(TR.reports.paymentSummarySub)} />
 
       {/* The total changes with the cycle, so it sits under the control that

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
 import { POLICY_TYPES } from "@/lib/constants";
@@ -89,17 +88,6 @@ export function InsuranceView() {
 
   return (
     <div>
-      <Link
-        href="/dashboard"
-        aria-label={t(TR.ratios.backToOverview)}
-        style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          width: 34, height: 34, borderRadius: "50%",
-          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
-        }}
-      >
-        <ArrowLeft size={17} />
-      </Link>
       <SectionHeader title={t(TR.insurance.title)} sub={t(TR.insurance.subtitle)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.insurance.editTitle) : t(TR.insurance.addTitle)}>

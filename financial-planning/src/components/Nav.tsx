@@ -9,7 +9,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useBackupStatus } from "@/hooks/useBackupStatus";
 import { TR } from "@/lib/i18n";
 
-const NAV = [
+export const NAV = [
   { key: "dashboard", href: "/dashboard", label: TR.nav.dashboard, icon: LayoutDashboard },
   { key: "cashflow", href: "/cashflow", label: TR.nav.cashflow, icon: Wallet },
   { key: "assets", href: "/assets", label: TR.nav.assets, icon: Layers },
