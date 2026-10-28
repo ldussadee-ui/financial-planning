@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.24.1] - 2026-10-28
+
+### Changed
+- New app icon to match the Bold Pop look: a yellow ฿ coin with a green seedling growing out of it, on purple, with the same dark outline and hard shadow as the cards. The old dark-green-and-gold icon came from the previous style and looked out of place next to the new screens. The ฿ stays so the icon is still recognisable, and the seedling ties it to the app's name เงินทองของเรา 🌱
+- The splash and browser bar colour use the new periwinkle background instead of the old cream
+- An icon already on a phone's home screen doesn't change by itself: remove it and add the app to the home screen again to get the new icon (this also lets you fix the name under it)
+
 ## [0.24.0] - 2026-10-27
 
 ### Changed
