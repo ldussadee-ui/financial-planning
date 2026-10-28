@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { cleanLabel } from "@/lib/categoryTree";
@@ -53,17 +51,6 @@ export function RecurringEntriesView() {
 
   return (
     <div>
-      <Link
-        href="/cashflow"
-        aria-label={t(TR.ratios.backToOverview)}
-        style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          width: 34, height: 34, borderRadius: "50%",
-          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
-        }}
-      >
-        <ArrowLeft size={17} />
-      </Link>
       <SectionHeader title={t(TR.recurring.pageTitle)} sub={t(TR.recurring.pageSubtitle)} />
 
       <Modal open={editingId !== null} onClose={closeModal} title={t(TR.recurring.editTitle)}>

@@ -26,10 +26,13 @@ html {
   height: 100%;
 }
 
+/* `clip` after `hidden`: `hidden` makes body a scroll container, which
+   would stop the sticky top bar from sticking to the window. */
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -165,6 +168,21 @@ button {
   display: none;
 }
 
+/* Back button + language switch + settings, pinned to the top while the
+   page scrolls. Negative side margins (matching .fp-main's padding) let its
+   background cover the full column so content doesn't peek past it. */
+.fp-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -42px 10px;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 42px 8px;
+  background: var(--bg);
+}
+
 /* Clips the Assets tab's content as it slides between sub-tabs. The
    negative margins cancel .fp-main's side padding (42px here, 16px on
    mobile below — keep the two in step), so a tab leaves at the screen edge
@@ -197,6 +215,11 @@ button {
   .fp-swipe-clip {
     margin: 0 -16px;
     padding: 0 16px;
+  }
+  .fp-topbar {
+    margin: 0 -16px 10px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
   .fp-grid-2 {
     grid-template-columns: 1fr !important;

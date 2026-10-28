@@ -15,6 +15,7 @@ export const TR = {
     goals: { th: "เป้าหมาย", en: "Goals" } as Text,
     settings: { th: "Settings", en: "Settings" } as Text,
     backupDue: { th: "ถึงเวลาสำรองข้อมูล", en: "Backup due" } as Text,
+    backTo: { th: "กลับไป", en: "Back to " } as Text,
     mainNavAria: { th: "เมนูหลัก", en: "Main menu" } as Text,
     quickNavAria: { th: "เมนูด่วน", en: "Quick menu" } as Text,
   },
@@ -420,7 +421,6 @@ export const TR = {
     importedOf: { th: "ของ", en: "for" } as Text,
   },
   reports: {
-    backToCashflow: { th: "กลับไปรายรับ-จ่าย", en: "Back to cashflow" } as Text,
     title: { th: "สรุปรายจ่ายตามช่วงเวลา 📊", en: "Expense Report by Period 📊" } as Text,
     subtitle: { th: "ดูว่าช่วงนั้นจ่ายอะไรไปบ้าง แยกประจำ/ทั่วไป/ออมและลงทุน และแยกตามหมวดหมู่", en: "See what was spent in a period, split by Fixed/General/Savings & Investing and by category" } as Text,
     prevPeriod: { th: "ช่วงก่อนหน้า", en: "Previous period" } as Text,
@@ -447,7 +447,6 @@ export const TR = {
     unspecifiedMethod: { th: "ไม่ระบุช่องทาง", en: "No payment method" } as Text,
   },
   ratios: {
-    backToOverview: { th: "กลับไปภาพรวม", en: "Back to overview" } as Text,
     title: { th: "อัตราส่วนทางการเงิน 📐", en: "Financial Ratios 📐" } as Text,
     subtitle: { th: "คำนวณจากข้อมูลรอบบัญชีปัจจุบัน", en: "Calculated from the current billing cycle's data" } as Text,
     standard: { th: "มาตรฐาน", en: "Standard:" } as Text,

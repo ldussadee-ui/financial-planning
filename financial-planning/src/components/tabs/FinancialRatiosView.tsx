@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { useFinancialRatios } from "@/hooks/useFinancialRatios";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
@@ -28,17 +26,6 @@ export function FinancialRatiosView() {
 
   return (
     <div>
-      <Link
-        href="/dashboard"
-        aria-label={t(TR.ratios.backToOverview)}
-        style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          width: 34, height: 34, borderRadius: "50%",
-          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
-        }}
-      >
-        <ArrowLeft size={17} />
-      </Link>
       <SectionHeader
         title={t(TR.ratios.title)}
         sub={`${passCount} ${t(TR.dashboard.ratiosOutOf)} ${total} ${t(TR.dashboard.ratiosPassed)} — ${t(TR.ratios.subtitle)}`}

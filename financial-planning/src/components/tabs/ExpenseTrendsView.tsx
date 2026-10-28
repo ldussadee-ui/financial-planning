@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
 import { fmt } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
@@ -164,17 +162,6 @@ export function ExpenseTrendsView() {
 
   return (
     <div>
-      <Link
-        href="/cashflow"
-        aria-label={t(TR.reports.backToCashflow)}
-        style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          width: 34, height: 34, borderRadius: "50%",
-          background: "var(--lilac)", color: "var(--accent)", marginBottom: 12,
-        }}
-      >
-        <ArrowLeft size={17} />
-      </Link>
       <SectionHeader title={t(TR.reports.title)} sub={t(TR.reports.subtitle)} />
 
       <div style={{ marginBottom: 18, maxWidth: 320 }}>
