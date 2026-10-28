@@ -222,19 +222,30 @@ button {
   display: none;
 }
 
-/* Back button + language switch + settings, pinned to the top while the
-   page scrolls. Negative side margins (matching .fp-main's padding) let its
-   background cover the full column so content doesn't peek past it. */
+/* Language switch + settings at the top of every page. They scroll away
+   with the page like any page header; only the back button (below) stays. */
 .fp-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 25;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0 -42px 10px;
-  padding: calc(8px + env(safe-area-inset-top, 0px)) 42px 8px;
-  background: var(--bg);
+  min-height: 34px;
+  margin-bottom: 10px;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 0 8px;
+}
+/* The back button on sub-pages, pinned to the top-left while the page
+   scrolls so going back never needs a scroll up first. Zero height so it
+   takes no room of its own: at rest the button sits over the empty left end
+   of .fp-topbar (same top padding, so the two line up), and the rest of the
+   row is free to scroll away. */
+.fp-back-float {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  height: 0;
+}
+.fp-back-float > * {
+  position: absolute;
+  top: calc(8px + env(safe-area-inset-top, 0px));
 }
 
 /* Clips the Assets tab's content as it slides between sub-tabs. The
@@ -269,11 +280,6 @@ button {
   .fp-swipe-clip {
     margin: 0 -16px;
     padding: 0 16px;
-  }
-  .fp-topbar {
-    margin: 0 -16px 10px;
-    padding-left: 16px;
-    padding-right: 16px;
   }
   .fp-grid-2 {
     grid-template-columns: 1fr !important;

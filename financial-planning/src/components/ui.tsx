@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { Plus, Trash2, ChevronRight, X } from "lucide-react";
+import { Plus, Trash2, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { fmt } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
@@ -19,6 +19,42 @@ export function SectionHeader({ title, sub, icon }: { title: string; sub?: strin
         {sub && <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 5 }}>{sub}</div>}
       </div>
     </div>
+  );
+}
+
+// The round ‹ › button that steps to the previous/next period (cashflow
+// cycle, report period). A bold chevron drawn centred in the circle: the
+// old "‹" text character was thin and sat off-centre because of the font's
+// own spacing.
+export function StepButton({ dir, onClick, label, size = 30 }: { dir: "prev" | "next"; onClick: () => void; label: string; size?: number }) {
+  const Chevron = dir === "prev" ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="fp-pop"
+      style={{
+        width: size, height: size, borderRadius: 999, background: "var(--panel)", color: "var(--ink)",
+        display: "inline-grid", placeItems: "center", padding: 0, cursor: "pointer", flexShrink: 0,
+      }}
+    >
+      <Chevron size={Math.round(size * 0.6)} strokeWidth={3} aria-hidden />
+    </button>
+  );
+}
+
+// The fold/unfold marker on a section that opens and closes: a bold chevron
+// (same weight as StepButton's) pointing right when closed and turning down
+// when open. Decorative only: the header it sits in is what takes the tap.
+export function FoldChevron({ open, size = 18 }: { open: boolean; size?: number }) {
+  return (
+    <ChevronRight
+      aria-hidden
+      size={size}
+      strokeWidth={3}
+      style={{ color: "var(--ink)", flexShrink: 0, transform: open ? "rotate(90deg)" : "none", transition: "transform 0.15s ease" }}
+    />
   );
 }
 
@@ -397,11 +433,7 @@ export function NestedGroup({
           const headerContent = (
             <>
               {foldable && (
-                <ChevronRight
-                  size={14}
-                  aria-hidden
-                  style={{ color, flexShrink: 0, transform: folded ? "none" : "rotate(90deg)", transition: "transform 0.15s ease" }}
-                />
+                <FoldChevron open={!folded} />
               )}
               {sg.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: sg.dot, flexShrink: 0 }} />}
               <span style={{ fontSize: 13, fontWeight: 600, color }}>{sg.label}</span>

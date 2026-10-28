@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.1] - 2026-10-28
+
+### Changed
+- On the sub-pages (financial ratios, insurance, recurring entries, payment summary, expense report) only the back button now stays pinned to the top-left while you scroll. The TH/EN switch and the settings gear scroll away with the page like on the main screens, so they no longer cover a strip of the page the whole time. On the main screens nothing stays pinned at the top any more
+
+### Fixed
+- The round ‹ › buttons that step to the previous/next accounting cycle (รายรับ-จ่าย, payment summary) and period (expense report) now show a bold arrow drawn in the exact middle of the circle, with the same hard shadow as the other buttons. Before, the arrow was a thin text character that sat off-centre because of the font's spacing. Both screens now use one shared button, so they can't drift apart again
+- The little arrows that open and close a section (Active/Passive and the other groups on รายรับ-จ่าย, the overview cards, the budget section in Settings, the retirement comparison in Goals, the categories in the expense report, which used small ▲▼ marks) were thin and hard to see. They are now a bold dark arrow, pointing right when closed and turning down when open
+
 ## [0.26.0] - 2026-10-28
 
 ### Changed

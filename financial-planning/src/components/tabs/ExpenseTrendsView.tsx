@@ -9,7 +9,7 @@ import { useBudgets } from "@/hooks/useBudgets";
 import { useMonthlyCategoryTrend } from "@/hooks/useMonthlyCategoryTrend";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
-import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl } from "@/components/ui";
+import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl, StepButton, FoldChevron } from "@/components/ui";
 import { CategoryIcon, IconLabel } from "@/components/icons";
 
 const CATEGORY_PALETTE = ["#FF9AA2", "var(--teal)", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
@@ -26,10 +26,6 @@ function toggleStyle(active: boolean): CSSProperties {
     borderRadius: 999, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
   };
 }
-const navButtonStyle: CSSProperties = {
-  border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
-  borderRadius: 999, width: 32, height: 32, fontSize: 14, cursor: "pointer",
-};
 const compactAmount = (n: number) => (n >= 1000 ? Math.round(n / 1000) + "k" : String(n));
 
 // The figures written over the bars, at three levels of detail:
@@ -169,11 +165,11 @@ export function ExpenseTrendsView() {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 18 }}>
-        <button type="button" onClick={() => setPeriod((p) => shiftPeriod(p, -1))} style={navButtonStyle} aria-label={t(TR.reports.prevPeriod)}>‹</button>
+        <StepButton dir="prev" onClick={() => setPeriod((p) => shiftPeriod(p, -1))} label={t(TR.reports.prevPeriod)} size={34} />
         <div className="fp-display" style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)", minWidth: 160, textAlign: "center" }}>
           {periodLabel(period, lang)}
         </div>
-        <button type="button" onClick={() => setPeriod((p) => shiftPeriod(p, 1))} style={navButtonStyle} aria-label={t(TR.reports.nextPeriod)}>›</button>
+        <StepButton dir="next" onClick={() => setPeriod((p) => shiftPeriod(p, 1))} label={t(TR.reports.nextPeriod)} size={34} />
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
@@ -211,7 +207,7 @@ export function ExpenseTrendsView() {
                       <CategoryIcon category={c.category} />
                       <span style={{ color: "var(--ink)" }}>{translateLabel(c.category, lang, CATEGORY_LABEL_EN)}</span>
                       <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>({c.count} {t(TR.reports.itemsCount)})</span>
-                      <span style={{ fontSize: 10, color: "var(--ink-soft)" }}>{isOpen ? "▲" : "▼"}</span>
+                      <FoldChevron open={isOpen} size={16} />
                       <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>{fmt(c.amount)}</span>
                       <span className="fp-num" style={{ width: 40, textAlign: "right", color: "var(--ink-soft)" }}>
                         {total > 0 ? ((c.amount / total) * 100).toFixed(0) : 0}%

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { db } from "@/lib/db";
 import { categoryBudgetStatus, fmt, inRange } from "@/lib/calc";
@@ -14,7 +14,7 @@ import { useInsuranceAnalysis } from "@/hooks/useInsuranceAnalysis";
 import { useNetWorthTrend } from "@/hooks/useNetWorthTrend";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, type Language, CATEGORY_LABEL_EN, GOAL_TYPE_LABEL_EN, INVESTMENT_CAT_LABEL_EN, translateLabel } from "@/lib/i18n";
-import { SectionHeader, StatRow, EmptyState, BudgetBar } from "@/components/ui";
+import { SectionHeader, StatRow, EmptyState, BudgetBar, FoldChevron } from "@/components/ui";
 import { CategoryIcon } from "@/components/icons";
 
 const BUDGET_ALERT_THRESHOLD = 80;
@@ -170,7 +170,7 @@ export function Dashboard() {
           >
             <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, fontWeight: 500 }}>
               {tile.label}
-              {openTile === tile.key ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              <FoldChevron open={openTile === tile.key} />
             </span>
             <span className="fp-num" style={{ display: "block", fontSize: 18, fontWeight: 600, marginTop: 2 }}>{tile.value}</span>
           </button>
@@ -212,7 +212,7 @@ export function Dashboard() {
           style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
         >
           <h2 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600 }}>{t(TR.dashboard.allocation)}</h2>
-          {expanded.has("allocation") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
+          <FoldChevron open={expanded.has("allocation")} />
         </div>
         {metrics.byCat.length ? (
           expanded.has("allocation") ? (
@@ -274,7 +274,7 @@ export function Dashboard() {
             style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
           >
             <h2 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600 }}>{t(TR.dashboard.passiveIncome)}</h2>
-            {expanded.has("passive") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
+            <FoldChevron open={expanded.has("passive")} />
           </div>
           <div className="fp-display" style={{ fontSize: 32, fontWeight: 600, color: "#0A8A55", marginTop: 4 }}>
             {metrics.passiveRatio === null ? "—" : (metrics.passiveRatio * 100).toFixed(1) + "%"}
@@ -299,7 +299,7 @@ export function Dashboard() {
           style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
         >
           <h2 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600 }}>{t(TR.dashboard.goalProgress)}</h2>
-          {expanded.has("goals") ? <ChevronDown size={16} color="var(--ink-soft)" /> : <ChevronRight size={16} color="var(--ink-soft)" />}
+          <FoldChevron open={expanded.has("goals")} />
         </div>
         {goalProgress.length ? (
           expanded.has("goals") ? (

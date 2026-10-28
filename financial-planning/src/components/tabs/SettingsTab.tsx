@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
 import { fmt } from "@/lib/calc";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
 import { usePrimaryGoal } from "@/hooks/usePrimaryGoal";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
-import { SectionHeader, Field, inputStyle } from "@/components/ui";
+import { SectionHeader, Field, inputStyle, FoldChevron } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { BudgetFields } from "@/components/BudgetEditor";
 import { CashflowExportImport } from "./CashflowExportImport";
@@ -85,8 +84,8 @@ function BudgetSettings() {
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
       <div onClick={() => setOpen((v) => !v)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
-        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
-          {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
+          <FoldChevron open={open} />
           <IconLabel name="budget">{t(TR.settings.budgetTitle)}</IconLabel>
         </div>
         <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{summary}</span>

@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Trash2, Pencil, ChevronDown } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { db } from "@/lib/db";
 import {
   fmt, monthlySavingsNeeded, monthsUntilDate, recommendedMonthlySavings,
@@ -13,7 +13,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TR, GOAL_TYPE_LABEL_EN, LEVEL_LABEL_EN, fillText, translateLabel } from "@/lib/i18n";
 import {
   SectionHeader, EmptyState, Field, AddButton, Modal, SegmentedControl,
-  cancelButtonStyle, inputStyle, deleteBtn,
+  cancelButtonStyle, inputStyle, deleteBtn, FoldChevron,
 } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
@@ -318,7 +318,7 @@ export function GoalsTab() {
                   <button type="button" style={compareBarStyle} onClick={() => setCompareOpen((v) => !v)} aria-expanded={compareOpen}>
                     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
                       {t(TR.goals.retireCompare)}
-                      <ChevronDown size={18} style={{ transform: compareOpen ? "rotate(180deg)" : undefined, transition: "transform 0.15s ease", flexShrink: 0 }} />
+                      <FoldChevron open={compareOpen} />
                     </span>
                     {!compareOpen && (
                       <span style={{ fontSize: 11, color: "var(--ink-soft)", fontVariantNumeric: "tabular-nums" }}>
