@@ -44,7 +44,7 @@ export function FinancialRatiosView() {
                   <div style={{ fontSize: 14, fontWeight: 600 }}>{r.name}</div>
                   <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 2 }}>{r.formulaLabel}</div>
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: badge.color, background: badge.bg, padding: "4px 10px", borderRadius: 999, whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: badge.color, background: badge.bg, padding: "4px 10px", borderRadius: 999, whiteSpace: "nowrap" }}>
                   {badge.icon ? <IconLabel name={badge.icon} size="glyph">{badge.text}</IconLabel> : badge.text}
                 </span>
               </div>

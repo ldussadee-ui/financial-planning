@@ -168,7 +168,7 @@ export function Dashboard() {
               transform: openTile === tile.key ? "translate(3px, 3px)" : undefined,
             }}
           >
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, fontWeight: 500 }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 13, fontWeight: 600 }}>
               {tile.label}
               <FoldChevron open={openTile === tile.key} />
             </span>

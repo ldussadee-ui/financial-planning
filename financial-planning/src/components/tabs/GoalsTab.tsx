@@ -52,7 +52,7 @@ const resultValueStyle: CSSProperties = {
   fontFamily: "var(--font-kanit), Kanit, sans-serif", fontVariantNumeric: "tabular-nums",
   fontWeight: 600, color: "var(--ink)", fontSize: 13, whiteSpace: "nowrap",
 };
-const subNoteStyle: CSSProperties = { fontSize: 10.5, color: "var(--ink-soft)", lineHeight: 1.4, marginTop: 1 };
+const subNoteStyle: CSSProperties = { fontSize: 12, color: "var(--ink-soft)", lineHeight: 1.4, marginTop: 1 };
 const compareBarStyle: CSSProperties = {
   background: "#fff", border: "1px solid #D9C4EF", borderRadius: 12, padding: "9px 12px",
   display: "flex", flexDirection: "column", gap: 2, cursor: "pointer", width: "100%", textAlign: "left",
@@ -67,7 +67,7 @@ const compareGrid: CSSProperties = { display: "grid", gridTemplateColumns: "5.4r
 // so the figures below read as belonging to it. Not uppercased: it does
 // nothing for Thai and only makes the English heading longer and shoutier.
 const compareHeadStyle: CSSProperties = {
-  ...compareGrid, alignItems: "end", fontSize: 11, fontWeight: 700, letterSpacing: ".02em",
+  ...compareGrid, alignItems: "end", fontSize: 12, fontWeight: 700, letterSpacing: ".02em",
   color: "var(--ink)", padding: "0 7px 6px", borderBottom: "1px solid #E6D8F4", marginBottom: 3,
 };
 
@@ -286,10 +286,10 @@ export function GoalsTab() {
                 <div style={{ ...dividerStyle, display: "flex", flexDirection: "column", gap: 11 }}>
                   <div>
                     <div style={resultRowStyle}>
-                      <span style={{ fontSize: 11.5, color: "var(--ink-soft)" }}>{t(TR.goals.retireFirstMonth)}</span>
+                      <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(TR.goals.retireFirstMonth)}</span>
                       <span style={resultValueStyle}>
                         {fmt(Math.round(plan.monthlyAtRetirement))}
-                        <span style={{ fontSize: 10.5, fontWeight: 500, color: "var(--ink-soft)", marginLeft: 2 }}>{t(TR.goals.retirePerMonth)}</span>
+                        <span style={{ fontSize: 12, fontWeight: 500, color: "var(--ink-soft)", marginLeft: 2 }}>{t(TR.goals.retirePerMonth)}</span>
                       </span>
                     </div>
                     <div style={subNoteStyle}>
@@ -321,7 +321,7 @@ export function GoalsTab() {
                       <FoldChevron open={compareOpen} />
                     </span>
                     {!compareOpen && (
-                      <span style={{ fontSize: 11, color: "var(--ink-soft)", fontVariantNumeric: "tabular-nums" }}>
+                      <span style={{ fontSize: 12, color: "var(--ink-soft)", fontVariantNumeric: "tabular-nums" }}>
                         {fillText(t(TR.goals.retireCompareTeaser), {
                           lo: compareRows[0].rate,
                           hi: compareRows[compareRows.length - 1].rate,
@@ -336,7 +336,7 @@ export function GoalsTab() {
 
                   {compareOpen && (
                     <div style={{ marginTop: 8 }}>
-                      <div style={{ fontSize: 10.5, color: "var(--ink-soft)", marginBottom: 5 }}>
+                      <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 5 }}>
                         {fillText(t(TR.goals.retireCompareNote), { linked: fmt(editingLinked) })}
                       </div>
                       <div style={compareHeadStyle}>
@@ -354,14 +354,14 @@ export function GoalsTab() {
                             aria-current={current}
                             style={{
                               ...compareGrid, width: "100%", border: "none", padding: "8px 7px", borderRadius: 8,
-                              cursor: "pointer", fontSize: 11.5, fontFamily: "inherit", textAlign: "left",
+                              cursor: "pointer", fontSize: 12, fontFamily: "inherit", textAlign: "left",
                               background: current ? "#EBDCFA" : "transparent",
                               color: current ? "var(--accent)" : "var(--ink-soft)",
                             }}
                           >
                             <span>{row.rate}%</span>
-                            <span style={{ ...resultValueStyle, fontSize: 11.5, textAlign: "right", color: current ? "var(--accent)" : "var(--ink)" }}>{shortBaht(row.total)}</span>
-                            <span style={{ ...resultValueStyle, fontSize: 11.5, textAlign: "right", color: current ? "var(--accent)" : "var(--ink)" }}>{row.monthly === null ? "—" : fmt(Math.round(row.monthly))}</span>
+                            <span style={{ ...resultValueStyle, fontSize: 12, textAlign: "right", color: current ? "var(--accent)" : "var(--ink)" }}>{shortBaht(row.total)}</span>
+                            <span style={{ ...resultValueStyle, fontSize: 12, textAlign: "right", color: current ? "var(--accent)" : "var(--ink)" }}>{row.monthly === null ? "—" : fmt(Math.round(row.monthly))}</span>
                           </button>
                         );
                       })}

@@ -225,7 +225,7 @@ export function Modal({
 export function StatRow({ label, value, big }: { label: ReactNode; value: string; big?: boolean }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "7px 0" }}>
-      <span style={{ fontSize: big ? 14 : 13, color: "var(--ink-soft)" }}>{label}</span>
+      <span style={{ fontSize: big ? 14 : 13, color: "var(--ink)", fontWeight: 500 }}>{label}</span>
       <span className="fp-num" style={{ fontSize: big ? 18 : 14, fontWeight: 600 }}>{value}</span>
     </div>
   );
@@ -534,7 +534,7 @@ const dayPickerPopoverStyle: CSSProperties = {
 };
 function dayCellStyle(active: boolean): CSSProperties {
   return {
-    width: 26, height: 26, borderRadius: 8, border: "none", fontSize: 11.5, cursor: "pointer",
+    width: 26, height: 26, borderRadius: 8, border: "none", fontSize: 12, cursor: "pointer",
     display: "flex", alignItems: "center", justifyContent: "center",
     background: active ? "var(--yellow)" : "var(--track)",
     color: active ? "var(--ink)" : "var(--ink-soft)", fontWeight: active ? 700 : 400,

@@ -28,7 +28,7 @@ function SpendCompareSettings() {
 
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="spendCompare">{t(TR.settings.spendCompare)}</IconLabel></div>
+      <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="spendCompare">{t(TR.settings.spendCompare)}</IconLabel></div>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
         {t(TR.settings.spendCompareNote)}
       </div>
@@ -84,7 +84,7 @@ function BudgetSettings() {
   return (
     <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
       <div onClick={() => setOpen((v) => !v)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
-        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
           <FoldChevron open={open} />
           <IconLabel name="budget">{t(TR.settings.budgetTitle)}</IconLabel>
         </div>
@@ -115,14 +115,14 @@ export function SettingsTab() {
           under headings that say which is which: this one replaces your own
           data wholesale, the ones below append someone else's to it. */}
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <h2 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="backup">{t(TR.settings.backupSection)}</IconLabel></h2>
+        <h2 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="backup">{t(TR.settings.backupSection)}</IconLabel></h2>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.backupNote)}
         </div>
         <FullBackup />
       </div>
 
-      <h2 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, margin: "0 0 4px 2px" }}>
+      <h2 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, margin: "0 0 4px 2px" }}>
         {t(TR.settings.mergeHeading)}
       </h2>
       <div style={{ fontSize: 12, color: "var(--ink-soft)", margin: "0 0 12px 2px", lineHeight: 1.55 }}>
@@ -130,7 +130,7 @@ export function SettingsTab() {
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="cashflow">{t(TR.settings.cashflowSection)}</IconLabel></h3>
+        <h3 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="cashflow">{t(TR.settings.cashflowSection)}</IconLabel></h3>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.cashflowExportNote)}
         </div>
@@ -138,7 +138,7 @@ export function SettingsTab() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <h3 style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="assets">{t(TR.settings.assetsSection)}</IconLabel></h3>
+        <h3 style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 4 }}><IconLabel name="assets">{t(TR.settings.assetsSection)}</IconLabel></h3>
         <div style={{ fontSize: 12, color: "var(--ink-soft)", marginBottom: 14 }}>
           {t(TR.settings.assetsExportNote)}
         </div>
