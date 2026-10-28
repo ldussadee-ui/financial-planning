@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.5] - 2026-10-28
+
+### Changed
+- The TH/EN language switch at the top of every page is smaller: a rounded pill the same height as the settings gear and the back button next to it, instead of a taller square-cornered box that stood out from the rest of the row. You still see both TH and EN and tap the one you want
+
 ## [0.26.4] - 2026-10-28
 
 ### Changed

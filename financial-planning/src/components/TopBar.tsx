@@ -4,8 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR } from "@/lib/i18n";
-import { SegmentedControl } from "@/components/ui";
+import { TR, type Language } from "@/lib/i18n";
 import { NAV, SettingsShortcut } from "@/components/Nav";
 
 // Sub-pages (e.g. /dashboard/insurance) go back to the tab they live under,
@@ -35,6 +34,46 @@ function BackButton() {
   );
 }
 
+// TH/EN switch sized to match the round settings and back buttons beside it
+// (34px tall, pill-shaped) rather than the taller general SegmentedControl.
+function LanguagePill({ lang, onChange }: { lang: Language; onChange: (lang: Language) => void }) {
+  const options: Language[] = ["th", "en"];
+  return (
+    <div
+      role="group"
+      aria-label="Language"
+      style={{
+        position: "relative", display: "flex", width: 76, height: 34, padding: 3,
+        background: "var(--panel)", border: "2px solid var(--border)", borderRadius: 999,
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          position: "absolute", top: 3, bottom: 3, width: "calc(50% - 3px)",
+          left: lang === "th" ? 3 : "50%",
+          background: "var(--yellow)", border: "1.5px solid var(--border)", borderRadius: 999,
+          transition: "left 0.2s ease",
+        }}
+      />
+      {options.map((o) => (
+        <button
+          key={o}
+          type="button"
+          onClick={() => onChange(o)}
+          aria-pressed={lang === o}
+          style={{
+            position: "relative", flex: 1, border: "none", background: "transparent", cursor: "pointer", padding: 0,
+            fontSize: 12, fontWeight: lang === o ? 700 : 600, color: lang === o ? "var(--ink)" : "var(--ink-soft)",
+          }}
+        >
+          {o.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // Rendered once in the shared tabs layout (not per-page) so it's reachable
 // from every tab and lands in DOM/tab order right after the sidebar. Only the
 // back button stays on screen while scrolling (see .fp-back-float); the
@@ -48,14 +87,7 @@ export function TopBar() {
       </div>
       <div className="fp-topbar">
         <div style={{ flex: 1 }} />
-        <div style={{ width: 108 }}>
-          <SegmentedControl
-            small
-            options={[{ value: "th", label: "TH" }, { value: "en", label: "EN" }]}
-            value={lang}
-            onChange={setLang}
-          />
-        </div>
+        <LanguagePill lang={lang} onChange={setLang} />
         <SettingsShortcut />
       </div>
     </>
