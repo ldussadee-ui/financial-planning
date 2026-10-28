@@ -323,8 +323,10 @@ export function SegmentedControl<T extends string>({
     <div style={{ position: "relative", display: "flex", background: "var(--panel)", border: "2px solid var(--border)", borderRadius: small ? 11 : 13, padding: 3 }}>
       <div
         style={{
+          // Measured over the 3px-padded track the buttons sit in, so the
+          // thumb lines up with its button and the label stays centred.
           position: "absolute", top: 3, bottom: 3,
-          left: `calc(${(thumbAt * 100) / n}% + 3px)`, width: `calc(${100 / n}% - 6px)`,
+          left: `calc(3px + (100% - 6px) * ${thumbAt / n})`, width: `calc((100% - 6px) / ${n})`,
           background: "var(--yellow)", borderRadius: small ? 7 : 8, border: "2px solid var(--border)",
           transition: thumb?.tracking ? "none" : "left 0.2s ease",
         }}

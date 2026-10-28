@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.7] - 2026-10-28
+
+### Fixed
+- The amounts on the left side of the asset trend chart were cut off once your assets passed a million (for example "18000k" showed as "8000k"). Millions are now written short, like 1.7M or 18M, so the whole number fits. The expense report chart uses the same labels
+- In every switch with a yellow highlight (the asset tabs, monthly/quarterly/yearly, and the others), the highlight now sits exactly behind the selected word. Before, it drifted a little towards the middle of the switch, so the word looked off-centre in the yellow box, most visibly on the last option
+
 ## [0.26.6] - 2026-10-28
 
 ### Changed

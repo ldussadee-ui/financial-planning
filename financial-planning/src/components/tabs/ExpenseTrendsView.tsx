@@ -2,7 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
-import { fmt } from "@/lib/calc";
+import { compactAmount, fmt } from "@/lib/calc";
 import { defaultPeriod, shiftPeriod, periodLabel, type Granularity, type Period } from "@/lib/period";
 import { useExpensePeriod } from "@/hooks/useExpensePeriod";
 import { useBudgets } from "@/hooks/useBudgets";
@@ -26,7 +26,6 @@ function toggleStyle(active: boolean): CSSProperties {
     borderRadius: 999, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
   };
 }
-const compactAmount = (n: number) => (n >= 1000 ? Math.round(n / 1000) + "k" : String(n));
 
 // The figures written over the bars, at three levels of detail:
 //   0 — the agreed rule: exact under ten thousand (8,450), thousands above (12.5k)
@@ -110,7 +109,7 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
             <BarChart data={chartData} margin={{ top: 18, right: 4, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
+              <YAxis tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} width={40} tickFormatter={compactAmount} />
               <Tooltip formatter={(v) => fmt(Number(v))} />
               {selected === null
                 ? categories.map((cat, i) => (

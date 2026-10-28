@@ -13,6 +13,20 @@ export const classifyIncome = (category: string): IncomeClass => {
   return PASSIVE_KEYWORDS.some((k) => t.includes(k.toLowerCase())) ? "Passive" : "Active";
 };
 
+// Short chart-axis labels: 950, 12k, 1.5M, 18M. Kept to about four
+// characters so they fit the narrow Y axis; a value in the millions written
+// as thousands ("18000k") was wider than the axis and got cut off.
+export function compactAmount(n: number): string {
+  const a = Math.abs(n);
+  const sign = n < 0 ? "-" : "";
+  if (a >= 1_000_000) {
+    const m = a / 1_000_000;
+    return sign + (m >= 10 ? Math.round(m) : Math.round(m * 10) / 10) + "M";
+  }
+  if (a >= 1000) return sign + Math.round(a / 1000) + "k";
+  return String(n);
+}
+
 export const fmt = (n: number | null | undefined) =>
   "฿" + Number(n || 0).toLocaleString("th-TH", { maximumFractionDigits: 0 });
 
