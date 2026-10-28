@@ -7,18 +7,13 @@ import { fmt } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 
-export function SectionHeader({ title, sub, chip }: { title: string; sub?: string; chip?: string }) {
+export function SectionHeader({ title, sub }: { title: string; sub?: string }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 26, flexWrap: "wrap", gap: 10 }}>
       <div>
         <h1 className="fp-display" style={{ fontSize: 28, fontWeight: 600, color: "var(--ink)", lineHeight: 1.2 }}>{title}</h1>
         {sub && <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 5 }}>{sub}</div>}
       </div>
-      {chip && (
-        <div className="fp-chip">
-          <span aria-hidden>✨</span> {chip}
-        </div>
-      )}
     </div>
   );
 }

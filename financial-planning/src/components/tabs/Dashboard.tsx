@@ -6,7 +6,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { db } from "@/lib/db";
-import { categoryBudgetStatus, fmt, fmtRange, inRange } from "@/lib/calc";
+import { categoryBudgetStatus, fmt, inRange } from "@/lib/calc";
 import { ICON_MAP } from "@/lib/constants";
 import { useMetrics } from "@/hooks/useMetrics";
 import { useBudgets } from "@/hooks/useBudgets";
@@ -141,7 +141,7 @@ export function Dashboard() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.dashboard.title)} sub={`${t(TR.dashboard.subtitle)} ${fmtRange(cycleRange, lang)}`} chip={t(TR.dashboard.trialChip)} />
+      <SectionHeader title={t(TR.dashboard.title)} />
 
       <NetWorthHero
         netWorth={metrics.totalNetWorth}
