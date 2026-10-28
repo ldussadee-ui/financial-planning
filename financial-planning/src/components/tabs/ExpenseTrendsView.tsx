@@ -9,7 +9,7 @@ import { useBudgets } from "@/hooks/useBudgets";
 import { useMonthlyCategoryTrend } from "@/hooks/useMonthlyCategoryTrend";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
-import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl, StepButton } from "@/components/ui";
+import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl, StepButton, FoldChevron } from "@/components/ui";
 import { CategoryIcon, IconLabel } from "@/components/icons";
 
 const CATEGORY_PALETTE = ["#FF9AA2", "var(--teal)", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
@@ -207,7 +207,7 @@ export function ExpenseTrendsView() {
                       <CategoryIcon category={c.category} />
                       <span style={{ color: "var(--ink)" }}>{translateLabel(c.category, lang, CATEGORY_LABEL_EN)}</span>
                       <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>({c.count} {t(TR.reports.itemsCount)})</span>
-                      <span style={{ fontSize: 10, color: "var(--ink-soft)" }}>{isOpen ? "▲" : "▼"}</span>
+                      <FoldChevron open={isOpen} size={16} />
                       <span className="fp-num" style={{ marginLeft: "auto", fontWeight: 600 }}>{fmt(c.amount)}</span>
                       <span className="fp-num" style={{ width: 40, textAlign: "right", color: "var(--ink-soft)" }}>
                         {total > 0 ? ((c.amount / total) * 100).toFixed(0) : 0}%
