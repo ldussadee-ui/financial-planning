@@ -93,7 +93,7 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
   const trendTitle = period.granularity === "halfYear" ? t(TR.reports.trendHalfYear) : t(TR.reports.trendYear);
 
   return (
-    <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
+    <div className="fp-card" style={{ padding: "14px 16px", marginTop: 18 }}>
       <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="monthlyTrend">{trendTitle}</IconLabel></div>
       {categories.length ? (
         <>
@@ -171,7 +171,7 @@ export function ExpenseTrendsView() {
         <StepButton dir="next" onClick={() => setPeriod((p) => shiftPeriod(p, 1))} label={t(TR.reports.nextPeriod)} size={34} />
       </div>
 
-      <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
+      <div className="fp-card" style={{ padding: "14px 16px", marginBottom: 18 }}>
         <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="cashflow">{t(TR.reports.overview)}</IconLabel></div>
         <StatRow label={t(TR.reports.total)} value={fmt(total)} big />
         <StatRow label={<IconLabel name="fixed">{t(TR.reports.fixedLabel)}</IconLabel>} value={fmt(fixedTotal)} />
@@ -179,19 +179,27 @@ export function ExpenseTrendsView() {
         <StatRow label={<IconLabel name="saveInvest">{t(TR.reports.investLabel)}</IconLabel>} value={fmt(investTotal)} />
       </div>
 
-      <div className="fp-card" style={{ padding: 26 }}>
+      <div className="fp-card" style={{ padding: "14px 16px" }}>
         <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="category">{t(TR.reports.byCategory)}</IconLabel></div>
         {byCategory.length ? (
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
-            <ResponsiveContainer width={180} height={180}>
-              <PieChart>
-                <Pie data={byCategory} dataKey="amount" nameKey="category" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
-                  {byCategory.map((c, i) => <Cell key={c.category} fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]} stroke="none" />)}
-                </Pie>
-                <Tooltip {...chartTooltipProps} formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, CATEGORY_LABEL_EN)]} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div style={{ flex: 1, minWidth: 220, fontSize: 13 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* The donut's hole carries the period total so the centre isn't dead space. */}
+            <div style={{ position: "relative", width: 200, height: 200, alignSelf: "center" }}>
+              <ResponsiveContainer width={200} height={200}>
+                <PieChart>
+                  <Pie data={byCategory} dataKey="amount" nameKey="category" innerRadius={64} outerRadius={96} paddingAngle={3} cornerRadius={6}>
+                    {byCategory.map((c, i) => <Cell key={c.category} fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]} stroke="none" />)}
+                  </Pie>
+                  <Tooltip {...chartTooltipProps} wrapperStyle={{ zIndex: 1 }} formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, CATEGORY_LABEL_EN)]} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+                <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(TR.reports.total)}</span>
+                <span className="fp-num" style={{ fontSize: 20, fontWeight: 700, color: "var(--ink)" }}>{fmt(total)}</span>
+                <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{byCategory.reduce((n, c) => n + c.count, 0)} {t(TR.reports.itemsCount)}</span>
+              </div>
+            </div>
+            <div style={{ fontSize: 13 }}>
               {byCategory.map((c, i) => {
                 const isOpen = openCategory === c.category;
                 return (
