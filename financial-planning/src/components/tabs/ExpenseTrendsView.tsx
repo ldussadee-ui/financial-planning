@@ -9,7 +9,7 @@ import { useBudgets } from "@/hooks/useBudgets";
 import { useMonthlyCategoryTrend } from "@/hooks/useMonthlyCategoryTrend";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
-import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl, StepButton, FoldChevron } from "@/components/ui";
+import { SectionHeader, StatRow, EmptyState, BudgetBar, SegmentedControl, StepButton, FoldChevron, chartTooltipProps } from "@/components/ui";
 import { CategoryIcon, IconLabel } from "@/components/icons";
 
 const CATEGORY_PALETTE = ["#FF9AA2", "var(--teal)", "#B4A7F5", "#FFD8A8", "#B7E4C7", "#A0CED9", "#BFE3F0", "#FFE29A", "#FFAFCC", "#C9B8FF", "#FFB5A7"];
@@ -110,7 +110,7 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} width={40} tickFormatter={compactAmount} />
-              <Tooltip formatter={(v) => fmt(Number(v))} />
+              <Tooltip {...chartTooltipProps} formatter={(v) => fmt(Number(v))} />
               {selected === null
                 ? categories.map((cat, i) => (
                     <Bar key={cat} dataKey={cat} name={translateLabel(cat, lang, CATEGORY_LABEL_EN)} stackId="a" fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]}>
@@ -188,7 +188,7 @@ export function ExpenseTrendsView() {
                 <Pie data={byCategory} dataKey="amount" nameKey="category" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
                   {byCategory.map((c, i) => <Cell key={c.category} fill={CATEGORY_PALETTE[i % CATEGORY_PALETTE.length]} stroke="none" />)}
                 </Pie>
-                <Tooltip formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, CATEGORY_LABEL_EN)]} />
+                <Tooltip {...chartTooltipProps} formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, CATEGORY_LABEL_EN)]} />
               </PieChart>
             </ResponsiveContainer>
             <div style={{ flex: 1, minWidth: 220, fontSize: 13 }}>

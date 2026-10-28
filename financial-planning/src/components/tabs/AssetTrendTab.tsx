@@ -7,7 +7,7 @@ import { useNetWorthTrend } from "@/hooks/useNetWorthTrend";
 import { useNetWorthTable } from "@/hooks/useNetWorthTable";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
-import { SectionHeader, EmptyState, SegmentedControl } from "@/components/ui";
+import { SectionHeader, EmptyState, SegmentedControl, chartTooltipProps } from "@/components/ui";
 import type { AssetGranularity } from "@/lib/netWorthBuckets";
 
 const GRANULARITY_COUNT: Record<AssetGranularity, number> = { month: 6, quarter: 4, halfYear: 4, year: 5 };
@@ -78,7 +78,7 @@ export function AssetTrendTab() {
                 width={40}
                 tickFormatter={(v) => `${v}%`}
               />
-              <Tooltip formatter={(v, n) => (n === growthName ? `${Number(v).toFixed(1)}%` : fmt(Number(v)))} />
+              <Tooltip {...chartTooltipProps} formatter={(v, n) => (n === growthName ? `${Number(v).toFixed(1)}%` : fmt(Number(v)))} />
               {/* itemSorter default ("value") sorts alphabetically, which puts the
                   Latin "Net Worth" ahead of the Thai labels regardless of Bar order */}
               <Legend wrapperStyle={{ fontSize: 12 }} itemSorter={null} />

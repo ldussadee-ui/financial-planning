@@ -7,6 +7,7 @@ All notable changes to this project are documented here. Format loosely follows 
 ### Fixed
 - The amounts on the left side of the asset trend chart were cut off once your assets passed a million (for example "18000k" showed as "8000k"). Millions are now written short, like 1.7M or 18M, so the whole number fits. The expense report chart uses the same labels
 - In every switch with a yellow highlight (the asset tabs, monthly/quarterly/yearly, and the others), the highlight now sits exactly behind the selected word. Before, it drifted a little towards the middle of the switch, so the word looked off-centre in the yellow box, most visibly on the last option
+- The details box that pops up when you tap a chart (asset trend, expense report, the overview pie) was the plain thin grey box of the chart library. It now looks like the rest of the app: a white card with a black outline, rounded corners and the hard shadow, with the month in bold
 
 ## [0.26.6] - 2026-10-28
 
