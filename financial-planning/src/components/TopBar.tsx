@@ -36,24 +36,28 @@ function BackButton() {
 }
 
 // Rendered once in the shared tabs layout (not per-page) so it's reachable
-// from every tab and lands in DOM/tab order right after the sidebar. It
-// sticks to the top of the screen so going back or switching language never
-// needs a scroll up first.
+// from every tab and lands in DOM/tab order right after the sidebar. Only the
+// back button stays on screen while scrolling (see .fp-back-float); the
+// language switch and settings scroll away with the page.
 export function TopBar() {
   const { lang, setLang } = useLanguage();
   return (
-    <div className="fp-topbar">
-      <BackButton />
-      <div style={{ flex: 1 }} />
-      <div style={{ width: 108 }}>
-        <SegmentedControl
-          small
-          options={[{ value: "th", label: "TH" }, { value: "en", label: "EN" }]}
-          value={lang}
-          onChange={setLang}
-        />
+    <>
+      <div className="fp-back-float">
+        <BackButton />
       </div>
-      <SettingsShortcut />
-    </div>
+      <div className="fp-topbar">
+        <div style={{ flex: 1 }} />
+        <div style={{ width: 108 }}>
+          <SegmentedControl
+            small
+            options={[{ value: "th", label: "TH" }, { value: "en", label: "EN" }]}
+            value={lang}
+            onChange={setLang}
+          />
+        </div>
+        <SettingsShortcut />
+      </div>
+    </>
   );
 }
