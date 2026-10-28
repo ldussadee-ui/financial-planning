@@ -31,7 +31,7 @@ export function AddFab({ onClick }: { onClick: () => void }) {
   if (!hydrated) return null;
   return createPortal(
     <button type="button" onClick={onClick} className="fp-pop" style={fabStyle} aria-label={t(TR.common.addItemAria)}>
-      <Plus size={24} />
+      <Plus size={26} strokeWidth={3} />
     </button>,
     document.body,
   );

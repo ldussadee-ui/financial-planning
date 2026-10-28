@@ -11,10 +11,10 @@ import { SectionHeader, Field, AddButton, Modal, Group, Row, cancelButtonStyle, 
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { Liability, LiabilityTerm } from "@/lib/types";
+import { LiabilityIcon } from "@/components/icons";
 
 const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", rate: "", monthly: "" };
 
-const debtIcon = <span style={{ width: 30, height: 30, borderRadius: 10, background: LIABILITY_COLOR, flexShrink: 0 }} />;
 
 export function LiabilityTab() {
   const { t } = useLanguage();
@@ -91,10 +91,10 @@ export function LiabilityTab() {
       </Modal>
 
       <Group title={t(TR.assets.shortTermDebt)} amount={fmt(short.reduce((s, l) => s + l.balance, 0))} tint="#FFEFEA">
-        {short.map((l) => <Row key={l.id} icon={debtIcon} left={rowLeft(l)} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
+        {short.map((l) => <Row key={l.id} icon={<LiabilityIcon term={l.term} color={LIABILITY_COLOR} />} left={rowLeft(l)} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
       <Group title={t(TR.assets.longTermDebt)} amount={fmt(long.reduce((s, l) => s + l.balance, 0))} tint="#EFFBF6">
-        {long.map((l) => <Row key={l.id} icon={debtIcon} left={rowLeft(l)} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
+        {long.map((l) => <Row key={l.id} icon={<LiabilityIcon term={l.term} color={LIABILITY_COLOR} />} left={rowLeft(l)} right={fmt(l.balance)} onClick={() => openEdit(l)} onDelete={() => remove(l.id)} />)}
       </Group>
 
       <AddFab onClick={openNew} />

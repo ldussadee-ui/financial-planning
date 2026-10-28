@@ -209,9 +209,9 @@ export function Modal({
               type="button"
               onClick={onClose}
               aria-label={t(TR.common.close)}
-              style={{ border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-soft)", padding: 4 }}
+              style={{ border: "none", background: "transparent", cursor: "pointer", color: "var(--ink)", padding: 4 }}
             >
-              <X size={20} />
+              <X size={22} strokeWidth={3} />
             </button>
           </div>
         </div>
@@ -261,7 +261,7 @@ export const inputStyle: CSSProperties = {
   border: "1.5px solid var(--border)", borderRadius: 12, padding: "8px 12px",
   fontSize: 13, background: "var(--panel)", color: "var(--ink)", minWidth: 130,
 };
-export const deleteBtn: CSSProperties = { border: "none", background: "transparent", color: "var(--ink-soft)", cursor: "pointer", padding: 4, borderRadius: 8 };
+export const deleteBtn: CSSProperties = { border: "none", background: "transparent", color: "var(--ink)", cursor: "pointer", padding: 4, borderRadius: 8 };
 
 // Form rows are laid out explicitly instead of being left to flex-wrap.
 // With wrapping, where a row breaks is decided by how long the words in it
@@ -364,7 +364,7 @@ export function AddButton({ onClick, label, color = "var(--teal)", icon }: { onC
         borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
       }}
     >
-      {icon ?? <Plus size={14} />} {label ?? t(TR.common.add)}
+      {icon ?? <Plus size={16} strokeWidth={3} />} {label ?? t(TR.common.add)}
     </button>
   );
 }
@@ -503,8 +503,8 @@ export function Row({
       {date && <span style={{ fontSize: 12, color: "var(--ink)", background: "var(--lilac)", padding: "2px 8px", borderRadius: 999 }}>{date}</span>}
       <span className="fp-num" style={{ fontSize: 14, fontWeight: 600 }}>{right}</span>
       {onClick && (
-        <span style={{ color: "var(--ink-soft)", display: "flex" }} aria-hidden>
-          <ChevronRight size={16} />
+        <span style={{ color: "var(--ink)", display: "flex" }} aria-hidden>
+          <ChevronRight size={18} strokeWidth={3} />
         </span>
       )}
       {toggle && <Switch checked={toggle.checked} onChange={toggle.onChange} ariaLabel={toggle.ariaLabel} />}
@@ -517,7 +517,7 @@ export function Row({
         style={{ ...deleteBtn, marginLeft: 6 }}
         aria-label={deleteAriaLabel ?? t(TR.common.deleteItemAria)}
       >
-        <Trash2 size={13} />
+        <Trash2 size={17} strokeWidth={2.5} />
       </button>
     </div>
   );

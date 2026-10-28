@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.2] - 2026-10-28
+
+### Fixed
+- The small action icons that still had the old thin, grey look now match the Pop Sticker style: the › on every list row and on the overview score cards, the trash and pencil icons on assets, debts and goals, the × that closes a pop-up or a notice, the × on category chips while editing them, the + on the add buttons, and the settings gear. They are now bold and dark like the other buttons
+- Rows in สภาพคล่อง, ลงทุน, ส่วนตัว and หนี้สิน had a plain coloured square at the start. Each square is now a sticker icon for what the row is: banknotes for cash, a bank for savings accounts, a candlestick chart for stocks, a pie chart for mutual funds, a building for property, a gem for gold, a car or house for personal items, a card or bank for debts. Investment rows keep their category colour, so a row still matches its slice in the allocation chart
+
 ## [0.26.1] - 2026-10-28
 
 ### Changed

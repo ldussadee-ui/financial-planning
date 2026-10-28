@@ -16,6 +16,7 @@ import { Field, AddButton, DayPicker, Modal, cancelButtonStyle, inputStyle } fro
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
 import { CategoryIcon, IconLabel, type IconName } from "@/components/icons";
+import { X } from "lucide-react";
 
 // `accent` is the colour of the direction being entered, so a selected chip
 // in the expense sheet doesn't sit there wearing the colour this screen uses
@@ -30,8 +31,8 @@ function chipStyle(active: boolean, accent: string): CSSProperties {
 }
 const chipDeleteBadge: CSSProperties = {
   position: "absolute", top: -7, right: -7, width: 18, height: 18, borderRadius: 999,
-  background: "var(--danger)", color: "#fff", border: "2px solid var(--bg)", fontSize: 11, lineHeight: "14px",
-  textAlign: "center", padding: 0, cursor: "pointer", boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+  background: "var(--danger)", color: "var(--ink)", border: "1.5px solid var(--border)",
+  display: "grid", placeItems: "center", padding: 0, cursor: "pointer", boxShadow: "1.5px 1.5px 0 var(--border)",
 };
 // A #sub-item: smaller and squarer than the category chips above it, in the
 // lavender the cashflow list uses for the same tag, so the two levels never
@@ -391,7 +392,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     <span className="fp-ic-label"><CategoryIcon category={c.label} />{translateLabel(c.label, lang, CATEGORY_LABEL_EN)}</span>
                   </button>
                   {editing && (
-                    <button type="button" onClick={() => removeCat(c.id, c.label)} title={t(TR.cashflow.removeShortcut)} style={chipDeleteBadge}>×</button>
+                    <button type="button" onClick={() => removeCat(c.id, c.label)} title={t(TR.cashflow.removeShortcut)} aria-label={t(TR.cashflow.removeShortcut)} style={chipDeleteBadge}><X size={11} strokeWidth={3.5} aria-hidden /></button>
                   )}
                 </div>
               ))}
@@ -417,7 +418,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     <div key={sub} style={{ position: "relative", display: "inline-block" }}>
                       <button type="button" onClick={() => { if (!editing) pickSub(sub); }} style={subChipStyle(!editing && form.sub === sub)}>#{sub}</button>
                       {editing && (selectedCat.subs || []).includes(sub) && (
-                        <button type="button" onClick={() => removeSub(sub)} title={t(TR.cashflow.removeSub)} style={chipDeleteBadge}>×</button>
+                        <button type="button" onClick={() => removeSub(sub)} title={t(TR.cashflow.removeSub)} aria-label={t(TR.cashflow.removeSub)} style={chipDeleteBadge}><X size={11} strokeWidth={3.5} aria-hidden /></button>
                       )}
                     </div>
                   ))}

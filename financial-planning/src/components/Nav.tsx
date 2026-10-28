@@ -123,7 +123,7 @@ export function SettingsShortcut() {
         border: "2px solid var(--border)",
       }}
     >
-      <Settings size={17} strokeWidth={2} />
+      <Settings size={18} strokeWidth={2.5} />
       {stale && (
         <span
           aria-hidden

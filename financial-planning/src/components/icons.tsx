@@ -5,8 +5,10 @@ import {
   CreditCard, Delete, FileText, Gauge, Gem, Gift, HandHeart, HardDriveDownload, House, KeyRound, Landmark, Laptop,
   LayoutDashboard, Layers, Leaf, Lightbulb, Lock, Package, Palette, PartyPopper, PenLine, Pill, Plane, Plus, Repeat,
   Scale, Settings, Shield, ShieldCheck, ShoppingBag, Sparkles, SprayCan, Sprout, Tag, Target, Timer, TrendingUp,
-  TriangleAlert, Upload, Download, User, Users, UtensilsCrossed, WalletCards, Wifi, Zap, type LucideIcon,
+  TriangleAlert, Upload, Download, User, Users, UtensilsCrossed, WalletCards, Wifi, Zap, Wallet, ScrollText, Building2,
+  Shapes, Trophy, Sofa, type LucideIcon,
 } from "lucide-react";
+import type { InvestmentCategory, LiabilityTerm, LiquidType, PersonalItemType } from "@/lib/types";
 
 // The app's "Pop Sticker" icon set (v0.26.0): a line glyph on a flat colour
 // tile with the Bold Pop ink outline and hard shadow. Every concept gets one
@@ -77,10 +79,13 @@ const TONE_VAR: Record<IconTone, string> = {
 // (buttons, pass/fail pills).
 export type IconSize = "lg" | "md" | "sm" | "glyph";
 
-function Sticker({ Glyph, tone, size }: { Glyph: LucideIcon; tone: IconTone; size: IconSize }) {
+// `tone` is one of the palette tones, or any CSS colour for tiles that must
+// match a colour used elsewhere (an investment category's chart colour).
+function Sticker({ Glyph, tone, size }: { Glyph: LucideIcon; tone: IconTone | string; size: IconSize }) {
   if (size === "glyph") return <Glyph aria-hidden size={15} strokeWidth={2.5} style={{ flexShrink: 0 }} />;
+  const bg = TONE_VAR[tone as IconTone] ?? tone;
   return (
-    <span aria-hidden className={size === "sm" ? "fp-ic" : `fp-ic fp-ic-${size}`} style={{ ["--ic-tone" as string]: TONE_VAR[tone] }}>
+    <span aria-hidden className={size === "sm" ? "fp-ic" : `fp-ic fp-ic-${size}`} style={{ ["--ic-tone" as string]: bg }}>
       <Glyph strokeWidth={size === "sm" ? 2.5 : 2.25} />
     </span>
   );
@@ -126,4 +131,31 @@ const CATEGORY_ICONS: Record<string, [LucideIcon, IconTone]> = {
 export function CategoryIcon({ category, size = "sm" }: { category: string; size?: IconSize }) {
   const [Glyph, tone] = CATEGORY_ICONS[category] ?? [Tag, "yellow"];
   return <Sticker Glyph={Glyph} tone={tone} size={size} />;
+}
+
+// Row icons for the asset and debt lists: what kind of thing each row is,
+// on the tab's own tile colour (investments keep their category's chart
+// colour so a row matches its slice in the allocation chart).
+const LIQUID_ICONS: Record<LiquidType, LucideIcon> = {
+  "เงินสด": Banknote, "บัญชีออมทรัพย์": Landmark, "บัญชีกระแสรายวัน": Wallet, "กองทุนตลาดเงิน": Coins, "อื่นๆ": Package,
+};
+const INVESTMENT_ICONS: Record<InvestmentCategory, LucideIcon> = {
+  FixedIncome: ScrollText, Equity: ChartCandlestick, MutualFund: ChartPie, RealEstate: Building2, Gold: Gem, Alternative: Shapes,
+};
+const PERSONAL_ICONS: Record<PersonalItemType, LucideIcon> = {
+  "รถยนต์": Car, "บ้านอยู่เอง": House, "ของสะสม": Trophy, "เครื่องประดับ": Gem, "เฟอร์นิเจอร์": Sofa, "อื่นๆ": Package,
+};
+const LIABILITY_ICONS: Record<LiabilityTerm, LucideIcon> = { ShortTerm: CreditCard, LongTerm: Landmark };
+
+export function LiquidIcon({ type, color }: { type: LiquidType; color: string }) {
+  return <Sticker Glyph={LIQUID_ICONS[type] ?? Package} tone={color} size="md" />;
+}
+export function InvestmentIcon({ category, color }: { category: InvestmentCategory; color: string }) {
+  return <Sticker Glyph={INVESTMENT_ICONS[category] ?? Shapes} tone={color} size="md" />;
+}
+export function PersonalIcon({ type, color }: { type: PersonalItemType; color: string }) {
+  return <Sticker Glyph={PERSONAL_ICONS[type] ?? Package} tone={color} size="md" />;
+}
+export function LiabilityIcon({ term, color }: { term: LiabilityTerm; color: string }) {
+  return <Sticker Glyph={LIABILITY_ICONS[term] ?? CreditCard} tone={color} size="md" />;
 }

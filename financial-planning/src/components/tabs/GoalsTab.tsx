@@ -414,7 +414,7 @@ export function GoalsTab() {
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <span className="fp-num" style={{ fontSize: 12, color: "var(--ink-soft)" }}>{fmt(linked)} / {fmt(g.target)}</span>
                   <span className="fp-num" style={{ fontSize: 13, fontWeight: 600 }}>{pct.toFixed(0)}%</span>
-                  <span style={{ color: "var(--ink-soft)" }} aria-hidden><Pencil size={12} /></span>
+                  <span style={{ color: "var(--ink)", display: "flex" }} aria-hidden><Pencil size={16} strokeWidth={2.5} /></span>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -424,7 +424,7 @@ export function GoalsTab() {
                     style={deleteBtn}
                     aria-label={t(TR.goals.deleteAria)}
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={17} strokeWidth={2.5} />
                   </button>
                 </div>
               </div>

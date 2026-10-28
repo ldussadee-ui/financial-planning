@@ -11,6 +11,7 @@ import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelB
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { InvestmentAsset, InvestmentCategory } from "@/lib/types";
+import { InvestmentIcon } from "@/components/icons";
 
 const emptyForm = { category: "Equity" as InvestmentCategory, name: "", current_value: "", goal_id: "" };
 
@@ -81,7 +82,7 @@ export function InvestmentTab() {
           {g.items.map((a) => (
             <Row
               key={a.id}
-              icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: g.cat.color, flexShrink: 0 }} />}
+              icon={<InvestmentIcon category={g.cat.key} color={g.cat.color} />}
               left={
                 <div>
                   <div style={{ fontSize: 14 }}>{a.name}</div>

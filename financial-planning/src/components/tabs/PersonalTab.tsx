@@ -11,6 +11,7 @@ import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelB
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { PersonalAsset, PersonalItemType } from "@/lib/types";
+import { PersonalIcon } from "@/components/icons";
 
 const emptyForm = { item_type: "รถยนต์" as PersonalItemType, name: "", current_value: "", liability_id: "" };
 
@@ -76,7 +77,7 @@ export function PersonalTab() {
           {g.items.map((a) => (
             <Row
               key={a.id}
-              icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: PERSONAL_COLOR, flexShrink: 0 }} />}
+              icon={<PersonalIcon type={a.item_type} color={PERSONAL_COLOR} />}
               left={
                 <div>
                   <div style={{ fontSize: 14 }}>{a.name}</div>

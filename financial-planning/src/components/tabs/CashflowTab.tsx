@@ -19,6 +19,7 @@ import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
 import type { CashFlowEntry } from "@/lib/types";
 import { CategoryIcon, IconLabel, PopIcon } from "@/components/icons";
+import { X } from "lucide-react";
 
 // Equal-width shortcut links: each of the 3 gets exactly 1/3 of the row so
 // all three stay visible with no horizontal scrolling; a longer label wraps
@@ -183,9 +184,9 @@ export function CashflowTab() {
             type="button"
             onClick={() => setRecurringNotice([])}
             aria-label={t(TR.common.close)}
-            style={{ border: "none", background: "transparent", color: "var(--ink-soft)", cursor: "pointer", fontSize: 15, lineHeight: 1, padding: 0 }}
+            style={{ border: "none", background: "transparent", color: "var(--ink)", cursor: "pointer", padding: 0, display: "flex" }}
           >
-            ×
+            <X size={18} strokeWidth={3} aria-hidden />
           </button>
         </div>
       )}

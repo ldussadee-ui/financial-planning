@@ -75,7 +75,7 @@ function ScoreCard({ href, title, pass, total, passedLabel }: { href: string; ti
     <Link href={href} className="fp-card fp-pop" style={{ padding: "14px 14px 16px", display: "block", color: "inherit", minWidth: 0, boxShadow: "var(--shadow)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6 }}>
         <h2 style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3 }}>{title}</h2>
-        <ChevronRight size={16} style={{ flexShrink: 0 }} />
+        <ChevronRight size={18} strokeWidth={3} style={{ flexShrink: 0 }} />
       </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 5, marginTop: 6 }}>
         <span className="fp-num" style={{ fontSize: 28, fontWeight: 600, color: "#0A8A55", lineHeight: 1 }}>{pass}</span>
