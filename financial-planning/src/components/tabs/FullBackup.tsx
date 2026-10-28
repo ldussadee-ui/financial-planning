@@ -11,6 +11,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TR, fillText } from "@/lib/i18n";
 import { Field, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
+import { IconLabel } from "@/components/icons";
 
 
 const actionButtonStyle: CSSProperties = {
@@ -233,7 +234,7 @@ function StoragePersistence() {
   if (state === "persisted") {
     return (
       <div style={{ fontSize: 12.5, color: "#0F6E56", marginBottom: 12, lineHeight: 1.5 }}>
-        {t(TR.settings.storagePersisted)}
+        <IconLabel name="fixed">{t(TR.settings.storagePersisted)}</IconLabel>
       </div>
     );
   }
@@ -244,7 +245,7 @@ function StoragePersistence() {
   }
   return (
     <div style={{ ...warningBoxStyle, marginBottom: 12, display: "flex", flexDirection: "column", gap: 8 }}>
-      <span style={{ fontWeight: 600 }}>{t(TR.settings.storageAtRisk)}</span>
+      <span style={{ fontWeight: 600 }}><IconLabel name="warning">{t(TR.settings.storageAtRisk)}</IconLabel></span>
       <span style={{ color: "var(--ink)" }}>{t(TR.settings.storageAtRiskWhy)}</span>
       <button
         type="button"

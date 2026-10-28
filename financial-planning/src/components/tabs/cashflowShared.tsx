@@ -1,9 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Row } from "@/components/ui";
 import { fmt, fmtDateShort } from "@/lib/calc";
-import { ICON_MAP } from "@/lib/constants";
 import { CATEGORY_LABEL_EN, translateLabel, type Language } from "@/lib/i18n";
 import type { CashFlowEntry } from "@/lib/types";
+import { CategoryIcon } from "@/components/icons";
 
 const dateHeaderStyle: CSSProperties = {
   fontFamily: "var(--font-kanit), 'Kanit', sans-serif",
@@ -13,17 +13,7 @@ const dateHeaderStyle: CSSProperties = {
 const firstDateHeaderStyle: CSSProperties = { ...dateHeaderStyle, borderTop: "none", marginTop: 0 };
 
 function entryIcon(c: CashFlowEntry) {
-  const bg = c.type === "Income" ? "#CDEEDF" : "#FBDCC2";
-  return (
-    <span
-      style={{
-        width: 30, height: 30, borderRadius: 10, background: bg, flexShrink: 0,
-        display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15,
-      }}
-    >
-      {ICON_MAP[c.category] || "🏷️"}
-    </span>
-  );
+  return <CategoryIcon category={c.category} size="md" />;
 }
 
 const subTagStyle: CSSProperties = {

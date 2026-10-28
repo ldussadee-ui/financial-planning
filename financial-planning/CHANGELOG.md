@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.0] - 2026-10-28
+
+### Changed
+- Every emoji in the app is replaced by one matching icon set, "Pop Sticker": a line icon on a small coloured tile with the same dark outline and hard shadow as the cards and buttons. Emoji looked different on every phone and computer and clashed with the Bold Pop style; the new icons look the same everywhere and come from the same family as the bottom menu icons
+- Page titles get a larger, slightly tilted sticker beside them, e.g. ภาพรวมการเงิน, สินทรัพย์สภาพคล่อง (now banknotes instead of the pig) and สินทรัพย์เพื่อการลงทุน (now a candlestick chart, like a stock chart, instead of the 📈 emoji)
+- Labels, badges and buttons (รายการประจำ, รับ/จ่าย, ประจำ/ทั่วไป/ออมและลงทุน, warnings, tips, export/import, pass/fail and so on) use small stickers or plain line icons
+- Every category has its own icon, coloured by group: income green, everyday spending yellow, monthly commitments purple, saving and investing pink. Categories you typed in yourself get a tag icon. Nothing in your saved data changes; the app picks the icon from the category name
+
 ## [0.25.0] - 2026-10-28
 
 ### Changed

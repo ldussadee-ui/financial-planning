@@ -49,7 +49,7 @@ export function AssetTrendTab() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.assets.trendTitle)} sub={t(TR.assets.trendSub)} />
+      <SectionHeader title={t(TR.assets.trendTitle)} icon="assetTrend" sub={t(TR.assets.trendSub)} />
 
       <div style={{ marginBottom: 18 }}>
         <SegmentedControl options={GRANULARITY_OPTIONS} value={granularity} onChange={setGranularity} />

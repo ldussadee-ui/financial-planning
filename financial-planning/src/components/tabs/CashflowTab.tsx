@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { categoryBudgetStatus, cycleRangeAtOffset, daysFasterToGoal, fmt, hoursOfWork } from "@/lib/calc";
-import { ICON_MAP } from "@/lib/constants";
 import type { GeneratedEntryInfo } from "@/lib/recurring";
 import { useSetting } from "@/hooks/useSetting";
 import { useHourlyWage } from "@/hooks/useHourlyWage";
@@ -19,6 +18,7 @@ import { CycleNav } from "@/components/CycleNav";
 import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
 import type { CashFlowEntry } from "@/lib/types";
+import { CategoryIcon, IconLabel, PopIcon } from "@/components/icons";
 
 // Equal-width shortcut links: each of the 3 gets exactly 1/3 of the row so
 // all three stay visible with no horizontal scrolling; a longer label wraps
@@ -129,7 +129,7 @@ export function CashflowTab() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.cashflow.title)} sub={t(TR.cashflow.subtitle)} />
+      <SectionHeader title={t(TR.cashflow.title)} icon="cashflow" sub={t(TR.cashflow.subtitle)} />
 
       <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 10 }}>
         <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
@@ -138,7 +138,7 @@ export function CashflowTab() {
         </span>
         <span style={{ display: "flex", gap: 6 }}>
           <Link href="/cashflow/reports" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            📊 {t(TR.cashflow.monthlyReport)}
+            <IconLabel name="report">{t(TR.cashflow.monthlyReport)}</IconLabel>
           </Link>
           {/* Carries the cycle being viewed. Without it the summary always
               opened on the current cycle, so stepping back to August here
@@ -147,10 +147,10 @@ export function CashflowTab() {
             href={cycleOffset === 0 ? "/cashflow/payment-summary" : `/cashflow/payment-summary?cycle=${cycleOffset}`}
             style={{ ...shortcutLinkStyle, textDecoration: "none" }}
           >
-            💳 {t(TR.cashflow.paymentSummary)}
+            <IconLabel name="card">{t(TR.cashflow.paymentSummary)}</IconLabel>
           </Link>
           <Link href="/cashflow/recurring" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            {t(TR.recurring.manageLink)}
+            <IconLabel name="recurring">{t(TR.recurring.manageLink)}</IconLabel>
           </Link>
         </span>
       </div>
@@ -176,7 +176,7 @@ export function CashflowTab() {
       {recurringNotice.length > 0 && (
         <div className="fp-card" style={{ padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 12.5, background: "var(--lilac)" }}>
           <div style={{ flex: 1 }}>
-            <b>{t(TR.recurring.noticePrefix)}</b>{" "}
+            <b><IconLabel name="recurring">{t(TR.recurring.noticePrefix)}</IconLabel></b>{" "}
             {recurringNotice.map((n) => `${translateLabel(n.category, lang, CATEGORY_LABEL_EN)}${n.sub ? ` #${n.sub}` : ""} ${fmt(n.amount)}`).join(", ")}
           </div>
           <button
@@ -230,7 +230,7 @@ export function CashflowTab() {
             {budgetStatus.map((b) => (
               <div key={b.category}>
                 <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13 }}>
-                  <span>{ICON_MAP[b.category] || "🏷️"}</span>
+                  <CategoryIcon category={b.category} />
                   <span>{translateLabel(b.category, lang, CATEGORY_LABEL_EN)}</span>
                 </div>
                 <BudgetBar spent={b.spent} budget={b.budget} />
@@ -240,7 +240,7 @@ export function CashflowTab() {
         </div>
       ) : (
         <button type="button" onClick={() => setBudgetOpen(true)} style={budgetInviteStyle}>
-          <span style={{ fontSize: 19, flexShrink: 0 }}>🎯</span>
+          <PopIcon name="budget" size="md" />
           <span style={{ minWidth: 0 }}>
             <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
               {t(TR.cashflow.budgetInviteTitle)}

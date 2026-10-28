@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { fmtRange, type CycleRange } from "@/lib/calc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
+import { PopIcon } from "@/components/icons";
 
 const navButtonStyle: CSSProperties = {
   border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
@@ -30,7 +31,7 @@ export function CycleNav({
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
       <button type="button" onClick={() => onChange(offset - 1)} style={navButtonStyle} aria-label={t(TR.cashflow.prevCycle)}>‹</button>
-      🗓️ {isCurrent ? t(TR.cashflow.currentCycle) : t(TR.cashflow.cycle)}: <b style={{ color: "var(--ink)" }}>{fmtRange(range, lang)}</b>
+      <PopIcon name="calendar" /> {isCurrent ? t(TR.cashflow.currentCycle) : t(TR.cashflow.cycle)}: <b style={{ color: "var(--ink)" }}>{fmtRange(range, lang)}</b>
       <button type="button" onClick={() => onChange(offset + 1)} style={navButtonStyle} aria-label={t(TR.cashflow.nextCycle)}>›</button>
       {!isCurrent && (
         <button type="button" onClick={() => onChange(0)} style={backToCurrentStyle}>

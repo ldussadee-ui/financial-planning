@@ -51,7 +51,7 @@ export function RecurringEntriesView() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.recurring.pageTitle)} sub={t(TR.recurring.pageSubtitle)} />
+      <SectionHeader title={t(TR.recurring.pageTitle)} icon="recurring" sub={t(TR.recurring.pageSubtitle)} />
 
       <Modal open={editingId !== null} onClose={closeModal} title={t(TR.recurring.editTitle)}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>

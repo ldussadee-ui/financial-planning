@@ -47,7 +47,7 @@ export function LiquidTab() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.assets.liquidTitle)} sub={t(TR.assets.liquidSub)} />
+      <SectionHeader title={t(TR.assets.liquidTitle)} icon="liquid" sub={t(TR.assets.liquidSub)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.liquidEditTitle) : t(TR.assets.liquidAddTitle)}>
         <div style={formColumnStyle}>

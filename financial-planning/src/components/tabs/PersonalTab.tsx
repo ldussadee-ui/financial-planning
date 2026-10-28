@@ -47,7 +47,7 @@ export function PersonalTab() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.assets.personalTitle)} sub={t(TR.assets.personalSub)} />
+      <SectionHeader title={t(TR.assets.personalTitle)} icon="personal" sub={t(TR.assets.personalSub)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.personalEditTitle) : t(TR.assets.personalAddTitle)}>
         <div style={formColumnStyle}>

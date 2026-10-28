@@ -10,6 +10,7 @@ import { Share2 } from "lucide-react";
 import { downloadJson, shareJson, useCanShareFiles } from "@/lib/shareFile";
 import { upgradeEntry } from "@/lib/categoryTree";
 import type { CashFlowEntry } from "@/lib/types";
+import { IconLabel } from "@/components/icons";
 
 const EXPORT_APP_ID = "financial-planning-cashflow-export";
 
@@ -172,7 +173,7 @@ function ImportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
           </>
         )}
         {done !== null && (
-          <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}>{t(TR.exportImport.importedCount)} {done} {t(TR.exportImport.itemsWord)} {t(TR.exportImport.importedOf)} {owner}</div>
+          <div style={{ fontSize: 12.5, color: "#0F6E56", fontWeight: 600 }}><IconLabel name="pass">{t(TR.exportImport.importedCount)} {done} {t(TR.exportImport.itemsWord)} {t(TR.exportImport.importedOf)} {owner}</IconLabel></div>
         )}
       </div>
     </Modal>
@@ -190,9 +191,9 @@ export function CashflowExportImport() {
         {/* The date range has to be picked first, so this still opens a dialog —
             but says up front that sharing is inside it. */}
         <button type="button" onClick={() => setExportOpen(true)} style={actionButtonStyle}>
-          📤 {t(canShare ? TR.common.shareOrExport : TR.common.exportData)}
+          <IconLabel name="exportData">{t(canShare ? TR.common.shareOrExport : TR.common.exportData)}</IconLabel>
         </button>
-        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}>📥 {t(TR.common.importData)}</button>
+        <button type="button" onClick={() => setImportOpen(true)} style={actionButtonStyle}><IconLabel name="importData">{t(TR.common.importData)}</IconLabel></button>
       </div>
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} />

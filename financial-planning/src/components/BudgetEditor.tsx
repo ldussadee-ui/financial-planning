@@ -7,6 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TR, CATEGORY_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { Modal } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
+import { CategoryIcon } from "@/components/icons";
 
 // One editor, two homes: Settings expands it inline where it has always
 // lived, and the cashflow tab opens it in a sheet from beside the bars it
@@ -21,7 +22,7 @@ export function BudgetFields() {
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {(categories || []).map((c) => (
         <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ width: 22, textAlign: "center" }}>{c.icon}</span>
+          <CategoryIcon category={c.label} />
           <span style={{ flex: 1, fontSize: 13, minWidth: 0 }}>{translateLabel(c.label, lang, CATEGORY_LABEL_EN)}</span>
           <div style={{ width: 130, flexShrink: 0 }}>
             <CalcInput

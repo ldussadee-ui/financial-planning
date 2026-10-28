@@ -8,6 +8,7 @@ import {
 import { useLanguage } from "@/hooks/useLanguage";
 import { useBackupStatus } from "@/hooks/useBackupStatus";
 import { TR } from "@/lib/i18n";
+import { IconLabel } from "@/components/icons";
 
 export const NAV = [
   { key: "dashboard", href: "/dashboard", label: TR.nav.dashboard, icon: LayoutDashboard },
@@ -28,7 +29,7 @@ export function Sidebar() {
       }}
     >
       <div style={{ padding: "0 8px 24px 8px" }}>
-        <div className="fp-display" style={{ fontSize: 22, fontWeight: 600, color: "var(--ink)" }}>{t(TR.nav.appName)}</div>
+        <div className="fp-display" style={{ fontSize: 22, fontWeight: 600, color: "var(--ink)" }}><IconLabel name="app">{t(TR.nav.appName)}</IconLabel></div>
         <div style={{ fontSize: 12, color: "var(--ink)", marginTop: 3 }}>{t(TR.nav.appTagline)}</div>
       </div>
       <nav aria-label={t(TR.nav.mainNavAria)} style={{ display: "flex", flexDirection: "column", gap: 4 }}>

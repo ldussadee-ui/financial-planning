@@ -4,6 +4,7 @@ import { useState, type CSSProperties } from "react";
 import { Modal, inputStyle } from "@/components/ui";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
+import { IconLabel, PopIcon } from "@/components/icons";
 
 type Op = "+" | "-" | "×" | "÷";
 
@@ -101,7 +102,7 @@ function CalcKeypad({ initial, onConfirm }: { initial: string; onConfirm: (value
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
         <button type="button" onClick={pressClear} style={muteKeyStyle}>C</button>
-        <button type="button" onClick={pressBackspace} style={muteKeyStyle}>⌫</button>
+        <button type="button" onClick={pressBackspace} style={muteKeyStyle} aria-label="Backspace"><PopIcon name="backspace" size="glyph" /></button>
         <button type="button" onClick={() => pressOp("÷")} style={opKeyStyle}>÷</button>
         <button type="button" onClick={() => pressOp("×")} style={opKeyStyle}>×</button>
 
@@ -123,7 +124,7 @@ function CalcKeypad({ initial, onConfirm }: { initial: string; onConfirm: (value
         <button type="button" onClick={() => pressDigit("0")} style={{ ...keyStyle, gridColumn: "span 3" }}>0</button>
         <button type="button" onClick={() => pressDigit(".")} style={keyStyle}>.</button>
       </div>
-      <button type="button" onClick={confirm} style={confirmButtonStyle}>{t(TR.common.ok)}</button>
+      <button type="button" onClick={confirm} style={confirmButtonStyle}><IconLabel name="check" size="glyph">{t(TR.common.ok)}</IconLabel></button>
     </div>
   );
 }

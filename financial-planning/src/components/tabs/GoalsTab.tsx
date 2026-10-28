@@ -18,6 +18,7 @@ import {
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { Goal, GoalType, Priority } from "@/lib/types";
+import { IconLabel } from "@/components/icons";
 
 const RETIREMENT: GoalType = "เกษียณ";
 // Assumptions offered in the comparison table. Deliberately spans "the pot
@@ -191,7 +192,7 @@ export function GoalsTab() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.goals.title)} sub={t(TR.goals.subtitle)} />
+      <SectionHeader title={t(TR.goals.title)} icon="goals" sub={t(TR.goals.subtitle)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.goals.editTitle) : t(TR.goals.addTitle)}>
         <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
@@ -239,7 +240,7 @@ export function GoalsTab() {
             {isRetirement && (
               <>
                 <h3 style={{ fontFamily: "var(--font-kanit), Kanit, sans-serif", fontSize: 13, fontWeight: 600, color: "var(--accent)", margin: 0 }}>
-                  {t(TR.goals.retireHelperTitle)}
+                  <IconLabel name="calculator">{t(TR.goals.retireHelperTitle)}</IconLabel>
                 </h3>
                 <SegmentedControl
                   small
@@ -432,13 +433,13 @@ export function GoalsTab() {
               </div>
               {monthlyNeeded !== null ? (
                 <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
-                  {t(TR.goals.recommendedSavings)} {fmt(monthlyNeeded)}{t(TR.goals.perMonthToMakeIt)}
+                  <IconLabel name="tip">{t(TR.goals.recommendedSavings)} {fmt(monthlyNeeded)}{t(TR.goals.perMonthToMakeIt)}</IconLabel>
                   {g.expectedReturn ? ` ${t(TR.goals.assumedReturn)} ${g.expectedReturn}${t(TR.goals.perYearEstimate)}` : ` ${t(TR.goals.noInvestmentReturn)}`}
                 </div>
               ) : !g.date ? (
-                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>{t(TR.goals.setDateForAdvice)}</div>
+                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}><IconLabel name="warning">{t(TR.goals.setDateForAdvice)}</IconLabel></div>
               ) : (
-                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}>{t(TR.goals.datePassedOrTooClose)}</div>
+                <div style={{ fontSize: 12, color: "#D07A4E", marginTop: 6 }}><IconLabel name="warning">{t(TR.goals.datePassedOrTooClose)}</IconLabel></div>
               )}
             </div>
           );

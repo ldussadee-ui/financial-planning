@@ -48,7 +48,7 @@ export function InvestmentTab() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.assets.investTitle)} sub={t(TR.assets.investSub)} />
+      <SectionHeader title={t(TR.assets.investTitle)} icon="invest" sub={t(TR.assets.investSub)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.investEditTitle) : t(TR.assets.investAddTitle)}>
         <div style={formColumnStyle}>

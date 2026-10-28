@@ -61,7 +61,7 @@ export function LiabilityTab() {
 
   return (
     <div>
-      <SectionHeader title={t(TR.assets.liabilityTitle)} sub={t(TR.assets.liabilitySub)} />
+      <SectionHeader title={t(TR.assets.liabilityTitle)} icon="liability" sub={t(TR.assets.liabilitySub)} />
 
       <Modal open={modalOpen} onClose={closeModal} title={editingId ? t(TR.assets.liabilityEditTitle) : t(TR.assets.liabilityAddTitle)}>
         <div style={formColumnStyle}>

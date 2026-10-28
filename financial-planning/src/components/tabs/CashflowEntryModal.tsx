@@ -15,6 +15,7 @@ import { cleanLabel } from "@/lib/categoryTree";
 import { Field, AddButton, DayPicker, Modal, cancelButtonStyle, inputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import type { CashFlowEntry, CashFlowType, CategoryChip } from "@/lib/types";
+import { CategoryIcon, IconLabel, type IconName } from "@/components/icons";
 
 // `accent` is the colour of the direction being entered, so a selected chip
 // in the expense sheet doesn't sit there wearing the colour this screen uses
@@ -58,6 +59,10 @@ function badgeLabel(type: CashFlowType, cls: string, lang: Language) {
     return t(TR.cashflow.badgeGeneral);
   }
   return cls === "Passive" ? t(TR.cashflow.badgePassive) : t(TR.cashflow.badgeActive);
+}
+function badgeIcon(type: CashFlowType, cls: string): IconName {
+  if (type === "Expense") return cls === "Fixed" ? "fixed" : cls === "Invest" ? "saveInvest" : "general";
+  return cls === "Passive" ? "passive" : "active";
 }
 // Each class gets its own hue rather than just a lighter/darker shade of one
 // family — shade alone wasn't enough contrast against the class's own tinted
@@ -332,6 +337,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                 shiftWeekend={dayShiftWeekend}
                 onShiftWeekendChange={setDayShiftWeekend}
                 buttonLabel={t(TR.recurring.dayButtonLabel)}
+                buttonIcon="recurring"
                 popoverTitle={t(TR.recurring.chooseDay)}
                 maxDay={31}
               />
@@ -343,13 +349,13 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
           {!editingId && (
             <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, color: "var(--ink-soft)", cursor: "pointer" }}>
               <input type="checkbox" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} />
-              {t(TR.recurring.toggleLabel)}
+              <IconLabel name="recurring">{t(TR.recurring.toggleLabel)}</IconLabel>
             </label>
           )}
 
           {editingId && editingRecurringId && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, flexBasis: "100%" }}>
-              <span style={{ color: "var(--accent)", fontWeight: 600 }}>{t(TR.recurring.fromRecurringBadge)}</span>
+              <span style={{ color: "var(--accent)", fontWeight: 600 }}><IconLabel name="recurring">{t(TR.recurring.fromRecurringBadge)}</IconLabel></span>
               <Link href="/cashflow/recurring" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>{t(TR.recurring.editSourceLink)}</Link>
             </div>
           )}
@@ -382,7 +388,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     onClick={() => handleChipClick(c.label)}
                     style={chipStyle(!customMode && !editing && form.category === c.label, accent)}
                   >
-                    <span style={{ marginRight: 5 }}>{c.icon}</span>{translateLabel(c.label, lang, CATEGORY_LABEL_EN)}
+                    <span className="fp-ic-label"><CategoryIcon category={c.label} />{translateLabel(c.label, lang, CATEGORY_LABEL_EN)}</span>
                   </button>
                   {editing && (
                     <button type="button" onClick={() => removeCat(c.id, c.label)} title={t(TR.cashflow.removeShortcut)} style={chipDeleteBadge}>×</button>
@@ -391,11 +397,11 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
               ))}
               {!editing && (
                 <button type="button" onClick={() => { setCustomMode(true); setForm({ ...form, category: "", sub: "" }); setSaveShortcut(true); }} style={chipStyle(customMode, accent)}>
-                  {t(TR.cashflow.typeOwn)}
+                  <IconLabel name="typeOwn">{t(TR.cashflow.typeOwn)}</IconLabel>
                 </button>
               )}
               {editing && (
-                <button type="button" onClick={() => setEditing(false)} style={doneButtonStyle}>{t(TR.cashflow.done)}</button>
+                <button type="button" onClick={() => setEditing(false)} style={doneButtonStyle}><IconLabel name="check" size="glyph">{t(TR.cashflow.done)}</IconLabel></button>
               )}
             </div>
             <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
@@ -465,11 +471,11 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
                     onClick={() => setForm({ ...form, payment_method_id: m.id })}
                     style={chipStyle(effectivePaymentMethodId === m.id, accent)}
                   >
-                    <span style={{ marginRight: 5 }}>{m.kind === "เงินสด" ? "💵" : "💳"}</span>{translateLabel(m.name, lang, PAYMENT_METHOD_LABEL_EN)}
+                    <IconLabel name={m.kind === "เงินสด" ? "cash" : "card"}>{translateLabel(m.name, lang, PAYMENT_METHOD_LABEL_EN)}</IconLabel>
                   </button>
                 ))}
                 <button type="button" onClick={() => setAddingCard(true)} style={chipStyle(addingCard, accent)}>
-                  {t(TR.cashflow.addCard)}
+                  <IconLabel name="add">{t(TR.cashflow.addCard)}</IconLabel>
                 </button>
               </div>
               {addingCard && (
@@ -490,11 +496,11 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
           )}
 
           {form.category && (
-            <span style={badgeStyle(form.type, preview)}>{badgeLabel(form.type, preview, lang)}</span>
+            <span style={badgeStyle(form.type, preview)}><IconLabel name={badgeIcon(form.type, preview)} size="glyph">{badgeLabel(form.type, preview, lang)}</IconLabel></span>
           )}
           {spendCompare && (
             <span style={{ fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999, height: 20, background: "var(--lilac)", color: "var(--accent)" }}>
-              ⏱️ {spendCompare}
+              <IconLabel name="spendCompare" size="glyph">{spendCompare}</IconLabel>
             </span>
           )}
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>

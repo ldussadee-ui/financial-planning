@@ -6,6 +6,7 @@ import { EXPENSE_COLOR, INCOME_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 import type { CashFlowType } from "@/lib/types";
+import { IconLabel } from "@/components/icons";
 
 const DRAG_THRESHOLD = 6;
 
@@ -68,7 +69,7 @@ function DraggableButton({
         touchAction: "none", userSelect: "none",
       }}
     >
-      {label}
+      <IconLabel name={type === "Income" ? "income" : "expense"} size="glyph">{label}</IconLabel>
     </button>
   );
 }
