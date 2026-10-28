@@ -2,21 +2,13 @@ import type { ReactNode } from "react";
 import {
   AlarmClock, ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Banknote, BookOpen, Briefcase, Bus, Calculator, CalendarDays,
   Car, ChartCandlestick, ChartColumn, ChartLine, ChartPie, Check, CircleCheck, CircleHelp, CircleX, CloudSun, Coins,
-  CreditCard, Delete, FileText, Gauge, Gem, Gift, HandHeart, HardDriveDownload, House, KeyRound, Landmark, Laptop,
+  CreditCard, Delete, FileChartColumn, FileText, Gauge, Gem, Gift, HandHeart, HardDriveDownload, House, KeyRound, Landmark, Laptop,
   LayoutDashboard, Layers, Leaf, Lightbulb, Lock, Package, Palette, PartyPopper, PenLine, Pill, Plane, Plus, Repeat,
   Scale, Settings, Shield, ShieldCheck, ShoppingBag, Sparkles, SprayCan, Sprout, Tag, Target, Timer, TrendingUp,
   TriangleAlert, Upload, Download, User, Users, UtensilsCrossed, WalletCards, Wifi, Zap, Wallet, ScrollText, Building2,
-  Shapes, Trophy, Sofa, createLucideIcon, type LucideIcon,
+  Shapes, Trophy, Sofa, type LucideIcon,
 } from "lucide-react";
 import type { InvestmentCategory, LiabilityTerm, LiquidType, PersonalItemType } from "@/lib/types";
-
-// Lucide's ChartPie leaves a gap in its outline next to the slice, which
-// reads as a broken line once the "tint" size fills it. This one is a whole
-// circle with the slice marked by two lines inside.
-const ClosedChartPie = createLucideIcon("ClosedChartPie", [
-  ["circle", { cx: "12", cy: "12", r: "9", key: "circle" }],
-  ["path", { d: "M12 3v9h9", key: "slice" }],
-]);
 
 // The app's "Pop Sticker" icon set (v0.26.0): a line glyph on a flat colour
 // tile with the Bold Pop ink outline and hard shadow. Every concept gets one
@@ -36,7 +28,7 @@ const ICONS = {
   liability: [CreditCard, "pink"],
   assetTrend: [ChartLine, "lav"],
   goals: [Target, "yellow"],
-  report: [ClosedChartPie, "sky"],
+  report: [FileChartColumn, "sky"],
   paymentSummary: [WalletCards, "teal"],
   ratios: [Scale, "lav"],
   insurance: [ShieldCheck, "teal"],
