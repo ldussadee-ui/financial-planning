@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.6] - 2026-10-28
+
+### Changed
+- The floating รับ / จ่าย buttons keep their size but their contents are bigger: the label is now 16 and bold, and the arrow is larger and thicker, so the buttons read at a glance instead of showing small text in a big button. In English both buttons are a little wider, and the same width as each other, to fit "Income" and "Expense"
+
 ## [0.26.5] - 2026-10-28
 
 ### Changed

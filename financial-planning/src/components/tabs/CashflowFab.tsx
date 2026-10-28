@@ -6,7 +6,7 @@ import { EXPENSE_COLOR, INCOME_COLOR } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
 import type { CashFlowType } from "@/lib/types";
-import { IconLabel } from "@/components/icons";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 
 const DRAG_THRESHOLD = 6;
 
@@ -14,9 +14,9 @@ const DRAG_THRESHOLD = 6;
 // is disambiguated by movement distance: dragging past the threshold
 // suppresses the click that would otherwise fire on release.
 function DraggableButton({
-  type, label, color, defaultRight, defaultBottom, onOpen,
+  type, label, color, width, defaultRight, defaultBottom, onOpen,
 }: {
-  type: CashFlowType; label: string; color: string; defaultRight: number; defaultBottom: number; onOpen: (type: CashFlowType) => void;
+  type: CashFlowType; label: string; color: string; width: number; defaultRight: number; defaultBottom: number; onOpen: (type: CashFlowType) => void;
 }) {
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
   const elRef = useRef<HTMLButtonElement>(null);
@@ -49,6 +49,7 @@ function DraggableButton({
     onOpen(type);
   };
 
+  const Arrow = type === "Income" ? ArrowDownLeft : ArrowUpRight;
   const posStyle: CSSProperties = pos
     ? { position: "fixed", left: pos.left, top: pos.top, zIndex: 40 }
     : { position: "fixed", right: defaultRight, bottom: defaultBottom, zIndex: 40 };
@@ -65,11 +66,15 @@ function DraggableButton({
       style={{
         ...posStyle,
         background: color, color: "var(--ink)", borderRadius: 16,
-        width: 96, padding: "12px 0", fontSize: 13, fontWeight: 600, cursor: "grab",
+        width, padding: "11px 0", fontSize: 16, fontWeight: 700, cursor: "grab",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
         touchAction: "none", userSelect: "none",
       }}
     >
-      <IconLabel name={type === "Income" ? "income" : "expense"} size="glyph">{label}</IconLabel>
+      {/* Same arrows as the income/expense icons, drawn larger and bolder so
+          they fill the button rather than floating small in the middle. */}
+      <Arrow aria-hidden size={20} strokeWidth={3} />
+      {label}
     </button>
   );
 }
@@ -78,11 +83,14 @@ function DraggableButton({
 // and expense entries can be opened from any tab, not just the cashflow page.
 export function CashflowFab() {
   const { openNew } = useCashflowEntry();
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
+  // Both buttons share one width so they line up; English needs more room
+  // for "Expense" at this size.
+  const width = lang === "en" ? 128 : 96;
   return (
     <>
-      <DraggableButton type="Income" label={t(TR.cashflow.income$)} color={INCOME_COLOR} defaultRight={20} defaultBottom={150} onOpen={openNew} />
-      <DraggableButton type="Expense" label={t(TR.cashflow.expense$)} color={EXPENSE_COLOR} defaultRight={20} defaultBottom={90} onOpen={openNew} />
+      <DraggableButton type="Income" label={t(TR.cashflow.income$)} color={INCOME_COLOR} width={width} defaultRight={20} defaultBottom={150} onOpen={openNew} />
+      <DraggableButton type="Expense" label={t(TR.cashflow.expense$)} color={EXPENSE_COLOR} width={width} defaultRight={20} defaultBottom={90} onOpen={openNew} />
     </>
   );
 }
