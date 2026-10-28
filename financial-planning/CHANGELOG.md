@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.8] - 2026-10-28
+
+### Changed
+- The "By category" donut on the expense report looked empty: a small ring pushed to the left with blank space beside it and an empty centre. The ring is now bigger and centred, and its middle shows the period's total and how many entries it covers, so you see the overall figure right next to how it splits. The category list below, with its icons, is unchanged
+- The cards on the expense report now use the same inner spacing as the rest of the app (16 instead of 26), giving the chart and the list more room on a phone
+
 ## [0.26.7] - 2026-10-28
 
 ### Fixed
