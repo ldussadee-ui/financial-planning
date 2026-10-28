@@ -44,25 +44,17 @@ export function StepButton({ dir, onClick, label, size = 30 }: { dir: "prev" | "
   );
 }
 
-// The fold/unfold marker on a section that opens and closes: the same bold
-// chevron in a small outlined circle as StepButton, pointing right when
-// closed and turning down when open. Decorative only: the header it sits in
-// is what takes the tap.
-export function FoldChevron({ open, size = 22 }: { open: boolean; size?: number }) {
+// The fold/unfold marker on a section that opens and closes: a bold chevron
+// (same weight as StepButton's) pointing right when closed and turning down
+// when open. Decorative only: the header it sits in is what takes the tap.
+export function FoldChevron({ open, size = 18 }: { open: boolean; size?: number }) {
   return (
-    <span
+    <ChevronRight
       aria-hidden
-      style={{
-        width: size, height: size, borderRadius: 999, border: "1.5px solid var(--border)", background: "var(--panel)",
-        color: "var(--ink)", display: "inline-grid", placeItems: "center", flexShrink: 0,
-      }}
-    >
-      <ChevronRight
-        size={Math.round(size * 0.65)}
-        strokeWidth={3}
-        style={{ transform: open ? "rotate(90deg)" : "none", transition: "transform 0.15s ease" }}
-      />
-    </span>
+      size={size}
+      strokeWidth={3}
+      style={{ color: "var(--ink)", flexShrink: 0, transform: open ? "rotate(90deg)" : "none", transition: "transform 0.15s ease" }}
+    />
   );
 }
 
