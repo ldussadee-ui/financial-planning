@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import {
   AlarmClock, ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Banknote, BookOpen, Briefcase, Bus, Calculator, CalendarDays,
   Car, ChartCandlestick, ChartColumn, ChartLine, ChartPie, Check, CircleCheck, CircleHelp, CircleX, CloudSun, Coins,
-  CreditCard, Delete, FileText, Gauge, Gem, Gift, HandHeart, HardDriveDownload, House, KeyRound, Landmark, Laptop,
+  CreditCard, Delete, FileChartColumn, FileText, Gauge, Gem, Gift, HandHeart, HardDriveDownload, House, KeyRound, Landmark, Laptop,
   LayoutDashboard, Layers, Leaf, Lightbulb, Lock, Package, Palette, PartyPopper, PenLine, Pill, Plane, Plus, Repeat,
   Scale, Settings, Shield, ShieldCheck, ShoppingBag, Sparkles, SprayCan, Sprout, Tag, Target, Timer, TrendingUp,
   TriangleAlert, Upload, Download, User, Users, UtensilsCrossed, WalletCards, Wifi, Zap, Wallet, ScrollText, Building2,
@@ -28,7 +28,7 @@ const ICONS = {
   liability: [CreditCard, "pink"],
   assetTrend: [ChartLine, "lav"],
   goals: [Target, "yellow"],
-  report: [ChartPie, "sky"],
+  report: [FileChartColumn, "sky"],
   paymentSummary: [WalletCards, "teal"],
   ratios: [Scale, "lav"],
   insurance: [ShieldCheck, "teal"],
@@ -73,17 +73,24 @@ const TONE_VAR: Record<IconTone, string> = {
   yellow: "var(--yellow)", pink: "var(--pink)", teal: "var(--teal)", lav: "var(--lav)", sky: "var(--sky)",
 };
 
+const OPEN_GLYPHS = new Set<LucideIcon>([Repeat]);
+
 // "lg" sits beside a page title, "md" at the start of a list row, "sm" in
 // front of a label, and "glyph" is the
 // bare line icon for places that already have their own coloured background
-// (buttons, pass/fail pills).
-export type IconSize = "lg" | "md" | "sm" | "glyph";
+// (buttons, pass/fail pills). "tint" is that bare icon with its closed
+// shapes filled in the tile colour, for white buttons that want a touch of
+// colour without a tile (the cashflow shortcuts).
+export type IconSize = "lg" | "md" | "sm" | "glyph" | "tint";
 
 // `tone` is one of the palette tones, or any CSS colour for tiles that must
 // match a colour used elsewhere (an investment category's chart colour).
 function Sticker({ Glyph, tone, size }: { Glyph: LucideIcon; tone: IconTone | string; size: IconSize }) {
   if (size === "glyph") return <Glyph aria-hidden size={15} strokeWidth={2.5} style={{ flexShrink: 0 }} />;
   const bg = TONE_VAR[tone as IconTone] ?? tone;
+  // Glyphs made only of open strokes (Repeat's arrows) would fill as stray
+  // slivers, so they stay unfilled.
+  if (size === "tint") return <Glyph aria-hidden size={15} strokeWidth={2.5} fill={OPEN_GLYPHS.has(Glyph) ? "none" : bg} style={{ flexShrink: 0 }} />;
   return (
     <span aria-hidden className={size === "sm" ? "fp-ic" : `fp-ic fp-ic-${size}`} style={{ ["--ic-tone" as string]: bg }}>
       <Glyph strokeWidth={size === "sm" ? 2.5 : 2.25} />

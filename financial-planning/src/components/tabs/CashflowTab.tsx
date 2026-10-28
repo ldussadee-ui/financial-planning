@@ -21,17 +21,16 @@ import type { CashFlowEntry } from "@/lib/types";
 import { CategoryIcon, IconLabel, PopIcon } from "@/components/icons";
 import { X } from "lucide-react";
 
-// Equal-width shortcut links: each of the 3 gets exactly 1/3 of the row so
-// all three stay visible with no horizontal scrolling; a longer label wraps
-// onto a second line on a narrow phone instead of pushing siblings off-screen.
-// The icon sits above the label so the text gets the full width and never
-// needs a third line.
+// Shortcut links that share the row by the width of their labels, so all
+// three stay visible with no horizontal scrolling. One line each, icon
+// beside a short label, so the row stays as low as a single button; the
+// pages they open carry the full names in their titles.
 const shortcutLinkStyle: CSSProperties = {
-  flex: 1, minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4,
-  textAlign: "center", whiteSpace: "normal", lineHeight: 1.2,
-  background: "var(--panel)", color: "var(--ink)", border: "2px solid var(--border)", fontWeight: 600,
-  borderRadius: 14, padding: "8px 6px", fontSize: 12.5,
+  flex: "1 1 auto", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+  whiteSpace: "nowrap", background: "var(--panel)", color: "var(--ink)", border: "2px solid var(--border)",
+  fontWeight: 600, borderRadius: 12, padding: "7px 8px", fontSize: 12.5,
 };
+const shortcutTextStyle: CSSProperties = { overflow: "hidden", textOverflow: "ellipsis" };
 const editChipStyle: CSSProperties = {
   border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink-soft)",
   borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0,
@@ -134,14 +133,25 @@ export function CashflowTab() {
     <div>
       <SectionHeader title={t(TR.cashflow.title)} icon="cashflow" sub={t(TR.cashflow.subtitle)} />
 
-      <div className="fp-card" style={{ padding: "14px 20px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 10 }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", fontSize: 12.5, color: "var(--ink-soft)" }}>
-          <CycleNav offset={cycleOffset} range={cycleRange} onChange={setCycleOffset} />
-          <DayPicker value={cycleStartDay} onChange={setCycleStartDay} shiftWeekend={shiftWeekend} onShiftWeekendChange={setShiftWeekend} />
-        </span>
+      <div className="fp-card" style={{ padding: "14px 16px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+        <CycleNav
+          offset={cycleOffset}
+          range={cycleRange}
+          onChange={setCycleOffset}
+          trailing={
+            <DayPicker
+              value={cycleStartDay}
+              onChange={setCycleStartDay}
+              shiftWeekend={shiftWeekend}
+              onShiftWeekendChange={setShiftWeekend}
+              buttonLabel={t(TR.common.startDayShort)}
+              alignRight
+            />
+          }
+        />
         <span style={{ display: "flex", gap: 6 }}>
           <Link href="/cashflow/reports" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            <PopIcon name="report" />{t(TR.cashflow.monthlyReport)}
+            <PopIcon name="report" size="tint" /><span style={shortcutTextStyle}>{t(TR.cashflow.monthlyReport)}</span>
           </Link>
           {/* Carries the cycle being viewed. Without it the summary always
               opened on the current cycle, so stepping back to August here
@@ -150,10 +160,10 @@ export function CashflowTab() {
             href={cycleOffset === 0 ? "/cashflow/payment-summary" : `/cashflow/payment-summary?cycle=${cycleOffset}`}
             style={{ ...shortcutLinkStyle, textDecoration: "none" }}
           >
-            <PopIcon name="card" />{t(TR.cashflow.paymentSummary)}
+            <PopIcon name="card" size="tint" /><span style={shortcutTextStyle}>{t(TR.cashflow.paymentSummary)}</span>
           </Link>
           <Link href="/cashflow/recurring" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            <PopIcon name="recurring" />{t(TR.recurring.manageLink)}
+            <PopIcon name="recurring" size="tint" /><span style={shortcutTextStyle}>{t(TR.recurring.manageLink)}</span>
           </Link>
         </span>
       </div>
