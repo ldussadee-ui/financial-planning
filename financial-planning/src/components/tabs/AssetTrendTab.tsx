@@ -2,12 +2,12 @@
 
 import { useState, type CSSProperties } from "react";
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { fmt, growthAxisDomain } from "@/lib/calc";
+import { compactAmount, fmt, growthAxisDomain } from "@/lib/calc";
 import { useNetWorthTrend } from "@/hooks/useNetWorthTrend";
 import { useNetWorthTable } from "@/hooks/useNetWorthTable";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR } from "@/lib/i18n";
-import { SectionHeader, EmptyState, SegmentedControl } from "@/components/ui";
+import { SectionHeader, EmptyState, SegmentedControl, chartTooltipProps } from "@/components/ui";
 import type { AssetGranularity } from "@/lib/netWorthBuckets";
 
 const GRANULARITY_COUNT: Record<AssetGranularity, number> = { month: 6, quarter: 4, halfYear: 4, year: 5 };
@@ -16,7 +16,6 @@ const GRANULARITY_COUNT: Record<AssetGranularity, number> = { month: 6, quarter:
 // for normal vision and 10.5 under deuteranopia against them.
 const GROWTH_COLOR = "var(--accent)";
 
-const compactAmount = (n: number) => (Math.abs(n) >= 1000 ? Math.round(n / 1000) + "k" : String(n));
 
 const thStyle: CSSProperties = { textAlign: "right", padding: "8px 10px", fontSize: 12, color: "var(--ink-soft)", fontWeight: 600, whiteSpace: "nowrap" };
 const tdStyle: CSSProperties = { padding: "8px 10px", whiteSpace: "nowrap" };
@@ -63,7 +62,7 @@ export function AssetTrendTab() {
             <ComposedChart data={points}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
               <XAxis dataKey="label" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} />
-              <YAxis yAxisId="amount" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
+              <YAxis yAxisId="amount" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} width={40} tickFormatter={compactAmount} />
               {/* Bounds come from the data rather than being fixed: real growth
                   sits in single digits most months, and a fixed ceiling would
                   press the line flat against the floor. growthAxisDomain keeps
@@ -79,7 +78,7 @@ export function AssetTrendTab() {
                 width={40}
                 tickFormatter={(v) => `${v}%`}
               />
-              <Tooltip formatter={(v, n) => (n === growthName ? `${Number(v).toFixed(1)}%` : fmt(Number(v)))} />
+              <Tooltip {...chartTooltipProps} formatter={(v, n) => (n === growthName ? `${Number(v).toFixed(1)}%` : fmt(Number(v)))} />
               {/* itemSorter default ("value") sorts alphabetically, which puts the
                   Latin "Net Worth" ahead of the Thai labels regardless of Bar order */}
               <Legend wrapperStyle={{ fontSize: 12 }} itemSorter={null} />

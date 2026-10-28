@@ -222,6 +222,19 @@ export function Modal({
   );
 }
 
+// Shared look for every Recharts <Tooltip>: the same white card with ink
+// outline, rounded corners and hard shadow as .fp-card, instead of Recharts'
+// default thin grey box. Spread onto each Tooltip so the charts can't drift.
+export const chartTooltipProps = {
+  contentStyle: {
+    background: "var(--panel)", border: "2px solid var(--border)", borderRadius: 12,
+    boxShadow: "var(--shadow)", padding: "8px 12px", fontFamily: "inherit", fontSize: 13,
+  },
+  labelStyle: { color: "var(--ink)", fontWeight: 700, marginBottom: 4 },
+  itemStyle: { fontWeight: 600, padding: "1px 0" },
+  cursor: { fill: "var(--lilac)" },
+} satisfies Record<string, CSSProperties>;
+
 export function StatRow({ label, value, big }: { label: ReactNode; value: string; big?: boolean }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "7px 0" }}>
@@ -323,8 +336,10 @@ export function SegmentedControl<T extends string>({
     <div style={{ position: "relative", display: "flex", background: "var(--panel)", border: "2px solid var(--border)", borderRadius: small ? 11 : 13, padding: 3 }}>
       <div
         style={{
+          // Measured over the 3px-padded track the buttons sit in, so the
+          // thumb lines up with its button and the label stays centred.
           position: "absolute", top: 3, bottom: 3,
-          left: `calc(${(thumbAt * 100) / n}% + 3px)`, width: `calc(${100 / n}% - 6px)`,
+          left: `calc(3px + (100% - 6px) * ${thumbAt / n})`, width: `calc((100% - 6px) / ${n})`,
           background: "var(--yellow)", borderRadius: small ? 7 : 8, border: "2px solid var(--border)",
           transition: thumb?.tracking ? "none" : "left 0.2s ease",
         }}

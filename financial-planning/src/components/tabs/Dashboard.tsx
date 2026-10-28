@@ -14,7 +14,7 @@ import { useInsuranceAnalysis } from "@/hooks/useInsuranceAnalysis";
 import { useNetWorthTrend } from "@/hooks/useNetWorthTrend";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TR, type Language, CATEGORY_LABEL_EN, GOAL_TYPE_LABEL_EN, INVESTMENT_CAT_LABEL_EN, translateLabel } from "@/lib/i18n";
-import { SectionHeader, StatRow, EmptyState, BudgetBar, FoldChevron } from "@/components/ui";
+import { SectionHeader, StatRow, EmptyState, BudgetBar, FoldChevron, chartTooltipProps } from "@/components/ui";
 import { CategoryIcon } from "@/components/icons";
 
 const BUDGET_ALERT_THRESHOLD = 80;
@@ -222,7 +222,7 @@ export function Dashboard() {
                   <Pie data={metrics.byCat} dataKey="value" nameKey="name" innerRadius={40} outerRadius={72} paddingAngle={4} cornerRadius={6}>
                     {metrics.byCat.map((c) => <Cell key={c.key} fill={c.color} stroke="none" />)}
                   </Pie>
-                  <Tooltip formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, INVESTMENT_CAT_LABEL_EN)]} />
+                  <Tooltip {...chartTooltipProps} formatter={(v, n) => [fmt(Number(v)), translateLabel(String(n), lang, INVESTMENT_CAT_LABEL_EN)]} />
                 </PieChart>
               </ResponsiveContainer>
               <div style={{ flex: 1, fontSize: 12.5 }}>
