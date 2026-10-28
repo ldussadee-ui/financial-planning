@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.24.2] - 2026-10-28
+
+### Changed
+- The overview page header is now just the title "ภาพรวมการเงิน ☺️". The ✨ "ทดลองใช้งาน" badge is gone: it was only a decoration and didn't do anything, so it made the app look unfinished. The grey line under the title (a description plus the current cycle's dates) is gone too, so the numbers start higher on a phone screen. The cycle dates are still shown on the รายรับ-จ่าย and payment summary pages, where you pick the cycle
+
 ## [0.24.1] - 2026-10-28
 
 ### Changed

@@ -20,8 +20,6 @@ export const TR = {
   },
   dashboard: {
     title: { th: "ภาพรวมการเงิน ☺️", en: "Financial Overview ☺️" } as Text,
-    subtitle: { th: "สรุปสถานะสินทรัพย์ หนี้สิน และกระแสเงินสด · รอบปัจจุบัน", en: "Assets, liabilities, and cashflow at a glance · Current cycle" } as Text,
-    trialChip: { th: "ทดลองใช้งาน", en: "Beta" } as Text,
     netWorthSection: { th: "มูลค่าสุทธิ", en: "Net Worth" } as Text,
     liquidAssets: { th: "สินทรัพย์สภาพคล่อง", en: "Liquid Assets" } as Text,
     investmentAssets: { th: "สินทรัพย์เพื่อการลงทุน", en: "Investment Assets" } as Text,
