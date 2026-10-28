@@ -76,14 +76,17 @@ const TONE_VAR: Record<IconTone, string> = {
 // "lg" sits beside a page title, "md" at the start of a list row, "sm" in
 // front of a label, and "glyph" is the
 // bare line icon for places that already have their own coloured background
-// (buttons, pass/fail pills).
-export type IconSize = "lg" | "md" | "sm" | "glyph";
+// (buttons, pass/fail pills). "tint" is that bare icon with its closed
+// shapes filled in the tile colour, for white buttons that want a touch of
+// colour without a tile (the cashflow shortcuts).
+export type IconSize = "lg" | "md" | "sm" | "glyph" | "tint";
 
 // `tone` is one of the palette tones, or any CSS colour for tiles that must
 // match a colour used elsewhere (an investment category's chart colour).
 function Sticker({ Glyph, tone, size }: { Glyph: LucideIcon; tone: IconTone | string; size: IconSize }) {
   if (size === "glyph") return <Glyph aria-hidden size={15} strokeWidth={2.5} style={{ flexShrink: 0 }} />;
   const bg = TONE_VAR[tone as IconTone] ?? tone;
+  if (size === "tint") return <Glyph aria-hidden size={15} strokeWidth={2.5} fill={bg} style={{ flexShrink: 0 }} />;
   return (
     <span aria-hidden className={size === "sm" ? "fp-ic" : `fp-ic fp-ic-${size}`} style={{ ["--ic-tone" as string]: bg }}>
       <Glyph strokeWidth={size === "sm" ? 2.5 : 2.25} />

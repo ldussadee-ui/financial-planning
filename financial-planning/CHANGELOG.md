@@ -6,7 +6,7 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ### Changed
 - On รายรับ-จ่าย the cycle row and the start-day button now fit on one line on a phone. Before, they took two lines and the › arrow could drop onto a line of its own. "รอบบัญชีปัจจุบัน" is now a small line above the dates, centred between ‹ and ›, and the start-day button is shortened to "เริ่ม 25" at the end of the row. Tapping it still opens the day picker, which now opens towards the left so it stays on screen. When you step back to an older cycle, the "กลับไปรอบปัจจุบัน" button appears on a second line only then. The payment summary uses the same row, so it changes the same way
-- The three shortcut buttons under the cycle row are now one low row instead of tall buttons with the icon on top: each shows a small icon beside a short name, "รายงาน", "ช่องทางจ่าย" and "รายการประจำ" (Report, Payments, Recurring in English). The card takes about half the height it did. The full names are still the titles of the pages they open
+- The three shortcut buttons under the cycle row are now one low row instead of tall buttons with the icon on top: each shows a small icon, filled with its colour (blue, pink, purple) like a colouring book, beside a short name, "รายงาน", "ช่องทางจ่าย" and "รายการประจำ" (Report, Payments, Recurring in English). The card takes about half the height it did. The full names are still the titles of the pages they open
 
 ## [0.26.3] - 2026-10-28
 

@@ -151,7 +151,7 @@ export function CashflowTab() {
         />
         <span style={{ display: "flex", gap: 6 }}>
           <Link href="/cashflow/reports" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            <PopIcon name="report" size="glyph" /><span style={shortcutTextStyle}>{t(TR.cashflow.monthlyReport)}</span>
+            <PopIcon name="report" size="tint" /><span style={shortcutTextStyle}>{t(TR.cashflow.monthlyReport)}</span>
           </Link>
           {/* Carries the cycle being viewed. Without it the summary always
               opened on the current cycle, so stepping back to August here
@@ -160,10 +160,10 @@ export function CashflowTab() {
             href={cycleOffset === 0 ? "/cashflow/payment-summary" : `/cashflow/payment-summary?cycle=${cycleOffset}`}
             style={{ ...shortcutLinkStyle, textDecoration: "none" }}
           >
-            <PopIcon name="card" size="glyph" /><span style={shortcutTextStyle}>{t(TR.cashflow.paymentSummary)}</span>
+            <PopIcon name="card" size="tint" /><span style={shortcutTextStyle}>{t(TR.cashflow.paymentSummary)}</span>
           </Link>
           <Link href="/cashflow/recurring" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            <PopIcon name="recurring" size="glyph" /><span style={shortcutTextStyle}>{t(TR.recurring.manageLink)}</span>
+            <PopIcon name="recurring" size="tint" /><span style={shortcutTextStyle}>{t(TR.recurring.manageLink)}</span>
           </Link>
         </span>
       </div>
