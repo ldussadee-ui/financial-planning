@@ -9,7 +9,7 @@ import { StepButton } from "@/components/ui";
 
 const backToCurrentStyle: CSSProperties = {
   border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink-soft)",
-  borderRadius: 999, padding: "5px 11px", fontSize: 11.5, fontWeight: 500, cursor: "pointer",
+  borderRadius: 999, padding: "5px 11px", fontSize: 12, fontWeight: 500, cursor: "pointer",
 };
 
 // The ‹ cycle › stepper. Lives here rather than in the cashflow tab so every

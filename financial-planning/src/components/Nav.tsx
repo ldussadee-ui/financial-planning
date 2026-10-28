@@ -86,8 +86,8 @@ export function BottomNav() {
             href={n.href}
             style={{
               flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-              padding: "8px 2px 6px", color: active ? "var(--ink)" : "var(--ink-soft)", fontSize: 11,
-              fontWeight: active ? 600 : 400,
+              padding: "8px 2px 6px", color: active ? "var(--ink)" : "var(--ink-soft)", fontSize: 12,
+              fontWeight: active ? 600 : 500,
             }}
           >
             <Icon size={20} strokeWidth={2} fill={active ? "var(--yellow)" : "none"} />
@@ -123,7 +123,7 @@ export function SettingsShortcut() {
         border: "2px solid var(--border)",
       }}
     >
-      <Settings size={17} strokeWidth={2} />
+      <Settings size={18} strokeWidth={2.5} />
       {stale && (
         <span
           aria-hidden

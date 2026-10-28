@@ -81,7 +81,7 @@ function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) 
         <Field label={t(TR.exportImport.toDate)}><input type="date" style={inputStyle} value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
         {canShare ? (
           <>
-            <AddButton onClick={() => void doExport(true)} label={t(TR.common.shareFile)} icon={<Share2 size={14} />} />
+            <AddButton onClick={() => void doExport(true)} label={t(TR.common.shareFile)} icon={<Share2 size={15} strokeWidth={2.5} />} />
             <button type="button" onClick={() => void doExport(false)} style={actionButtonStyle}>{t(TR.common.download)}</button>
           </>
         ) : (

@@ -17,7 +17,7 @@ function entryIcon(c: CashFlowEntry) {
 }
 
 const subTagStyle: CSSProperties = {
-  display: "inline-block", fontSize: 11.5, fontWeight: 500, color: "var(--accent)", background: "var(--lilac)",
+  display: "inline-block", fontSize: 12, fontWeight: 500, color: "var(--accent)", background: "var(--lilac)",
   borderRadius: 6, padding: "1px 7px", marginLeft: 6, whiteSpace: "nowrap",
 };
 

@@ -2,6 +2,22 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.26.3] - 2026-10-28
+
+### Changed
+- Card headings across the app (ภาพรวมรายจ่าย, แยกตามหมวดหมู่ and the trend chart in the expense report, every card in Settings, the checks and policies cards in Insurance, the comparison table in Asset Trend) were small grey text. They are now larger, bold and dark, so you can see at a glance where each card starts
+- The labels above the numbers (รายรับ / รายจ่าย / คงเหลือ on รายรับ-จ่าย, the coloured tiles on the overview) and the row names in summary lists are now bold and dark instead of thin grey, so the label reads as clearly as the number under it
+- The three shortcut buttons on รายรับ-จ่าย now show their icon above the label in bold text. The label gets the full width of the button, so "ช่องทางการจ่าย" no longer wraps onto three lines
+
+### Fixed
+- No text in the app is smaller than 12 any more. Text that was 10.5 to 11.5 was hard to read on a phone: the notes in the retirement comparison, the budget invite, the pass/fail badges on financial ratios and insurance, the chart axes, the bottom menu, the cycle buttons and the day picker
+
+## [0.26.2] - 2026-10-28
+
+### Fixed
+- The small action icons that still had the old thin, grey look now match the Pop Sticker style: the › on every list row and on the overview score cards, the trash and pencil icons on assets, debts and goals, the × that closes a pop-up or a notice, the × on category chips while editing them, the + on the add buttons, and the settings gear. They are now bold and dark like the other buttons
+- Rows in สภาพคล่อง, ลงทุน, ส่วนตัว and หนี้สิน had a plain coloured square at the start. Each square is now a sticker icon for what the row is: banknotes for cash, a bank for savings accounts, a candlestick chart for stocks, a pie chart for mutual funds, a building for property, a gem for gold, a car or house for personal items, a card or bank for debts. Investment rows keep their category colour, so a row still matches its slice in the allocation chart
+
 ## [0.26.1] - 2026-10-28
 
 ### Changed

@@ -19,19 +19,22 @@ import { renderByDay } from "./cashflowShared";
 import { useCashflowEntry } from "./CashflowEntryModal";
 import type { CashFlowEntry } from "@/lib/types";
 import { CategoryIcon, IconLabel, PopIcon } from "@/components/icons";
+import { X } from "lucide-react";
 
 // Equal-width shortcut links: each of the 3 gets exactly 1/3 of the row so
 // all three stay visible with no horizontal scrolling; a longer label wraps
 // onto a second line on a narrow phone instead of pushing siblings off-screen.
+// The icon sits above the label so the text gets the full width and never
+// needs a third line.
 const shortcutLinkStyle: CSSProperties = {
-  flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center",
-  textAlign: "center", whiteSpace: "normal", lineHeight: 1.25,
-  background: "var(--panel)", color: "var(--ink)", border: "2px solid var(--border)", fontWeight: 500,
-  borderRadius: 999, padding: "7px 6px", fontSize: 12,
+  flex: 1, minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4,
+  textAlign: "center", whiteSpace: "normal", lineHeight: 1.2,
+  background: "var(--panel)", color: "var(--ink)", border: "2px solid var(--border)", fontWeight: 600,
+  borderRadius: 14, padding: "8px 6px", fontSize: 12.5,
 };
 const editChipStyle: CSSProperties = {
   border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink-soft)",
-  borderRadius: 999, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", flexShrink: 0,
+  borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0,
 };
 // Dashed and tinted rather than a solid card: it is an offer to set
 // something up, not a report of anything that exists yet.
@@ -138,7 +141,7 @@ export function CashflowTab() {
         </span>
         <span style={{ display: "flex", gap: 6 }}>
           <Link href="/cashflow/reports" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            <IconLabel name="report">{t(TR.cashflow.monthlyReport)}</IconLabel>
+            <PopIcon name="report" />{t(TR.cashflow.monthlyReport)}
           </Link>
           {/* Carries the cycle being viewed. Without it the summary always
               opened on the current cycle, so stepping back to August here
@@ -147,10 +150,10 @@ export function CashflowTab() {
             href={cycleOffset === 0 ? "/cashflow/payment-summary" : `/cashflow/payment-summary?cycle=${cycleOffset}`}
             style={{ ...shortcutLinkStyle, textDecoration: "none" }}
           >
-            <IconLabel name="card">{t(TR.cashflow.paymentSummary)}</IconLabel>
+            <PopIcon name="card" />{t(TR.cashflow.paymentSummary)}
           </Link>
           <Link href="/cashflow/recurring" style={{ ...shortcutLinkStyle, textDecoration: "none" }}>
-            <IconLabel name="recurring">{t(TR.recurring.manageLink)}</IconLabel>
+            <PopIcon name="recurring" />{t(TR.recurring.manageLink)}
           </Link>
         </span>
       </div>
@@ -165,7 +168,7 @@ export function CashflowTab() {
           { key: "left", label: t(TR.cashflow.remaining), value: totalIncome - totalExpense, bg: "var(--accent)", color: "#fff" },
         ].map((c) => (
           <div key={c.key} className="fp-card" style={{ background: c.bg, color: c.color, padding: "10px 12px", minWidth: 0 }}>
-            <div style={{ fontSize: 12, color: c.key === "left" ? "#fff" : "var(--ink-soft)" }}>{c.label}</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: c.key === "left" ? "#fff" : "var(--ink)" }}>{c.label}</div>
             <div className="fp-num" style={{ fontSize: 17, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {c.value < 0 ? "−" : ""}{fmt(Math.abs(c.value)).replace("฿", "")}
             </div>
@@ -183,9 +186,9 @@ export function CashflowTab() {
             type="button"
             onClick={() => setRecurringNotice([])}
             aria-label={t(TR.common.close)}
-            style={{ border: "none", background: "transparent", color: "var(--ink-soft)", cursor: "pointer", fontSize: 15, lineHeight: 1, padding: 0 }}
+            style={{ border: "none", background: "transparent", color: "var(--ink)", cursor: "pointer", padding: 0, display: "flex" }}
           >
-            ×
+            <X size={18} strokeWidth={3} aria-hidden />
           </button>
         </div>
       )}
@@ -245,7 +248,7 @@ export function CashflowTab() {
             <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
               {t(TR.cashflow.budgetInviteTitle)}
             </span>
-            <span style={{ display: "block", fontSize: 11.5, color: "var(--ink-soft)", lineHeight: 1.45, marginTop: 1 }}>
+            <span style={{ display: "block", fontSize: 12, color: "var(--ink-soft)", lineHeight: 1.45, marginTop: 1 }}>
               {t(TR.cashflow.budgetInviteSub)}
             </span>
           </span>

@@ -37,7 +37,7 @@ function CheckCard({ check, t }: { check: InsuranceCheck; t: <K extends { th: st
           <div style={{ fontSize: 14, fontWeight: 600 }}>{check.name}</div>
           <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 2 }}>{check.formulaLabel}</div>
         </div>
-        <span style={{ fontSize: 11, fontWeight: 700, color: badge.color, background: badge.bg, padding: "4px 10px", borderRadius: 999, whiteSpace: "nowrap" }}>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: badge.color, background: badge.bg, padding: "4px 10px", borderRadius: 999, whiteSpace: "nowrap" }}>
           {badge.icon ? <IconLabel name={badge.icon} size="glyph">{badge.text}</IconLabel> : badge.text}
         </span>
       </div>
@@ -115,7 +115,7 @@ export function InsuranceView() {
         </div>
       </Modal>
 
-      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.checksTitle)}</div>
+      <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.checksTitle)}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 18 }}>
         {checks.map((c) => <CheckCard key={c.key} check={c} t={t} />)}
       </div>
@@ -136,7 +136,7 @@ export function InsuranceView() {
         </div>
       )}
 
-      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.policiesTitle)}</div>
+      <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 10 }}>{t(TR.insurance.policiesTitle)}</div>
       <div className="fp-card" style={{ padding: 10 }}>
         {policies.length ? policies.map((p) => (
           <Row

@@ -95,7 +95,7 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
 
   return (
     <div className="fp-card" style={{ padding: 26, marginTop: 18 }}>
-      <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="monthlyTrend">{trendTitle}</IconLabel></div>
+      <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="monthlyTrend">{trendTitle}</IconLabel></div>
       {categories.length ? (
         <>
           <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
@@ -109,8 +109,8 @@ function TrendChart({ period, lang, t }: { period: Period; lang: Language; t: <K
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={chartData} margin={{ top: 18, right: 4, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
               <Tooltip formatter={(v) => fmt(Number(v))} />
               {selected === null
                 ? categories.map((cat, i) => (
@@ -173,7 +173,7 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26, marginBottom: 18 }}>
-        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="cashflow">{t(TR.reports.overview)}</IconLabel></div>
+        <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="cashflow">{t(TR.reports.overview)}</IconLabel></div>
         <StatRow label={t(TR.reports.total)} value={fmt(total)} big />
         <StatRow label={<IconLabel name="fixed">{t(TR.reports.fixedLabel)}</IconLabel>} value={fmt(fixedTotal)} />
         <StatRow label={<IconLabel name="general">{t(TR.reports.generalLabel)}</IconLabel>} value={fmt(variableTotal)} />
@@ -181,7 +181,7 @@ export function ExpenseTrendsView() {
       </div>
 
       <div className="fp-card" style={{ padding: 26 }}>
-        <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="category">{t(TR.reports.byCategory)}</IconLabel></div>
+        <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600, marginBottom: 8 }}><IconLabel name="category">{t(TR.reports.byCategory)}</IconLabel></div>
         {byCategory.length ? (
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
             <ResponsiveContainer width={180} height={180}>

@@ -11,6 +11,7 @@ import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelB
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { LiquidAsset, LiquidType } from "@/lib/types";
+import { LiquidIcon } from "@/components/icons";
 
 const emptyForm = { type: "บัญชีออมทรัพย์" as LiquidType, name: "", current_value: "", goal_id: "" };
 
@@ -78,7 +79,7 @@ export function LiquidTab() {
           {g.items.map((a) => (
             <Row
               key={a.id}
-              icon={<span style={{ width: 30, height: 30, borderRadius: 10, background: LIQUID_COLOR, flexShrink: 0 }} />}
+              icon={<LiquidIcon type={a.type} color={LIQUID_COLOR} />}
               left={
                 <div>
                   <div style={{ fontSize: 14 }}>{a.name}</div>

@@ -62,8 +62,8 @@ export function AssetTrendTab() {
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={points}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
-              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
-              <YAxis yAxisId="amount" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
+              <XAxis dataKey="label" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} />
+              <YAxis yAxisId="amount" tick={{ fontSize: 12, fill: "var(--ink)" }} axisLine={false} tickLine={false} width={36} tickFormatter={compactAmount} />
               {/* Bounds come from the data rather than being fixed: real growth
                   sits in single digits most months, and a fixed ceiling would
                   press the line flat against the floor. growthAxisDomain keeps
@@ -73,7 +73,7 @@ export function AssetTrendTab() {
                 yAxisId="growth"
                 orientation="right"
                 domain={growthAxisDomain(points.map((p) => p.pct))}
-                tick={{ fontSize: 11, fill: GROWTH_COLOR }}
+                tick={{ fontSize: 12, fill: GROWTH_COLOR }}
                 axisLine={false}
                 tickLine={false}
                 width={40}
@@ -108,7 +108,7 @@ export function AssetTrendTab() {
 
       <div className="fp-card" style={{ padding: 20, marginTop: 4 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
-          <div style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600 }}>{t(TR.assets.comparisonTable)}</div>
+          <div style={{ fontSize: 15, color: "var(--ink)", fontWeight: 600 }}>{t(TR.assets.comparisonTable)}</div>
           <div style={{ width: 200 }}>
             <SegmentedControl small options={TABLE_COUNT_OPTIONS} value={String(tableCount)} onChange={(v) => setTableCount(Number(v))} />
           </div>
