@@ -44,6 +44,28 @@ export function StepButton({ dir, onClick, label, size = 30 }: { dir: "prev" | "
   );
 }
 
+// The fold/unfold marker on a section that opens and closes: the same bold
+// chevron in a small outlined circle as StepButton, pointing right when
+// closed and turning down when open. Decorative only: the header it sits in
+// is what takes the tap.
+export function FoldChevron({ open, size = 22 }: { open: boolean; size?: number }) {
+  return (
+    <span
+      aria-hidden
+      style={{
+        width: size, height: size, borderRadius: 999, border: "1.5px solid var(--border)", background: "var(--panel)",
+        color: "var(--ink)", display: "inline-grid", placeItems: "center", flexShrink: 0,
+      }}
+    >
+      <ChevronRight
+        size={Math.round(size * 0.65)}
+        strokeWidth={3}
+        style={{ transform: open ? "rotate(90deg)" : "none", transition: "transform 0.15s ease" }}
+      />
+    </span>
+  );
+}
+
 // Tracks which open Modal is topmost, so a nested modal (e.g. the amount
 // field's calculator popup opened from inside another modal) is the only
 // one whose Tab handler acts — otherwise both handlers would compute a
@@ -419,11 +441,7 @@ export function NestedGroup({
           const headerContent = (
             <>
               {foldable && (
-                <ChevronRight
-                  size={14}
-                  aria-hidden
-                  style={{ color, flexShrink: 0, transform: folded ? "none" : "rotate(90deg)", transition: "transform 0.15s ease" }}
-                />
+                <FoldChevron open={!folded} />
               )}
               {sg.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: sg.dot, flexShrink: 0 }} />}
               <span style={{ fontSize: 13, fontWeight: 600, color }}>{sg.label}</span>
