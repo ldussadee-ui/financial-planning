@@ -168,4 +168,18 @@ export interface InsurancePolicy {
   annualPremium: number;
   expiryDate: string; // "" if not tracked
   beneficiarySet: boolean;
+  // Loans this policy pays off. A credit-life policy (MRTA/MLTA) pays the
+  // lender directly; a life policy listed here is one the heirs are meant to
+  // use to clear these loans. Unindexed and optional, so older rows simply
+  // have no links.
+  liabilityIds?: string[];
+  // Life policies only: how much of the sum assured is set aside for the
+  // linked loans. Missing means the whole sum assured.
+  debtEarmark?: number;
+  // "single" = one lump-sum premium (common for MRTA) stored in
+  // annualPremium and spread over coverageYears. Missing means yearly.
+  premiumMode?: PremiumMode;
+  coverageYears?: number;
 }
+
+export type PremiumMode = "annual" | "single";

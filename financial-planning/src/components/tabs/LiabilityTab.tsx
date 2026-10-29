@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
@@ -11,7 +12,8 @@ import { SectionHeader, Field, AddButton, Modal, Group, Row, cancelButtonStyle, 
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { Liability, LiabilityTerm } from "@/lib/types";
-import { LiabilityIcon } from "@/components/icons";
+import { IconLabel, LiabilityIcon } from "@/components/icons";
+import { computeLoanCoverage } from "@/lib/insuranceAnalysis";
 
 const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", rate: "", monthly: "" };
 
@@ -19,6 +21,8 @@ const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", ra
 export function LiabilityTab() {
   const { t } = useLanguage();
   const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
+  const policies = useLiveQuery(() => db.insurancePolicies.toArray(), [], []);
+  const coverage = new Map(computeLoanCoverage(policies || [], liabilities || []).map((c) => [c.liability.id, c]));
   const [form, setForm] = useState(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -34,8 +38,32 @@ export function LiabilityTab() {
           {fillText(t(TR.assets.installmentPerMonth), { amount: fmt(l.monthly) })}
         </div>
       )}
+      {coverChip(l)}
     </div>
   );
+
+  // Which loans carry insurance, from the links set on the insurance page.
+  // Long-term loans with none get a reminder; short-term debt stays quiet,
+  // since it isn't part of that check.
+  const coverChip = (l: Liability) => {
+    const covered = coverage.get(l.id)?.covered ?? 0;
+    if (covered <= 0 && l.term !== "LongTerm") return null;
+    return (
+      <Link
+        href="/dashboard/insurance"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          display: "inline-flex", whiteSpace: "nowrap", marginTop: 5, fontSize: 12, fontWeight: 600, color: "var(--ink)", textDecoration: "none",
+          border: "1.5px solid var(--border)", borderRadius: 999, padding: "1px 8px",
+          background: covered > 0 ? "var(--teal)" : "var(--yellow)",
+        }}
+      >
+        {covered > 0
+          ? <IconLabel name="insurance" size="glyph">{fillText(t(TR.insurance.loanHasCover), { amount: fmt(covered) })}</IconLabel>
+          : t(TR.insurance.loanNoCover)}
+      </Link>
+    );
+  };
 
   const openNew = () => { setForm(emptyForm); setEditingId(null); setModalOpen(true); };
   const openEdit = (l: Liability) => {

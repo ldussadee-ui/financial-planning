@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.27.0] - 2026-10-29
+
+### Added
+- Each credit-life policy (MRTA/MLTA) can now be tied to the loans it covers. Before, the app added all credit-life cover together and compared it with all long-term debt as one lump, so you couldn't tell which loan was protected and which wasn't. One policy can cover several loans; the cover is then split between them by their remaining balances, so the split follows the balances down as you pay them off
+- A life policy can be marked "set aside for debts" and tied to loans too, for cover the heirs are meant to use to pay the bank themselves. You can set how much of the sum assured is for the debts (blank means all of it). Those loans show as covered, labelled "heirs pay it off"
+- The credit-life check on the insurance page now lists every long-term loan with a bar showing how much of its balance is covered, and how much is still missing. It passes only when every long-term loan is fully covered. Short-term debt such as credit cards is left out, since it rarely carries this kind of cover
+- Each loan in the Debt tab shows whether it is insured. A long-term loan with no cover shows "ยังไม่มีประกัน"; tapping the label opens the insurance page
+- Policies can be paid "once" instead of yearly, with the number of years they cover. The premium-to-income check counts the lump sum spread over those years, rather than as if it were paid again every year
+
+### Changed
+- The life insurance gap no longer asks you to cover debt that a credit-life policy already pays to the lender. That debt was counted as something the family had to pay, which made the shortfall look bigger than it is. Life cover set aside for debts still counts in full, because that money goes to the family first
+- Credit-life policies no longer warn "no beneficiary set", since the lender is the beneficiary
+- Credit-life policies saved before this version aren't tied to any loan yet, so the credit-life check may now show "fail" until you open each one and tick its loans. They are listed under "Things to check" so you can find them
+- The add/edit policy form is now one field per row, like the other forms in the app
+
 ## [0.26.8] - 2026-10-28
 
 ### Changed
