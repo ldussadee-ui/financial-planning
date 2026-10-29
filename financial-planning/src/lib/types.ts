@@ -158,7 +158,9 @@ export interface NetWorthSnapshot {
   totalLiab: number;
 }
 
-export type PolicyType = "ชีวิต" | "สุขภาพ" | "อุบัติเหตุ" | "โรคร้ายแรง" | "คุ้มครองสินเชื่อ";
+export type PolicyType = "ชีวิต" | "สุขภาพ" | "อุบัติเหตุ" | "โรคร้ายแรง" | "คุ้มครองสินเชื่อ" | "บ้านและรถ";
+// What a "บ้านและรถ" (home & car) policy insures.
+export type PropertyKind = "อัคคีภัย" | "รถยนต์" | "อื่นๆ";
 
 export interface InsurancePolicy {
   id: string;
@@ -180,6 +182,10 @@ export interface InsurancePolicy {
   // annualPremium and spread over coverageYears. Missing means yearly.
   premiumMode?: PremiumMode;
   coverageYears?: number;
+  // Home & car policies only: the kind of cover and the personal asset
+  // (house, car…) it insures, if any.
+  propertyKind?: PropertyKind;
+  personalAssetId?: string;
 }
 
 export type PremiumMode = "annual" | "single";

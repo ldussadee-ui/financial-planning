@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
@@ -12,7 +11,8 @@ import { SectionHeader, Field, AddButton, Modal, Group, Row, cancelButtonStyle, 
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { Liability, LiabilityTerm } from "@/lib/types";
-import { IconLabel, LiabilityIcon } from "@/components/icons";
+import { LiabilityIcon } from "@/components/icons";
+import { InsuranceChip } from "@/components/InsuranceChip";
 import { computeLoanCoverage } from "@/lib/insuranceAnalysis";
 
 const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", rate: "", monthly: "" };
@@ -49,19 +49,9 @@ export function LiabilityTab() {
     const covered = coverage.get(l.id)?.covered ?? 0;
     if (covered <= 0 && l.term !== "LongTerm") return null;
     return (
-      <Link
-        href="/dashboard/insurance"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          display: "inline-flex", whiteSpace: "nowrap", marginTop: 5, fontSize: 12, fontWeight: 600, color: "var(--ink)", textDecoration: "none",
-          border: "1.5px solid var(--border)", borderRadius: 999, padding: "1px 8px",
-          background: covered > 0 ? "var(--teal)" : "var(--yellow)",
-        }}
-      >
-        {covered > 0
-          ? <IconLabel name="insurance" size="glyph">{fillText(t(TR.insurance.loanHasCover), { amount: fmt(covered) })}</IconLabel>
-          : t(TR.insurance.loanNoCover)}
-      </Link>
+      <InsuranceChip insured={covered > 0}>
+        {covered > 0 ? fillText(t(TR.insurance.loanHasCover), { amount: fmt(covered) }) : t(TR.insurance.loanNoCover)}
+      </InsuranceChip>
     );
   };
 

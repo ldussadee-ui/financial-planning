@@ -6,12 +6,13 @@ import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
 import { PERSONAL_COLOR, PERSONAL_TYPES } from "@/lib/constants";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR, PERSONAL_TYPE_LABEL_EN, translateLabel } from "@/lib/i18n";
+import { TR, PERSONAL_TYPE_LABEL_EN, PROPERTY_KIND_LABEL_EN, translateLabel } from "@/lib/i18n";
 import { SectionHeader, EmptyState, Field, AddButton, Modal, Group, Row, cancelButtonStyle, formColumnStyle, formActionsStyle, fullInputStyle } from "@/components/ui";
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { PersonalAsset, PersonalItemType } from "@/lib/types";
 import { PersonalIcon } from "@/components/icons";
+import { InsuranceChip } from "@/components/InsuranceChip";
 
 const emptyForm = { item_type: "รถยนต์" as PersonalItemType, name: "", current_value: "", liability_id: "" };
 
@@ -19,6 +20,11 @@ export function PersonalTab() {
   const { lang, t } = useLanguage();
   const personal = useLiveQuery(() => db.personalAssets.toArray(), [], []);
   const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
+  const policies = useLiveQuery(() => db.insurancePolicies.toArray(), [], []);
+  // Home & car policies tied to an asset on the insurance page. Assets with
+  // none show nothing: collectibles or furniture are rarely insured alone.
+  const policiesFor = (a: PersonalAsset) =>
+    (policies || []).filter((p) => p.policyType === "บ้านและรถ" && p.personalAssetId === a.id);
   const [form, setForm] = useState(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -84,6 +90,11 @@ export function PersonalTab() {
                   {a.liability_id && (
                     <div style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(TR.assets.linkedWith)} {(liabilities || []).find((l) => l.id === a.liability_id)?.type || ""}</div>
                   )}
+                  {policiesFor(a).map((p) => (
+                    <InsuranceChip key={p.id} insured>
+                      {translateLabel(p.propertyKind ?? "อื่นๆ", lang, PROPERTY_KIND_LABEL_EN)} {fmt(p.sumAssured)}
+                    </InsuranceChip>
+                  ))}
                 </div>
               }
               right={fmt(a.current_value)}

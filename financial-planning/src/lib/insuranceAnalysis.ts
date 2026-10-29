@@ -191,8 +191,8 @@ export function findExpiringPolicies(policies: InsurancePolicy[], today: Date = 
   });
 }
 
-// Credit-life policies name the lender as beneficiary by design, so they
-// never need one set.
+// Credit-life policies name the lender as beneficiary by design, and home &
+// car policies insure a thing rather than a person, so neither needs one set.
 export function findPoliciesWithoutBeneficiary(policies: InsurancePolicy[]): InsurancePolicy[] {
-  return policies.filter((p) => !p.beneficiarySet && p.policyType !== CREDIT_LIFE);
+  return policies.filter((p) => !p.beneficiarySet && p.policyType !== CREDIT_LIFE && p.policyType !== "บ้านและรถ");
 }

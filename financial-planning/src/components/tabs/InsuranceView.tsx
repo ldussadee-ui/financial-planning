@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { fmt, uid } from "@/lib/calc";
-import { POLICY_TYPES } from "@/lib/constants";
+import { POLICY_TYPES, PROPERTY_KINDS } from "@/lib/constants";
 import { useInsuranceAnalysis } from "@/hooks/useInsuranceAnalysis";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TR, POLICY_TYPE_LABEL_EN, translateLabel, fillText } from "@/lib/i18n";
+import { TR, POLICY_TYPE_LABEL_EN, PROPERTY_KIND_LABEL_EN, translateLabel, fillText } from "@/lib/i18n";
 import {
   SectionHeader, EmptyState, Field, AddButton, Modal, Row, SegmentedControl,
   cancelButtonStyle, formColumnStyle, formActionsStyle, formPairStyle, formPairCellStyle, fullInputStyle,
@@ -15,13 +16,14 @@ import {
 import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import { yearlyPremium, type InsuranceCheck, type InsuranceCheckStatus, type LoanCoverage } from "@/lib/insuranceAnalysis";
-import type { InsurancePolicy, Liability, PolicyType, PremiumMode } from "@/lib/types";
+import type { InsurancePolicy, Liability, PolicyType, PremiumMode, PropertyKind } from "@/lib/types";
 import { IconLabel, PopIcon } from "@/components/icons";
 
 const emptyForm = {
   policyType: "ชีวิต" as PolicyType, provider: "", sumAssured: "", annualPremium: "", expiryDate: "", beneficiarySet: false,
   premiumMode: "annual" as PremiumMode, coverageYears: "",
   liabilityIds: [] as string[], earmarkOn: false, debtEarmark: "",
+  propertyKind: "อัคคีภัย" as PropertyKind, personalAssetId: "",
 };
 
 type Translate = <K extends { th: string; en: string }>(entry: K) => string;
@@ -115,6 +117,7 @@ const checkLabelStyle = { display: "flex", alignItems: "center", gap: 6, fontSiz
 export function InsuranceView() {
   const { lang, t } = useLanguage();
   const { policies, liabilities, checks, expiringPolicies, noBeneficiaryPolicies, unlinkedCreditLife, loading } = useInsuranceAnalysis(lang);
+  const personalAssets = useLiveQuery(() => db.personalAssets.toArray(), [], []);
   const [form, setForm] = useState(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -130,6 +133,7 @@ export function InsuranceView() {
       liabilityIds: p.liabilityIds ?? [],
       earmarkOn: p.policyType === "ชีวิต" && (p.liabilityIds ?? []).length > 0,
       debtEarmark: p.debtEarmark ? String(p.debtEarmark) : "",
+      propertyKind: p.propertyKind ?? "อัคคีภัย", personalAssetId: p.personalAssetId ?? "",
     });
     setEditingId(p.id);
     setModalOpen(true);
@@ -140,28 +144,39 @@ export function InsuranceView() {
     if (!form.provider || !form.sumAssured) return;
     const isCredit = form.policyType === "คุ้มครองสินเชื่อ";
     const isEarmarked = form.policyType === "ชีวิต" && form.earmarkOn;
+    const isProperty = form.policyType === "บ้านและรถ";
     const single = form.premiumMode === "single";
     void db.insurancePolicies.put({
       id: editingId || uid(), policyType: form.policyType, provider: form.provider,
       sumAssured: Number(form.sumAssured), annualPremium: Number(form.annualPremium || 0),
-      expiryDate: form.expiryDate, beneficiarySet: isCredit ? true : form.beneficiarySet,
+      expiryDate: form.expiryDate, beneficiarySet: isCredit || isProperty ? true : form.beneficiarySet,
       premiumMode: form.premiumMode,
       coverageYears: single && Number(form.coverageYears) > 0 ? Number(form.coverageYears) : undefined,
       liabilityIds: isCredit || isEarmarked ? form.liabilityIds : [],
       debtEarmark: isEarmarked && Number(form.debtEarmark) > 0 ? Number(form.debtEarmark) : undefined,
+      propertyKind: isProperty ? form.propertyKind : undefined,
+      personalAssetId: isProperty && form.personalAssetId ? form.personalAssetId : undefined,
     });
     closeModal();
   };
   const remove = (id: string) => void db.insurancePolicies.delete(id);
 
   const isCreditForm = form.policyType === "คุ้มครองสินเชื่อ";
+  const isPropertyForm = form.policyType === "บ้านและรถ";
   const loanName = new Map(liabilities.map((l) => [l.id, l.type]));
-  const linkedNames = (p: InsurancePolicy) =>
-    p.policyType === "คุ้มครองสินเชื่อ" || p.policyType === "ชีวิต"
-      ? (p.liabilityIds || []).map((id) => loanName.get(id)).filter(Boolean).join(", ")
-      : "";
+  const assetName = new Map((personalAssets || []).map((a) => [a.id, a.name]));
+  const linkedNames = (p: InsurancePolicy) => {
+    if (p.policyType === "บ้านและรถ") return (p.personalAssetId && assetName.get(p.personalAssetId)) || "";
+    if (p.policyType === "คุ้มครองสินเชื่อ" || p.policyType === "ชีวิต")
+      return (p.liabilityIds || []).map((id) => loanName.get(id)).filter(Boolean).join(", ");
+    return "";
+  };
 
-  const policyLabel = (p: InsurancePolicy) => `${translateLabel(p.policyType, lang, POLICY_TYPE_LABEL_EN)} · ${p.provider}`;
+  const typeLabel = (p: InsurancePolicy) => {
+    const type = translateLabel(p.policyType, lang, POLICY_TYPE_LABEL_EN);
+    return p.policyType === "บ้านและรถ" && p.propertyKind ? `${type} (${translateLabel(p.propertyKind, lang, PROPERTY_KIND_LABEL_EN)})` : type;
+  };
+  const policyLabel = (p: InsurancePolicy) => `${typeLabel(p)} · ${p.provider}`;
 
   return (
     <div>
@@ -179,6 +194,25 @@ export function InsuranceView() {
               label={t(TR.insurance.linkedLoansCredit)} hint={t(TR.insurance.linkedLoansHint)}
               liabilities={liabilities} value={form.liabilityIds} onChange={(ids) => setForm({ ...form, liabilityIds: ids })} t={t}
             />
+          )}
+          {isPropertyForm && (
+            <>
+              <Field label={t(TR.insurance.propertyKind)}>
+                <SegmentedControl
+                  small
+                  options={PROPERTY_KINDS.map((k) => ({ value: k, label: translateLabel(k, lang, PROPERTY_KIND_LABEL_EN) }))}
+                  value={form.propertyKind}
+                  onChange={(v) => setForm({ ...form, propertyKind: v })}
+                />
+              </Field>
+              <Field label={t(TR.insurance.coveredItem)}>
+                <select value={form.personalAssetId} onChange={(e) => setForm({ ...form, personalAssetId: e.target.value })} style={fullInputStyle}>
+                  <option value="">{t(TR.common.none)}</option>
+                  {(personalAssets || []).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                </select>
+              </Field>
+              <span style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: -6 }}>{t(TR.insurance.coveredItemHint)}</span>
+            </>
           )}
           <Field label={t(TR.insurance.provider)}>
             <input style={fullInputStyle} value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value })} placeholder={t(TR.insurance.providerPlaceholder)} />
@@ -215,8 +249,8 @@ export function InsuranceView() {
             <Field label={t(TR.insurance.annualPremium)}><CalcInput value={form.annualPremium} onChange={(v) => setForm({ ...form, annualPremium: v })} placeholder="0" /></Field>
           )}
           <Field label={t(TR.insurance.expiryDate)}><input type="date" style={fullInputStyle} value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} /></Field>
-          {isCreditForm ? (
-            <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(TR.insurance.lenderBeneficiary)}</span>
+          {isCreditForm || isPropertyForm ? (
+            <span style={{ fontSize: 12, color: "var(--ink-soft)" }}>{t(isCreditForm ? TR.insurance.lenderBeneficiary : TR.insurance.noBeneficiaryForProperty)}</span>
           ) : (
             <label style={checkLabelStyle}>
               <input type="checkbox" checked={form.beneficiarySet} onChange={(e) => setForm({ ...form, beneficiarySet: e.target.checked })} />

@@ -525,6 +525,10 @@ export const TR = {
     coversLoans: { th: "คุ้มครอง {names}", en: "Covers {names}" } as Text,
     loanHasCover: { th: "ประกัน {amount}", en: "Insured {amount}" } as Text,
     loanNoCover: { th: "ยังไม่มีประกัน", en: "Not insured" } as Text,
+    propertyKind: { th: "ชนิด", en: "Kind" } as Text,
+    coveredItem: { th: "สิ่งที่คุ้มครอง", en: "What it insures" } as Text,
+    coveredItemHint: { th: "เลือกจากสินทรัพย์ส่วนตัว หรือเว้นไว้เป็น \"— ไม่มี —\" ก็ได้", en: "Pick from your personal assets, or leave it as \"— None —\"" } as Text,
+    noBeneficiaryForProperty: { th: "ไม่ต้องระบุผู้รับผลประโยชน์ เพราะคุ้มครองบ้านหรือรถ ไม่ใช่ตัวคน", en: "No beneficiary needed — this insures a home or car, not a person" } as Text,
     premiumName: { th: "เบี้ยประกันรวมต่อรายได้", en: "Premium to Income" } as Text,
     premiumFormula: { th: "เบี้ยประกันรวมต่อปี ÷ รายได้รวมต่อปี", en: "Total annual premiums ÷ total annual income" } as Text,
     premiumStandard: { th: "ไม่เกิน 15%", en: "≤ 15%" } as Text,
@@ -608,7 +612,11 @@ export const LEVEL_LABEL_EN: Record<string, string> = {
 
 export const POLICY_TYPE_LABEL_EN: Record<string, string> = {
   "ชีวิต": "Life", "สุขภาพ": "Health", "อุบัติเหตุ": "Accident",
-  "โรคร้ายแรง": "Critical Illness", "คุ้มครองสินเชื่อ": "Credit Life",
+  "โรคร้ายแรง": "Critical Illness", "คุ้มครองสินเชื่อ": "Credit Life", "บ้านและรถ": "Home & Car",
+};
+
+export const PROPERTY_KIND_LABEL_EN: Record<string, string> = {
+  "อัคคีภัย": "Fire", "รถยนต์": "Car", "อื่นๆ": "Other",
 };
 
 // The auto-created default cash payment method is always named/typed
