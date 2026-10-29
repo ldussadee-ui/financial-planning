@@ -158,7 +158,9 @@ export interface NetWorthSnapshot {
   totalLiab: number;
 }
 
-export type PolicyType = "ชีวิต" | "สุขภาพ" | "อุบัติเหตุ" | "โรคร้ายแรง" | "คุ้มครองสินเชื่อ";
+export type PolicyType = "ชีวิต" | "สุขภาพ" | "อุบัติเหตุ" | "โรคร้ายแรง" | "คุ้มครองสินเชื่อ" | "บ้านและรถ";
+// What a "บ้านและรถ" (home & car) policy insures.
+export type PropertyKind = "อัคคีภัย" | "รถยนต์" | "อื่นๆ";
 
 export interface InsurancePolicy {
   id: string;
@@ -168,4 +170,22 @@ export interface InsurancePolicy {
   annualPremium: number;
   expiryDate: string; // "" if not tracked
   beneficiarySet: boolean;
+  // Loans this policy pays off. A credit-life policy (MRTA/MLTA) pays the
+  // lender directly; a life policy listed here is one the heirs are meant to
+  // use to clear these loans. Unindexed and optional, so older rows simply
+  // have no links.
+  liabilityIds?: string[];
+  // Life policies only: how much of the sum assured is set aside for the
+  // linked loans. Missing means the whole sum assured.
+  debtEarmark?: number;
+  // "single" = one lump-sum premium (common for MRTA) stored in
+  // annualPremium and spread over coverageYears. Missing means yearly.
+  premiumMode?: PremiumMode;
+  coverageYears?: number;
+  // Home & car policies only: the kind of cover and the personal asset
+  // (house, car…) it insures, if any.
+  propertyKind?: PropertyKind;
+  personalAssetId?: string;
 }
+
+export type PremiumMode = "annual" | "single";

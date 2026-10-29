@@ -496,11 +496,39 @@ export const TR = {
     healthNone: { th: "ไม่มี", en: "No coverage" } as Text,
     healthAdvice: { th: "ยังไม่มีกรมธรรม์ประกันสุขภาพ ลองพิจารณาทำความคุ้มครองค่ารักษาพยาบาลไว้", en: "No health insurance policy yet — consider getting medical coverage" } as Text,
     creditLifeName: { th: "ประกันคุ้มครองวงเงินสินเชื่อ", en: "Credit Life Coverage" } as Text,
-    creditLifeFormula: { th: "ทุนประกันคุ้มครองสินเชื่อ เทียบกับหนี้สินระยะยาวคงเหลือ", en: "Credit life coverage vs. remaining long-term debt" } as Text,
+    creditLifeFormula: { th: "ทุนประกันของแต่ละสินเชื่อระยะยาว เทียบกับยอดหนี้คงเหลือ", en: "Cover on each long-term loan vs. its remaining balance" } as Text,
     creditLifeAdvice: {
-      th: "หนี้สินระยะยาวที่มี (เช่น บ้าน/รถ) ยังไม่มีประกันคุ้มครองวงเงินสินเชื่อ ถ้าผู้กู้เป็นอะไรไป ภาระหนี้อาจตกเป็นของครอบครัว",
-      en: "Your long-term debt (e.g. home/car loan) isn't covered by credit life insurance — if something happens to the borrower, the debt burden could fall on the family",
+      th: "สินเชื่อระยะยาวบางตัว (เช่น บ้าน/รถ) ยังมีประกันคุ้มครองไม่ครบยอดหนี้ ถ้าผู้กู้เป็นอะไรไป ภาระหนี้ส่วนที่ขาดอาจตกเป็นของครอบครัว",
+      en: "Some long-term loans (e.g. home/car) aren't fully covered — if something happens to the borrower, the uncovered debt could fall on the family",
     } as Text,
+    loanFull: { th: "ครบ", en: "Covered" } as Text,
+    loanShort: { th: "ขาด {amount}", en: "Short {amount}" } as Text,
+    loanNone: { th: "ไม่มีประกัน", en: "No cover" } as Text,
+    heirPays: { th: "ทายาทชำระเอง", en: "heirs pay it off" } as Text,
+    sharedSplit: { th: "แบ่งร่วม", en: "shared" } as Text,
+    linkedLoansCredit: { th: "สินเชื่อที่คุ้มครอง (เลือกได้หลายตัว)", en: "Loans covered (pick any)" } as Text,
+    linkedLoansHint: { th: "ถ้าเลือกหลายตัว ระบบแบ่งทุนให้ตามสัดส่วนยอดหนี้คงเหลือ", en: "With several loans, the cover is split by their remaining balances" } as Text,
+    noLoans: { th: "ยังไม่มีรายการหนี้สิน เพิ่มได้ที่หน้าสินทรัพย์ แท็บหนี้สิน", en: "No debts yet — add them under Assets › Debt" } as Text,
+    loanOption: { th: "{name} · คงเหลือ {amount}", en: "{name} · {amount} left" } as Text,
+    earmarkToggle: { th: "กันไว้ชำระหนี้ (ทายาทนำไปจ่ายเจ้าหนี้เอง)", en: "Set aside for debts (heirs pay the lender)" } as Text,
+    earmarkAmount: { th: "ยอดที่กันไว้ชำระหนี้", en: "Amount set aside for debts" } as Text,
+    earmarkHint: { th: "เว้นว่าง = ใช้ทุนทั้งหมด ทุนประกันชีวิตยังนับเต็มจำนวนในข้อเช็กช่องว่างทุนประกันชีวิต", en: "Leave blank to use the whole sum assured. It still counts in full towards the life insurance gap" } as Text,
+    premiumMode: { th: "วิธีจ่ายเบี้ย", en: "Premium" } as Text,
+    premiumAnnual: { th: "รายปี", en: "Yearly" } as Text,
+    premiumSingle: { th: "จ่ายครั้งเดียว", en: "Single payment" } as Text,
+    singlePremium: { th: "เบี้ยที่จ่าย", en: "Premium paid" } as Text,
+    coverageYears: { th: "คุ้มครอง (ปี)", en: "Cover (years)" } as Text,
+    singlePremiumNote: { th: "คิดเป็นเบี้ยเฉลี่ย {amount}/ปี", en: "Counts as {amount}/yr on average" } as Text,
+    singlePremiumRow: { th: "จ่ายครั้งเดียว {amount} · {years} ปี", en: "Single payment {amount} · {years} yrs" } as Text,
+    lenderBeneficiary: { th: "ผู้รับผลประโยชน์คือเจ้าหนี้ ไม่ต้องระบุเอง", en: "The lender is the beneficiary — nothing to set" } as Text,
+    unlinkedList: { th: "ประกันคุ้มครองสินเชื่อที่ยังไม่ได้ผูกกับสินเชื่อ:", en: "Credit life not linked to a loan yet:" } as Text,
+    coversLoans: { th: "คุ้มครอง {names}", en: "Covers {names}" } as Text,
+    loanHasCover: { th: "ประกัน {amount}", en: "Insured {amount}" } as Text,
+    loanNoCover: { th: "ยังไม่มีประกัน", en: "Not insured" } as Text,
+    propertyKind: { th: "ชนิด", en: "Kind" } as Text,
+    coveredItem: { th: "สิ่งที่คุ้มครอง", en: "What it insures" } as Text,
+    coveredItemHint: { th: "เลือกจากสินทรัพย์ส่วนตัว หรือเว้นไว้เป็น \"— ไม่มี —\" ก็ได้", en: "Pick from your personal assets, or leave it as \"— None —\"" } as Text,
+    noBeneficiaryForProperty: { th: "ไม่ต้องระบุผู้รับผลประโยชน์ เพราะคุ้มครองบ้านหรือรถ ไม่ใช่ตัวคน", en: "No beneficiary needed — this insures a home or car, not a person" } as Text,
     premiumName: { th: "เบี้ยประกันรวมต่อรายได้", en: "Premium to Income" } as Text,
     premiumFormula: { th: "เบี้ยประกันรวมต่อปี ÷ รายได้รวมต่อปี", en: "Total annual premiums ÷ total annual income" } as Text,
     premiumStandard: { th: "ไม่เกิน 15%", en: "≤ 15%" } as Text,
@@ -584,7 +612,11 @@ export const LEVEL_LABEL_EN: Record<string, string> = {
 
 export const POLICY_TYPE_LABEL_EN: Record<string, string> = {
   "ชีวิต": "Life", "สุขภาพ": "Health", "อุบัติเหตุ": "Accident",
-  "โรคร้ายแรง": "Critical Illness", "คุ้มครองสินเชื่อ": "Credit Life",
+  "โรคร้ายแรง": "Critical Illness", "คุ้มครองสินเชื่อ": "Credit Life", "บ้านและรถ": "Home & Car",
+};
+
+export const PROPERTY_KIND_LABEL_EN: Record<string, string> = {
+  "อัคคีภัย": "Fire", "รถยนต์": "Car", "อื่นๆ": "Other",
 };
 
 // The auto-created default cash payment method is always named/typed

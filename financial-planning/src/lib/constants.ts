@@ -1,4 +1,4 @@
-import type { InvestmentCategory, LiquidType, PersonalItemType, GoalType, LiquidityTier, PolicyType } from "./types";
+import type { InvestmentCategory, LiquidType, PersonalItemType, GoalType, LiquidityTier, PolicyType, PropertyKind } from "./types";
 
 export interface CatInfo {
   key: InvestmentCategory;
@@ -36,7 +36,8 @@ export const EXPENSE_COLOR = "#FF5C7A";
 
 export const PERSONAL_TYPES: PersonalItemType[] = ["รถยนต์", "บ้านอยู่เอง", "ของสะสม", "เครื่องประดับ", "เฟอร์นิเจอร์", "อื่นๆ"];
 export const GOAL_TYPES: GoalType[] = ["เกษียณ", "บ้าน", "การศึกษา", "ท่องเที่ยว", "กองทุนฉุกเฉิน", "อื่นๆ"];
-export const POLICY_TYPES: PolicyType[] = ["ชีวิต", "สุขภาพ", "อุบัติเหตุ", "โรคร้ายแรง", "คุ้มครองสินเชื่อ"];
+export const POLICY_TYPES: PolicyType[] = ["ชีวิต", "สุขภาพ", "อุบัติเหตุ", "โรคร้ายแรง", "คุ้มครองสินเชื่อ", "บ้านและรถ"];
+export const PROPERTY_KINDS: PropertyKind[] = ["อัคคีภัย", "รถยนต์", "อื่นๆ"];
 
 // Emoji stored in each CategoryChip's `icon` field for the main categories
 // (see categoryTree.ts), then for the single-level categories used before

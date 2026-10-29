@@ -12,6 +12,8 @@ import { CalcInput } from "@/components/CalcInput";
 import { AddFab } from "@/components/AddFab";
 import type { Liability, LiabilityTerm } from "@/lib/types";
 import { LiabilityIcon } from "@/components/icons";
+import { InsuranceChip } from "@/components/InsuranceChip";
+import { computeLoanCoverage } from "@/lib/insuranceAnalysis";
 
 const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", rate: "", monthly: "" };
 
@@ -19,6 +21,8 @@ const emptyForm = { term: "LongTerm" as LiabilityTerm, type: "", balance: "", ra
 export function LiabilityTab() {
   const { t } = useLanguage();
   const liabilities = useLiveQuery(() => db.liabilities.toArray(), [], []);
+  const policies = useLiveQuery(() => db.insurancePolicies.toArray(), [], []);
+  const coverage = new Map(computeLoanCoverage(policies || [], liabilities || []).map((c) => [c.liability.id, c]));
   const [form, setForm] = useState(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -34,8 +38,22 @@ export function LiabilityTab() {
           {fillText(t(TR.assets.installmentPerMonth), { amount: fmt(l.monthly) })}
         </div>
       )}
+      {coverChip(l)}
     </div>
   );
+
+  // Which loans carry insurance, from the links set on the insurance page.
+  // Long-term loans with none get a reminder; short-term debt stays quiet,
+  // since it isn't part of that check.
+  const coverChip = (l: Liability) => {
+    const covered = coverage.get(l.id)?.covered ?? 0;
+    if (covered <= 0 && l.term !== "LongTerm") return null;
+    return (
+      <InsuranceChip insured={covered > 0}>
+        {covered > 0 ? fillText(t(TR.insurance.loanHasCover), { amount: fmt(covered) }) : t(TR.insurance.loanNoCover)}
+      </InsuranceChip>
+    );
+  };
 
   const openNew = () => { setForm(emptyForm); setEditingId(null); setModalOpen(true); };
   const openEdit = (l: Liability) => {
