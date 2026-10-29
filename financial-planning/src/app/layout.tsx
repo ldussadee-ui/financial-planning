@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Kanit } from "next/font/google";
 import { DbInit } from "@/components/DbInit";
 import { PwaRegister } from "@/components/PwaRegister";
+import { UpdateChecker } from "@/components/UpdateChecker";
 import { NetWorthSnapshotter } from "@/components/NetWorthSnapshotter";
 import { RecurringGenerator } from "@/components/RecurringGenerator";
 import "./globals.css";
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <DbInit />
         <PwaRegister />
+        <UpdateChecker />
         <NetWorthSnapshotter />
         <RecurringGenerator />
         {children}

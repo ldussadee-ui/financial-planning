@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.28.0] - 2026-10-29
+
+### Added
+- The app now updates itself. A home-screen app is usually paused in the background rather than closed, so it kept running the version it first loaded until you swiped it away, even after a new release was live (that is why the new insurance form didn't show up at first). Now, each time you come back to the app after at least 30 seconds away, it asks the server which version is live and reloads into it if yours is older. It waits while an add/edit form is open, so nothing you are typing is lost, and tries again next time you come back. Only the version number is fetched; none of your data leaves the phone
+
 ## [0.27.0] - 2026-10-29
 
 ### Added
