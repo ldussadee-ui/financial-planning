@@ -39,6 +39,9 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  // The live version number must always come from the network, or the
+  // update check would only ever see the version it already has.
+  if (url.pathname === "/version") return;
 
   // App navigations: try the network first (fresh HTML/data), fall back to
   // the cached shell so the app still opens offline.
