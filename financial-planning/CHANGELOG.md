@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.28.1] - 2026-11-17
+
+### Fixed
+- Adding a new # while entering a transaction no longer throws away the category you picked. The whole category area was one big tap target tied to the first category chip, so a tap that landed on an empty spot (the gap between chips, the "# ใน …" panel, or where the input box was a moment before, which happens easily on a phone as the keyboard closes after pressing เพิ่ม) switched the category to the first one (อาหาร) and cleared the #. Empty spots in the category and "จ่ายด้วย" areas now do nothing, so the category and the new # both stay selected
+
 ## [0.28.0] - 2026-10-29
 
 ### Added
