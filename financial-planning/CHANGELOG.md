@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/), versioned with [SemVer](https://semver.org/).
 
+## [0.28.2] - 2026-11-17
+
+### Fixed
+- The "ยกเลิก" (Cancel) button text now sits in the middle of its button. The Thai font needs a taller line than the space left inside the button, and the extra spilled out below, so "ยกเลิก" looked a little low next to "+ เพิ่ม". It is now centred the same way as "+ เพิ่ม", on every form that has a Cancel button
+
 ## [0.28.1] - 2026-11-17
 
 ### Fixed
