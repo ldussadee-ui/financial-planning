@@ -289,7 +289,11 @@ export const formPairStyle: CSSProperties = { display: "flex", gap: 10, alignIte
 export const formPairCellStyle: CSSProperties = { flex: 1, minWidth: 0 };
 export const formActionsStyle: CSSProperties = { display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 3 };
 export const fullInputStyle: CSSProperties = { ...inputStyle, width: "100%", minWidth: 0 };
+// Centred with flex like AddButton beside it: Kanit's line box is taller than
+// the 14px left inside height 36 − padding − border, and as plain text it
+// overflowed downward, so "ยกเลิก" sat low next to "+ เพิ่ม".
 export const cancelButtonStyle: CSSProperties = {
+  display: "inline-flex", alignItems: "center", justifyContent: "center",
   border: "2px solid var(--border)", background: "var(--panel)", color: "var(--ink)",
   borderRadius: 999, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 36,
 };
