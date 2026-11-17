@@ -361,7 +361,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
             </div>
           )}
 
-          <Field label={t(TR.cashflow.category)} wide>
+          <Field label={t(TR.cashflow.category)} wide group>
             <div
               style={{ display: "flex", flexWrap: "wrap", gap: 10, maxWidth: 480 }}
               onPointerMove={onCatsPointerMove}
@@ -463,7 +463,7 @@ export function CashflowEntryProvider({ children }: { children: ReactNode }) {
           {form.type === "Expense" && (
             <>
               <div style={{ flexBasis: "100%", height: 0 }} />
-              <Field label={t(TR.cashflow.paidWith)} wide>
+              <Field label={t(TR.cashflow.paidWith)} wide group>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10, maxWidth: 480 }}>
                 {paymentMethodsSorted.map((m) => (
                   <button

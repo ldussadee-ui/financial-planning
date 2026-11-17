@@ -299,13 +299,20 @@ export const cancelButtonStyle: CSSProperties = {
 // field to screen readers. Wrapping works for any child (input, select, the
 // calculator's own trigger button, a picker built from several buttons)
 // without having to thread a matching id/htmlFor through every call site.
-export function Field({ label, wide, children }: { label: string; wide?: boolean; children: ReactNode }) {
-  return (
-    <label style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: wide ? 480 : undefined }}>
-      <span style={{ fontSize: 12, color: "var(--ink-soft)", fontWeight: 600 }}>{label}</span>
-      {children}
-    </label>
-  );
+//
+// `group` is for a picker made of several buttons (category chips, payment
+// methods). Inside a <label>, a tap on any empty spot — the gap between chips,
+// a hint line, the # panel — is forwarded to the label's first button, which
+// silently picked the first category and cleared the chosen #. A group is a
+// <div role="group"> named by its heading instead, so stray taps do nothing.
+export function Field({ label, wide, group, children }: { label: string; wide?: boolean; group?: boolean; children: ReactNode }) {
+  const labelId = useId();
+  const style: CSSProperties = { display: "flex", flexDirection: "column", gap: 5, maxWidth: wide ? 480 : undefined };
+  const heading = <span id={group ? labelId : undefined} style={{ fontSize: 12, color: "var(--ink-soft)", fontWeight: 600 }}>{label}</span>;
+  if (group) {
+    return <div role="group" aria-labelledby={labelId} style={style}>{heading}{children}</div>;
+  }
+  return <label style={style}>{heading}{children}</label>;
 }
 
 // Where to draw the thumb instead of under `value`, for a caller that moves
